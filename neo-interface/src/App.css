@@ -1,0 +1,236 @@
+.App {
+  font-family: 'Quicksand', sans-serif;
+}
+html {
+    position: relative;
+      min-height: 100%;
+}
+
+.top-block.blue p {
+    background-color: #78cadd;
+    color: #3b3b3b;
+}
+
+.top-block.yellow p {
+    background-color: #f5e860;
+    color: #3b3b3b;
+}
+
+.top-block.pink p {
+    background-color: #f1b9d6;
+    color: #3b3b3b;
+}
+
+html body {
+
+    background-image: url(https://i.imgur.com/P53rMza.png);
+    background-attachment: fixed;
+    background-size: auto 200px;
+    background-color: white;
+}
+
+.App .jumbotron {
+  background-color: #ffffff;
+  color: black;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding: 2rem;
+  box-shadow: 0 0 5px 0px #b7b4b4;
+}
+
+.jumbotron.nodes {
+    padding: 2rem 2rem 5rem 2rem !important;
+}
+
+.App .jumbotron h4 {
+  clear: left;
+  padding-top: 1rem;
+  padding-bottom: 0.3rem;
+}
+
+.App td {
+  font-size: 1rem;
+  overflow: hidden;
+  word-wrap: break-word;
+}
+
+
+.App-logo {
+
+  width: 100%;
+  max-width: 800px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 15rem;
+  float: left;
+  margin-left: 3rem;
+}
+
+footer.App-footer p {
+    margin: 0;
+    padding-right: 0rem;
+}
+
+.footer-text {
+  float:right;
+  padding: 3rem;
+  padding-right: 0rem;
+}
+
+.top-block p {
+  background-color: #5cb85c;
+  color: white;
+  padding: 0.5rem;
+  text-align: center;
+  border-radius: 0.6rem;
+}
+
+h2, h3, h4 {
+  font-weight: 600 !important;
+}
+
+.Footer-app-logo {
+  height: 10rem;
+  float: right;
+  -webkit-transition: filter  0.5s ease-in-out;
+  -moz-transition: filter  0.5s ease-in-out;
+  -ms-transition: filter  0.5s ease-in-out;
+  -o-transition: filter  0.5s ease-in-out;
+  transition: filter  0.5s ease-in-out;
+  filter:brightness(100%);
+}
+
+.Footer-app-logo:hover {
+  filter:brightness(120%);
+}
+
+.top-block {
+  float:right;
+  padding-right: 5rem;
+}
+
+.infoblock {
+  float:left;
+  padding-right: 3rem;
+}
+
+.App-header {
+  
+  padding: 1rem;
+  padding-top: 2.5rem;
+  color: black;
+  margin-bottom:2rem;
+  z-index:99999;
+  
+}
+
+.App-title {
+    font-size: 1em;
+    margin: 0;
+    padding: 0.8rem;
+    color: white;
+    background: #477360;
+    z-index: 999;
+}
+
+.tx_td {
+  width: 70%;
+  max-width: 70%;
+  padding-left: 0 !important;
+}
+
+.node_td {
+  width: 30%;
+  max-width: 30%;
+}
+
+.table-fixed thead {
+  width: 97%;
+}
+.table-fixed tbody {
+  height: 230px;
+  overflow-y: auto;
+  width: 100%;
+}
+.table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th {
+  display: block;
+}
+.table-fixed tbody td, .table-fixed thead > tr> th {
+  float: left;
+  border-bottom-width: 0;
+}
+
+.App-title:hover{
+    filter:brightness(110%);
+
+}
+
+.App-intro {
+  font-size: large;
+  margin-top: 10rem;
+}
+
+.node-boxes {
+  padding-bottom: 2rem;
+}
+
+.jumbotron .table {
+  table-layout: fixed;
+}
+
+.node-box {
+  width: 2rem;
+  height: 2rem;
+  float: left;
+  margin-right: 0.4rem;
+  margin-top: 0.4rem;
+  -webkit-transition: opacity 0.5s ease-in-out;
+  -moz-transition: opacity 0.5s ease-in-out;
+  -ms-transition: opacity 0.5s ease-in-out;
+  -o-transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
+  opacity: 1;
+  border-radius: 0.6rem;
+}
+
+.node-box:hover {
+  opacity: 0.7;
+}
+
+li {
+    font-size: 1rem !important;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.footer-credits {
+    padding: 2rem;
+      float:left;
+}
+.footer-credits img {
+  height: 5rem;
+  float:left;
+}
+
+.footer-credits p {
+  float:left;
+  padding-left: 2rem;
+}
+
+.node-box p {
+  margin: -1rem;
+}
+
+.App-footer {
+    background-color: #ffffff;
+    text-align: right;
+    height: 12rem;
+    color: black;
+    bottom:0px;
+    width:100%;
+}
+
