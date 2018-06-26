@@ -5,7 +5,6 @@
   "private": true,
   "dependencies": {
     "@cityofzion/neon-js": "^3.9.0",
-    "axios": "^0.18.0",
     "bootstrap": "^3.3.7",
     "emoji-flags": "^1.2.0",
     "google-map-react": "^1.0.4",

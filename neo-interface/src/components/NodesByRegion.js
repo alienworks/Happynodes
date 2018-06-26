@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-refetch'
 import { Link } from 'react-router-dom'
-import { Tooltip, OverlayTrigger, Button} from 'react-bootstrap'
+import { Tooltip, OverlayTrigger} from 'react-bootstrap'
 
 
 class NodesByRegion extends Component {
@@ -37,14 +37,14 @@ class NodesByRegion extends Component {
             const offline_europe = offline['europe'];
             const offline_americas = offline['americas'];
 
-            function LinkWithTooltip({ key, id, health, children, href, tooltip }) {
+            function LinkWithTooltip({ id, health, children, href, tooltip }) {
         const aStyle = {
-            'background-color':'hsl('+health+',100%,50%)'
+            'backgroundColor':'hsl('+health+',100%,50%)'
         }
         const bStyle = {
-            'background-color':'hsl('+health+',100%,50%)',
-            'border-style': 'solid',
-            'border-color': 'rgb(100, 100, 100)',
+            'backgroundColor':'hsl('+health+',100%,50%)',
+            'borderStyle': 'solid',
+            'borderColor': 'rgb(100, 100, 100)',
         }
         const nodeStyle = node_id === id ? bStyle : aStyle;
         
@@ -67,7 +67,7 @@ class NodesByRegion extends Component {
                 <div className="jumbotron nodes">
                     <h2>Nodes</h2>
                     <h3>Online ({online_asia.length + online_europe.length + online_americas.length})</h3> <hr style={{
-                        'border-color': '#78cadd', 'border-width': '3px'}}/>
+                        'borderColor': '#78cadd', 'borderWidth': '3px'}}/>
                     <h4>Asia ({online_asia.length})</h4>
                     <div className="node-boxes">
 
@@ -84,6 +84,7 @@ class NodesByRegion extends Component {
                     <h4>Europe ({online_europe.length})</h4>
                                        <div className="node-boxes">
                     {online_europe.map((item,i) => 
+
                                     <LinkWithTooltip key={i} tooltip={item.address} href="#" health={item.health_score} id={item.id}>
       {item.id}
     </LinkWithTooltip>)
@@ -98,8 +99,8 @@ class NodesByRegion extends Component {
                                 }
                                 </div>   
                     <br/>
-                    <h3 style={{clear: 'left', 'padding-top': '2rem'}}>Offline ({offline_asia.length + offline_europe.length + offline_americas.length})</h3> <hr style={{
-                        'border-color': '#78cadd', 'border-width': '3px'}}/>
+                    <h3 style={{clear: 'left', 'paddingTop': '2rem'}}>Offline ({offline_asia.length + offline_europe.length + offline_americas.length})</h3> <hr style={{
+                        'borderColor': '#78cadd', 'borderWidth': '3px'}}/>
                     <h4>Asia ({offline_asia.length})</h4>
                     <div className="node-boxes">
 
