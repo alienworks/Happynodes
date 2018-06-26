@@ -11,8 +11,17 @@ class BlockTime extends Component {
                <p></p>
             );
         }
+        
+        console.log("blocktime", blocktime.value)
+        if (blocktime.value === null || blocktime.value === 'undefined'){
+            return (
+                <div className="top-block yellow">
+                <h2>0s</h2>
+                <p>AVG BLOCK TIME</p></div>
+            );
+        }
         return (
-            <div class="top-block yellow">
+            <div className="top-block yellow">
             <h2>{blocktime.value.blocktime}s</h2>
             <p>AVG BLOCK TIME</p></div>
         );

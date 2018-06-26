@@ -2,28 +2,37 @@
 import React, { Component } from 'react'
 import { connect } from 'react-refetch'
 
-class BestBlock extends Component {
+class bestblock extends Component {
     render() {
-        const {bestBlock} = this.props
+        const {bestblock} = this.props
 
-        if (bestBlock.pending) {
+        if (bestblock.pending) {
             return (
                <p></p>
             );
         }
+
+        console.log("bestblock", bestblock.value)
+        if (bestblock.value === null || bestblock.value === 'undefined'){
+            return (
+                <div className="top-block blue">
+                <h2></h2>
+                <p>BEST BLOCK</p></div>
+            );
+        }
         return (
-            <div class="top-block blue">
-            <h2>{Number(bestBlock.value.bestblock).toLocaleString()}</h2>
+            <div className="top-block blue">
+            <h2>{Number(bestblock.value.bestblock).toLocaleString()}</h2>
             <p>BEST BLOCK</p></div>
         );
     }
 }
   
-// export default BestBlock;
+// export default bestblock;
 
 export default connect( (props)=> ({
-    bestBlock: {
+    bestblock: {
         url: `/bestblock`,
         refreshInterval: 3000
     }
-}))(BestBlock)
+}))(bestblock)

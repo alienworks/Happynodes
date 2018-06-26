@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-refetch'
-import { Link, Redirect } from 'react-router-dom'
-import { Tooltip, OverlayTrigger, Button} from 'react-bootstrap'
 import { Graph } from 'react-d3-graph'
 
 class NodeEdges extends Component {
@@ -36,11 +34,7 @@ class NodeEdges extends Component {
                 return map;
             }, {});
 
-            console.log(node_lookup);
-
-
-            console.log(d_edges);
-            console.log(d_nodes);
+            
 
             const data = {
               nodes: d_nodes,
@@ -63,7 +57,7 @@ class NodeEdges extends Component {
           };
 
            const onClickNode = function(nodeId) {
-              if (nodeId != node_id){
+              if (nodeId !== node_id){
                 window.location = './' + node_lookup[nodeId];
               }
                 
@@ -77,7 +71,7 @@ class NodeEdges extends Component {
                     
                     <h2>Direct Peers</h2>
                     <hr style={{
-                        'border-color': '#78cadd', 'border-width': '3px'}}/>
+                        'borderColor': '#78cadd', 'borderWidth': '3px'}}/>
                 <div className="container">
                 <Graph
                   id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error

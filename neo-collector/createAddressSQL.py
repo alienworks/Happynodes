@@ -11,7 +11,7 @@ resolver.nameservers = ["208.67.222.222", "208.67.220.220", '8.8.8.8', '2001:486
                     '8.8.4.4', '2001:4860:4860::8844']
 
 def open_mainnet_json():
-    f = open('./mainnet.json','r')
+    f = open('../mainnet.json','r')
     r = json.loads(f.read())
     return r
 

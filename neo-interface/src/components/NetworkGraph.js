@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-refetch'
-import { Link, Redirect } from 'react-router-dom'
-import { Tooltip, OverlayTrigger, Button} from 'react-bootstrap'
 import { Graph } from 'react-d3-graph'
 
 class NetworkGraph extends Component {
@@ -36,10 +34,6 @@ class NetworkGraph extends Component {
                 map[obj.address] = obj.id;
                 return map;
             }, {});
-
-            console.log(node_lookup);
-            console.log(d_edges);
-            console.log(d_nodes);
 
             const data = {
               nodes: d_nodes,
@@ -78,7 +72,7 @@ class NetworkGraph extends Component {
                     
                     <h2>Direct Peers</h2>
                     <hr style={{
-                        'border-color': '#78cadd', 'border-width': '3px'}}/>
+                        'borderColor': '#78cadd', 'borderWidth': '3px'}}/>
                 <div style={{width: '500px'}}>
 
                 <Graph
