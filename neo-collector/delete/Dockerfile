@@ -15,8 +15,6 @@ COPY config.py .
 
 COPY Client.py .
 
-COPY insertData.py .
-
 COPY deleteOldTx.py .
 
 # start app
