@@ -9,9 +9,8 @@ RUN pip3 install psycopg2
 RUN pip3 install dnspython
 
 RUN mkdir /usr/src/app
-WORKDIR /usr/src/app
 
-COPY config.py .
+WORKDIR /usr/src/app
 
 COPY Client.py .
 

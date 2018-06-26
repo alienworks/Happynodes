@@ -1,8 +1,17 @@
 import psycopg2
-from config import CONNECTION_STR
 import time
+import os
 
-connect_str = CONNECTION_STR
+host = str(os.environ['PGHOST'])
+databasename = str(os.environ['PGDATABASE'])
+user = str(os.environ['PGUSER'])
+password = str(os.environ['PGPASSWORD'])
+
+connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password)
+
+connect_str = connection_str
+
+print(connect_str)
 
 while True:
     conn = psycopg2.connect(connect_str)
