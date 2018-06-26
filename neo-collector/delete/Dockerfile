@@ -6,16 +6,12 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip3 install psycopg2
 
-RUN pip3 install dnspython
-
 RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 
 COPY config.py .
 
-COPY Client.py .
-
 COPY deleteOldTx.py .
 
 # start app
-CMD ["python3", "insertData.py"]
+CMD ["python3", "deleteOldTx.py"]
