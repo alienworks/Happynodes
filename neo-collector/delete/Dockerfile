@@ -9,8 +9,6 @@ RUN pip3 install psycopg2
 RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 
-COPY config.py .
-
 COPY deleteOldTx.py .
 
 # start app
