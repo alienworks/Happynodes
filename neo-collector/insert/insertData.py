@@ -9,7 +9,7 @@ import queue
 import threading
 import random
 from psycopg2.pool import ThreadedConnectionPool
-from config import CONNECTION_STR, DSN
+import os
 
 import dns.resolver
 
@@ -19,9 +19,20 @@ P2P_TCP_PORT=10333
 P2P_WS_PORT=10334
 
 
+host = str(os.environ['PGHOST'])
+databasename = str(os.environ['PGDATABASE'])
+user = str(os.environ['PGUSER'])
+password = str(os.environ['PGPASSWORD'])
+
+connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password)
+dsn="postgresql://{}:{}@{}/{}".format(user, password, host, databasename)
+
+print(connection_str)
+print(dsn)
+
 MIN_CON = 1
 MAX_CON = 800
-tcp = ThreadedConnectionPool(MIN_CON, MAX_CON, DSN)
+tcp = ThreadedConnectionPool(MIN_CON, MAX_CON, dsn)
 
 def getSqlDateTime(ts):
     return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
@@ -88,9 +99,7 @@ def chunkIt(seq, num):
     return out
 
 if __name__ == "__main__":
-    connect_str = CONNECTION_STR
-
-    conn = psycopg2.connect(connect_str)
+    conn = psycopg2.connect(connection_str)
 
     cursor = conn.cursor()
     
