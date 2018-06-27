@@ -16,12 +16,12 @@ import UnconfirmedTx from './components/UnconfirmedTx'
 import createHistory from 'history/createBrowserHistory'
 import ReactGA from 'react-ga';
 
-ReactGA.initialize("UA-121421605-1");
+ReactGA.initialize(process.env.GA_KEY);
 class App extends Component {
 
   componentDidMount  = () => ReactGA.pageview(window.location.pathname + window.location.search);
   componentDidUpdate = () => ReactGA.pageview(window.location.pathname + window.location.search);
-  
+
   render() {
     return (
       <div className="App">
