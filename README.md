@@ -1,6 +1,11 @@
 <p align="center"><img src="https://github.com/neo-ngd/Happynodes/blob/master/neo-interface/src/HappyNodes_Logo.png" width=25% /></p>
 <p align="center"> 1<sup>st</sup> Prize Winner of London 2018 NEO Hackathon</p>
-
+<p align="center">>> <a href="http://happynodes.f27.ventures">http://happynodes.f27.ventures</a> <<</p>
+<p align="center"><img src="https://img.shields.io/badge/status-online-green.svg">
+ <img src="https://img.shields.io/github/stars/F27Ventures/Happynodes.svg">
+ <img src="https://img.shields.io/github/license/F27Ventures/Happynodes.svg">
+ <a><img src="https://img.shields.io/discord/461663571219054592.svg?logo=discord" alt="chat on Discord"></a></p>
+ 
 # Overview
 
 Happynodes is a blockchain network monitor and visualisation tool designed for the NEO Smart Economy Blockchain. It is live on http://happynodes.f27.ventures. It is developed and run by F27 with support from NGD.
@@ -10,6 +15,7 @@ Happynodes is a blockchain network monitor and visualisation tool designed for t
 
 * [History](#history)
 * [Notes on F27 Ventures](#notes-on-f27-ventures)
+* [Licence](#licence)
 
 </details>
 
@@ -44,6 +50,10 @@ Our Innovations:
 - New Health Scoring system taking into account 4 metrics to provide differentiation between Online Nodes
 - Unconfirmed Transactions explorer - see how many nodes are supporting the as-yet unconfirmed transactions
 - Graph explorer to show the connections for the network as well as the direct edges for each Node
+
+## Licence
+
+This project is licensed under the terms of the **MIT** license.
 
 ## Notes on F27 Ventures
 
