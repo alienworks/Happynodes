@@ -13,8 +13,15 @@ import NetworkGraph from './components/NetworkGraph'
 import logo from './HappyNodes_Logo.png'
 import f27logo from './27-light-red.png'
 import UnconfirmedTx from './components/UnconfirmedTx'
+import createHistory from 'history/createBrowserHistory'
+import ReactGA from 'react-ga';
 
+ReactGA.initialize(process.env.REACT_APP_GA_KEY);
 class App extends Component {
+
+  componentDidMount  = () => ReactGA.pageview(window.location.pathname + window.location.search);
+  componentDidUpdate = () => ReactGA.pageview(window.location.pathname + window.location.search);
+
   render() {
     return (
       <div className="App">

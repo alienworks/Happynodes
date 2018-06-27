@@ -19,6 +19,7 @@
     "react-bootstrap": "^0.32.1",
     "react-d3-graph": "^1.2.2",
     "react-dom": "^16.4.1",
+    "react-ga": "^2.5.3",
     "react-interval-renderer": "1.0.1",
     "react-refetch": "^1.0.4",
     "react-router-dom": "^4.3.1",
