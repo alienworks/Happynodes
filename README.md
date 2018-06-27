@@ -1,10 +1,34 @@
-<img src="https://github.com/F27Ventures/neo-network-monitor/blob/master/neo-interface/src/HappyNodes_Logo.png" width=50% />
+<p align="center"><img src="https://github.com/neo-ngd/Happynodes/blob/master/neo-interface/src/HappyNodes_Logo.png" width=25% /></p>
+<p align="center"> 1<sup>st</sup> Prize Winner of London 2018 NEO Hackathon</p>
 
-# Happynodes - the younger, fun brother of CoZ's excellent Monitor
+# Overview
 
-![Happynodes UI Screenshot](https://github.com/F27Ventures/neo-network-monitor/blob/master/Happynodes%20Interface%20Screenshot.png)
+Happynodes is a blockchain network monitor and visualisation tool designed for the NEO Smart Economy Blockchain. It is live on http://happynodes.f27.ventures. It is developed and run by F27 with support from NGD.
 
-# NGD's London Hackathon 2018
+<details>
+ <summary><strong>Table of Contents</strong> (click to expand)</summary>
+
+* [History](#history)
+* [Notes on F27 Ventures](#notes-on-f27-ventures)
+
+</details>
+
+## History
+
+> How Happynodes came to be
+
+NGD (NEO Global Development) decided to sponsor and run the first NEO London Hackathon on 17th June 2018 with the aim of finding a companion network monitor to City of Zion's [neo-mon](https://github.com/CityOfZion/neo-mon) project, [City of Zion | Monitor](http://monitor.cityofzion.io/).
+
+Based on the rules of the Hackathon and from our experiences of City of Zion's monitor, we tried to focus on:
+
+* A user-friendly experience that would welcoming to new and existing developers
+* Adding historical information (CoZ's monitor is database-less, so can't monitor evolution over time)
+* Providing some innovation not seen in the existing monitor or any other NEO tool
+
+<img src="https://github.com/neo-ngd/Happynodes/blob/master/Happynodes%20Interface%20Screenshot.png" width=50% />
+
+
+### NGD's London Hackathon 2018
 
 F27 took part of NEO Global Development's first London Hackathon on 17th June 2018. The hackathon was organised by NGD with the goal to help participants LEARN, THINK and CREATE on NEO's Smart Economy platform.
 
@@ -21,12 +45,8 @@ Our Innovations:
 - Unconfirmed Transactions explorer - see how many nodes are supporting the as-yet unconfirmed transactions
 - Graph explorer to show the connections for the network as well as the direct edges for each Node
 
-Developed by F27 crew:
-- Shiran Chan
-- Wing Chan ~wy
-- Karlson Lee ~i25959341
+## Notes on F27 Ventures
 
-# Notes on F27 Ventures
 F27 was started by a group of 27-year olds who wanted to change the world one code commit at a time. We've worked at startups, large corporates and gone freelance. You don't have to be 27 to be part of our journey, you just need to dig what we do.
 
 ![F27](https://github.com/F27Ventures/cohorts/blob/master/F27-888x100-2b_02.jpg)
