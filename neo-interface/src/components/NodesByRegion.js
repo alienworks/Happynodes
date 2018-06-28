@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-refetch'
 import { Link } from 'react-router-dom'
 import { Tooltip, OverlayTrigger} from 'react-bootstrap'
+import config from './config'
 
 
 class NodesByRegion extends Component {
@@ -137,9 +138,8 @@ class NodesByRegion extends Component {
 }
 
 
-
 export default connect( (props)=> ({
-    nodesbyregion: {url:`/nodes`,
+    nodesbyregion: {url:config.api_url.concat(`/nodes`),
     refreshInterval: 3000}
 
 }))(NodesByRegion)
