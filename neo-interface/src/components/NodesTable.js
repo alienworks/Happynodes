@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-refetch'
+import config from './config'
 
 class NodesTable extends Component {
     constructor(props) {
@@ -74,7 +75,7 @@ class NodesTable extends Component {
 
 export default connect( (props)=> ({
     nodes: {
-        url: `http://api.happynodes-integration.f27.ventures/nodes`,
+        url: config.api_url.concat(`/nodes`),
         refreshInterval: 5000
     }
 }))(NodesTable)

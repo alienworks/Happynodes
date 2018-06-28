@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-refetch'
+import config from './config'
 
 class LastTime extends Component {
     constructor(props) {
@@ -49,7 +50,7 @@ class LastTime extends Component {
 
 export default connect((props) => ({
     lastblock: {
-        url: `http://api.happynodes-integration.f27.ventures/lastblock`,
+        url: config.api_url.concat(`/lastblock`),
         refreshInterval: 1000
     }
 }))(LastTime)

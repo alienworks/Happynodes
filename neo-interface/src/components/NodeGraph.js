@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-refetch'
 import { Graph } from 'react-d3-graph'
+import config from './config'
 
 class NodeGraph extends Component {
 
@@ -49,7 +50,7 @@ class NodeGraph extends Component {
 
 export default connect( (props)=> ({
     nodes: {
-        url: `http://api.happynodes-integration.f27.ventures/nodes`,
+        url: config.api_url.concat(`/nodes`),
         refreshInterval: 5000
     }
 }))(NodeGraph)

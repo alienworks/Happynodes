@@ -1,6 +1,7 @@
 
 import React, { Component } from 'react'
 import { connect } from 'react-refetch'
+import config from './config'
 
 class BlockTime extends Component {
     render() {
@@ -31,7 +32,7 @@ class BlockTime extends Component {
 
 export default connect( (props)=> ({
     blocktime: {
-        url: `http://api.happynodes-integration.f27.ventures/blocktime`,
+        url: config.api_url.concat(`/blocktime`),
         refreshInterval: 3000
     }
 }))(BlockTime)

@@ -1,6 +1,7 @@
 
 import React, { Component } from 'react'
 import { connect } from 'react-refetch'
+import config from './config'
 
 class bestblock extends Component {
     render() {
@@ -33,7 +34,7 @@ class bestblock extends Component {
 
 export default connect( (props)=> ({
     bestblock: {
-        url: `http://api.happynodes-integration.f27.ventures/bestblock`,
+        url: config.api_url.concat(`/bestblock`),
         refreshInterval: 3000
     }
 }))(bestblock)
