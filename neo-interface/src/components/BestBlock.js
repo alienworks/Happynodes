@@ -5,6 +5,7 @@ import { connect } from 'react-refetch'
 class bestblock extends Component {
     render() {
         const {bestblock} = this.props
+        
 
         if (bestblock.pending) {
             return (
@@ -32,7 +33,7 @@ class bestblock extends Component {
 
 export default connect( (props)=> ({
     bestblock: {
-        url: `/bestblock`,
+        url: `http://api.happynodes-integration.f27.ventures/bestblock`,
         refreshInterval: 3000
     }
 }))(bestblock)

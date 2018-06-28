@@ -31,7 +31,7 @@ class BlockTime extends Component {
 
 export default connect( (props)=> ({
     blocktime: {
-        url: `/blocktime`,
+        url: `http://api.happynodes-integration.f27.ventures/blocktime`,
         refreshInterval: 3000
     }
 }))(BlockTime)

@@ -137,9 +137,8 @@ class NodesByRegion extends Component {
 }
 
 
-
 export default connect( (props)=> ({
-    nodesbyregion: {url:`/nodes`,
+    nodesbyregion: {url:`http://api.happynodes-integration.f27.ventures/nodes`,
     refreshInterval: 3000}
 
 }))(NodesByRegion)

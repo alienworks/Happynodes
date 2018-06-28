@@ -95,6 +95,6 @@ class NetworkGraph extends Component {
 }
 
 export default connect( (props)=> ({
-    nodeedges: {url:`/edges`},
-    nodeslist: {url:`/nodeslist`}
+    nodeedges: {url:`http://api.happynodes-integration.f27.ventures/edges`},
+    nodeslist: {url:`http://api.happynodes-integration.f27.ventures/nodeslist`}
 }))(NetworkGraph)

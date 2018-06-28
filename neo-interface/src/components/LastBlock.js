@@ -49,7 +49,7 @@ class LastTime extends Component {
 
 export default connect((props) => ({
     lastblock: {
-        url: `/lastblock`,
+        url: `http://api.happynodes-integration.f27.ventures/lastblock`,
         refreshInterval: 1000
     }
 }))(LastTime)

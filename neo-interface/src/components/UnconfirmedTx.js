@@ -63,11 +63,11 @@ class UnconfirmedTx extends Component {
 
 export default connect((props) => ({
     unconfirmed: {
-        url: `/unconfirmed`,
+        url: `http://api.happynodes-integration.f27.ventures/unconfirmed`,
         refreshInterval: 2000
     },
     bestBlock: {
-        url: `/bestBlock`,
+        url: `http://api.happynodes-integration.f27.ventures/bestBlock`,
         refreshInterval: 2000
     }
 }))(UnconfirmedTx)

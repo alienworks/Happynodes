@@ -130,5 +130,5 @@ class NodeInfo extends Component {
 }
 
 export default connect((props) => ({
-    nodeinfo: { url: `/nodes/${props.node_id}` },
+    nodeinfo: { url: `http://api.happynodes-integration.f27.ventures/nodes/${props.node_id}`},
 }))(NodeInfo)

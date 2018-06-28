@@ -49,7 +49,7 @@ class NodeGraph extends Component {
 
 export default connect( (props)=> ({
     nodes: {
-        url: `/nodes`,
+        url: `http://api.happynodes-integration.f27.ventures/nodes`,
         refreshInterval: 5000
     }
 }))(NodeGraph)

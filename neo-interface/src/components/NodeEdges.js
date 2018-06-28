@@ -92,5 +92,5 @@ class NodeEdges extends Component {
 }
 
 export default connect( (props)=> ({
-    nodeedges: {url:`/nodes/${props.node_id}/validatedpeers`},
+    nodeedges: {url:`http://api.happynodes-integration.f27.ventures/nodes/${props.node_id}/validatedpeers`},
 }))(NodeEdges)
