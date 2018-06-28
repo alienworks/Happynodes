@@ -12,6 +12,7 @@ ENV PATH /usr/src/app/node_modules/.bin:$PATH
 # .package.json is old package file with lot of dependency
 # for faster caching
 COPY .package.json /usr/src/app/package.json
+RUN npm install -g serve
 RUN npm install --silent
 RUN npm install react-scripts@1.1.1 -g --silent
 
@@ -23,5 +24,7 @@ COPY . .
 
 EXPOSE 3000
 
+RUN npm run build
+
 # start app
-CMD ["npm", "start"]
+CMD serve -s build
