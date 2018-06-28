@@ -27,4 +27,4 @@ EXPOSE 3000
 RUN npm run build
 
 # start app
-CMD serve -s build
+CMD serve -s build -p 3000
