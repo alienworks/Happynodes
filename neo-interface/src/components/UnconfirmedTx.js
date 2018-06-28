@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-refetch'
+import config from './config'
 
 class UnconfirmedTx extends Component {
     static defaultProps = {
@@ -63,11 +64,11 @@ class UnconfirmedTx extends Component {
 
 export default connect((props) => ({
     unconfirmed: {
-        url: `/unconfirmed`,
+        url: config.api_url.concat(`/unconfirmed`),
         refreshInterval: 2000
     },
     bestBlock: {
-        url: `/bestBlock`,
+        url: config.api_url.concat(`/bestBlock`),
         refreshInterval: 2000
     }
 }))(UnconfirmedTx)

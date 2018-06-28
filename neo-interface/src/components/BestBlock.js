@@ -1,10 +1,12 @@
 
 import React, { Component } from 'react'
 import { connect } from 'react-refetch'
+import config from './config'
 
 class bestblock extends Component {
     render() {
         const {bestblock} = this.props
+        
 
         if (bestblock.pending) {
             return (
@@ -32,7 +34,7 @@ class bestblock extends Component {
 
 export default connect( (props)=> ({
     bestblock: {
-        url: `/bestblock`,
+        url: config.api_url.concat(`/bestblock`),
         refreshInterval: 3000
     }
 }))(bestblock)

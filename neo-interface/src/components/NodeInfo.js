@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-refetch'
 import emojiFlags from 'emoji-flags';
 import ClientSideLatency from './ClientSideLatency';
+import config from './config'
 
 class NodeInfo extends Component {
     render() {
@@ -64,7 +65,7 @@ class NodeInfo extends Component {
                         <h5>Server Side Latency (ms)</h5>
                     </div>
 
-                    <ClientSideLatency url={data.address}/>
+                    <ClientSideLatency url={data.address} />
 
                     <div className="infoblock">
                         <h4>{data.version}</h4>
@@ -103,7 +104,7 @@ class NodeInfo extends Component {
                     </div>
 
 
-                    
+
 
                     <div className="infoblock">
                         <h4>{Number(data.blockheight_score).toFixed(0)}%</h4>
@@ -130,5 +131,5 @@ class NodeInfo extends Component {
 }
 
 export default connect((props) => ({
-    nodeinfo: { url: `/nodes/${props.node_id}` },
+    nodeinfo: { url: config.api_url.concat(`/nodes/${props.node_id}`) },
 }))(NodeInfo)

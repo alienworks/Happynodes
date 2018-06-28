@@ -1,96 +1,96 @@
 import React, { Component } from 'react'
 import { connect } from 'react-refetch'
 import { Graph } from 'react-d3-graph'
+import config from './config'
 
 class NodeEdges extends Component {
     render() {
         const { nodeedges } = this.props;
         if (nodeedges.pending) {
             return (
-             
-                 <div className="jumbotron">
+
+                <div className="jumbotron">
                     <h2>Loading...</h2>
-                    </div>
+                </div>
             )
-        }else if (nodeedges.rejected  ) {
+        } else if (nodeedges.rejected) {
             return (
-            
+
                 <div>
                     error
                 </div>
             )
-        } else if (nodeedges.fulfilled ) {
-            
+        } else if (nodeedges.fulfilled) {
+
             const raw_data = nodeedges.value;
             const node_id = this.props.node_id;
-            
-            const d_edges = raw_data.map((item, i) => 
-                    {return {"source":this.props.node_id, "target":item.address}});
-            const d_nodes = raw_data.map((item, i) => 
-                {return {"id":item.address}}).concat([{"id":this.props.node_id}]);
 
-            const node_lookup = raw_data.reduce(function(map, obj) {
+            const d_edges = raw_data.map((item, i) => { return { "source": this.props.node_id, "target": item.address } });
+            const d_nodes = raw_data.map((item, i) => { return { "id": item.address } }).concat([{ "id": this.props.node_id }]);
+
+            const node_lookup = raw_data.reduce(function (map, obj) {
                 map[obj.address] = obj.address_id;
                 return map;
             }, {});
 
-            
+
 
             const data = {
-              nodes: d_nodes,
-              links: d_edges
+                nodes: d_nodes,
+                links: d_edges
             };
             const myConfig = {
-            nodeHighlightBehavior: true,
-            width: '500',
-            node: {
-                color: '#1FB6FF',
-                size: 120,
-                highlightStrokeColor: '#1FB6FF'
-            },
-            link: {
-                highlightColor: 'lightblue'
-            }
-        };
-          const onMouseOverNode = function(nodeId) {
-              //window.alert(`Mouse over node ${nodeId}`);
-          };
+                nodeHighlightBehavior: true,
+                width: '500',
+                node: {
+                    color: '#1FB6FF',
+                    size: 120,
+                    highlightStrokeColor: '#1FB6FF'
+                },
+                link: {
+                    highlightColor: 'lightblue'
+                }
+            };
+            const onMouseOverNode = function (nodeId) {
+                //window.alert(`Mouse over node ${nodeId}`);
+            };
 
-           const onClickNode = function(nodeId) {
-              if (nodeId !== node_id){
-                window.location = './' + node_lookup[nodeId];
-              }
-                
-          };
+            const onClickNode = function (nodeId) {
+                if (nodeId !== node_id) {
+                    window.location = './' + node_lookup[nodeId];
+                }
+
+            };
 
 
             return (
-            
+
                 <div className="jumbotron nodes">
 
-                    
+
                     <h2>Direct Peers</h2>
                     <hr style={{
-                        'borderColor': '#78cadd', 'borderWidth': '3px'}}/>
-                <div className="container">
-                <Graph
-                  id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error
-                  data={data}
-                  config={myConfig}
+                        'borderColor': '#78cadd', 'borderWidth': '3px'
+                    }} />
+                    <div className="container">
+                        <Graph
+                            id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error
+                            data={data}
+                            config={myConfig}
 
-                  onMouseOverNode={onMouseOverNode}
-                  onClickNode={onClickNode}
+                            onMouseOverNode={onMouseOverNode}
+                            onClickNode={onClickNode}
 
-              />
+                        />
 
-   
-          
-                </div></div>
-                )
+
+
+                    </div></div>
+            )
         }
-    }   
+    }
 }
 
-export default connect( (props)=> ({
-    nodeedges: {url:`/nodes/${props.node_id}/validatedpeers`},
+export default connect((props) => ({
+    nodeedges: { url: config.api_url.concat(`/nodes/${props.node_id}/validatedpeers`) },
 }))(NodeEdges)
