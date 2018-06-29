@@ -15,7 +15,6 @@ import psycopg2
 import time
 import datetime
 
-
 host = str(os.environ['PGHOST'])
 databasename = str(os.environ['PGDATABASE'])
 user = str(os.environ['PGUSER'])
