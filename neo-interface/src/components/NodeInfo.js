@@ -71,6 +71,20 @@ class NodeInfo extends Component {
                         <h4>{data.version}</h4>
                         <h5>Version</h5>
                     </div>
+
+
+                    {data.p2p_tcp_status ? (
+                        <div className="infoblock">
+                            <h4>online</h4>
+                            <h5>P2P Status</h5>
+                        </div>
+                    ) : (
+                            <div className="infoblock">
+                                <h4>offline</h4>
+                                <h5>P2P Status</h5>
+                            </div>
+                        )}
+
                     <div className="infoblock" style={{ clear: 'left' }}>
                         <h4>{data.mempool_size}</h4>
                         <h5>Unconfirmed Transactions</h5>
