@@ -8,6 +8,8 @@ WORKDIR /usr/src/app
 # add `/usr/src/app/node_modules/.bin` to $PATH
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
 
+RUN echo "REACT_APP_GA_KEY=\"$REACT_APP_GA_KEY\" \nDANGEROUSLY_DISABLE_HOST_CHECK=$DANGEROUSLY_DISABLE_HOST_CHECK \nREACT_APP_API_URL=\"http://api.happynodes-integration.f27.ventures\"" > .env
+
 # install and cache app dependencies 
 # .package.json is old package file with lot of dependency
 # for faster caching
