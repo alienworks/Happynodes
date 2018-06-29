@@ -21,7 +21,6 @@ RUN npm install react-scripts@1.1.1 -g --silent
 COPY package.json /usr/src/app/package.json
 RUN npm install --silent
 
-RUN echo "REACT_APP_GA_KEY=\"$REACT_APP_GA_KEY\" \nDANGEROUSLY_DISABLE_HOST_CHECK=$DANGEROUSLY_DISABLE_HOST_CHECK \nREACT_APP_API_URL=\"$REACT_APP_API_URL\"" > .env
 COPY . .
 
 EXPOSE 3000
