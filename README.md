@@ -73,6 +73,8 @@ Based on the rules of the Hackathon and from our experiences of City of Zion's m
 
 ### NGD's London Hackathon 2018
 
+Youtube Video: [NEO London Meetup & Hackathon](https://youtu.be/rhz1F6EB6LE?t=1m3s)
+
 F27 took part of NEO Global Development's first London Hackathon on 17th June 2018. The hackathon was organised by NGD with the goal to help participants LEARN, THINK and CREATE on NEO's Smart Economy platform.
 
 This specific challenge centred around Network State Monitoring.
