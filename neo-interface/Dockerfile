@@ -8,6 +8,7 @@ WORKDIR /usr/src/app
 # add `/usr/src/app/node_modules/.bin` to $PATH
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
 
+
 # install and cache app dependencies 
 # .package.json is old package file with lot of dependency
 # for faster caching
