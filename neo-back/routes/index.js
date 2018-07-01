@@ -492,7 +492,7 @@ router.get('/nodes/:node_id', cache('2 seconds'), function(req, res, next) {
 					proto.protocol,
 					po.port,
 							 COALESCE(p2p_tcp_status, false) AS p2p_tcp_status,
-					concat( proto.protocol, '://', addr.address, ':Ï' , po.port ) AS address,
+					concat( proto.protocol, '://', addr.address, ':' , po.port ) AS address,
 					coalesce(
 						vpt.validated_peers_counts,
 						0
