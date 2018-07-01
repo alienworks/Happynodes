@@ -13,6 +13,7 @@
     "pigeon-maps": "^0.9.3",
     "pigeon-marker": "^0.3.3",
     "pigeon-overlay": "^0.2.2",
+    "ping.js": "^0.2.1",
     "react": "^16.4.1",
     "react-addons-css-transition-group": "^15.6.2",
     "react-bootstrap": "^0.32.1",

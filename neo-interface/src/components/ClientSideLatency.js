@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { Component } from 'react'
+import Ping from 'ping.js';
 
 class ClientSideLatency extends Component {
     constructor(props) {
@@ -12,18 +13,15 @@ class ClientSideLatency extends Component {
     }
 
     getLatency() {
-        var xhttp = new XMLHttpRequest();
+        var p = new Ping();
         const url = this.props.url;
 
         var t0 = performance.now();
 
-        axios.get(url, {
-            timeout: 60000
-          })
-            .then((response) => {
-                var t1 = performance.now();
-                this.setState({ latency: (t1 - t0) });
-            })
+        p.ping(url, (err, data) => {
+            var t1 = performance.now();
+            this.setState({ latency: (t1 - t0) });
+        });
     }
 
     componentDidMount() {
