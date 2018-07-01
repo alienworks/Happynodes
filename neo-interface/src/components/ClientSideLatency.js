@@ -19,28 +19,9 @@ class ClientSideLatency extends Component {
         var t0 = performance.now();
 
         p.ping(url, (err, data) => {
-        // Also display error if err is returned.
-        if (err) {
-            console.log("error loading resource")
-            data = data + " " + err;
-        }
-        console.log("data", data);
-        var t1 = performance.now();
-        this.setState({ latency: (t1 - t0) });
+            var t1 = performance.now();
+            this.setState({ latency: (t1 - t0) });
         });
-
-        // var xhttp = new XMLHttpRequest();
-        // const url = this.props.url;
-
-        // var t0 = performance.now();
-
-        // axios.get(url, {
-        //     timeout: 60000
-        //   })
-        //     .then((response) => {
-        //         var t1 = performance.now();
-        //         this.setState({ latency: (t1 - t0) });
-        //     })
     }
 
     componentDidMount() {
