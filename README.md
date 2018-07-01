@@ -22,6 +22,12 @@ Happynodes is a blockchain network monitor and visualisation tool designed for t
 
 </details>
 
+## Latest UI
+
+> Last Recording: 30th June 2018
+
+<img src="https://github.com/neo-ngd/Happynodes/blob/master/HappyNodes-1.gif">
+
 ## Component Structure
 
 > Current HappyNodes structure
