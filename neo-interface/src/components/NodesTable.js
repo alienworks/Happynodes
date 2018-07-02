@@ -40,16 +40,16 @@ class NodesTable extends Component {
                         <td>{node.blockheight}</td>
                         <td>{node.mempool_size}</td>
                         <td>{node.latency}</td>
-                        {node.rcp_http_status === true &&
+                        {node.rpc_http_status === true &&
                             <td>Okay</td>
                         }
-                        {node.rcp_http_status === false &&
+                        {node.rpc_http_status === false &&
                             <td>N/A</td>
                         }
-                        {node.rcp_http_status === true &&
+                        {node.rpc_http_status === true &&
                             <td>Okay</td>
                         }
-                        {node.rcp_http_status === false &&
+                        {node.rpc_http_status === false &&
                             <td>N/A</td>
                         }
                         {node.online === true &&
@@ -58,8 +58,8 @@ class NodesTable extends Component {
                         {node.online === false &&
                             <td>Offline</td>
                         }
-                        <td>{node.rcp_http_status}</td>
-                        <td>{node.rcp_https_status}</td>
+                        <td>{node.rpc_http_status}</td>
+                        <td>{node.rpc_https_status}</td>
                         <td>{node.connection_counts}</td>
                         <td>{node.count} pct</td>
                         <td>{node.version}</td>
