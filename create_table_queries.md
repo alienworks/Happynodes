@@ -129,6 +129,13 @@ CREATE TABLE IF NOT EXISTS p2p_tcp_status_history (
     p2p_tcp_status BOOLEAN
 );
 
+CREATE TABLE IF NOT EXISTS p2p_ws_status_history (
+    id bigserial PRIMARY key,
+    ts TIMESTAMP WITHOUT TIME zone, 
+    address_id INTEGER REFERENCES address(id),
+    p2p_ws_status BOOLEAN
+);
+
 DROP TABLE port;
 DROP TABLE version_history;
 DROP TABLE blockheight_history;
