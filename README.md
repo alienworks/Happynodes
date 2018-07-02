@@ -1,16 +1,18 @@
 <p align="center"><img src="https://github.com/neo-ngd/Happynodes/blob/master/neo-interface/src/HappyNodes_Logo.png" width=25% /></p>
 <p align="center"> 1<sup>st</sup> Prize Winner of London 2018 NEO Hackathon</p>
 <p align="center">>> <a href="https://happynodes.f27.ventures">https://happynodes.f27.ventures</a> <<</p>
-<p align="center"><img src="https://img.shields.io/badge/status-online-green.svg">
+<p align="center"><img src="https://img.shields.io/github/release/neo-ngd/Happynodes.svg">
+ <img src="https://img.shields.io/badge/status-online-green.svg">
  <img src="https://img.shields.io/github/stars/F27Ventures/Happynodes.svg">
  <img src="https://img.shields.io/github/license/F27Ventures/Happynodes.svg">
+  
  <a><img src="https://img.shields.io/discord/461663571219054592.svg?logo=discord" alt="chat on Discord"></a></p>
  
 # Overview
 
 Happynodes is a blockchain network monitor and visualisation tool designed for the NEO Smart Economy Blockchain. It is live on https://happynodes.f27.ventures. It is developed and run by F27 with support from NGD. There is also an API under development that powers the front-end but will have useful metrics for the NEO community that are currently not available anywhere else (primarily historic information).
 
-We are currently working towards 0.9.0 Pre-release. You can see our [Milestones](https://github.com/neo-ngd/Happynodes/milestones) for more information on what is in each release.
+Current Release: [0.9.0](https://github.com/neo-ngd/Happynodes/releases/tag/v0.9.0). You can see our [Milestones](https://github.com/neo-ngd/Happynodes/milestones) for more information on what is in each major release, as well as our [Releases](https://github.com/neo-ngd/Happynodes/releases/latest) log.
 
 <details>
  <summary><strong>Table of Contents</strong> (click to expand)</summary>
