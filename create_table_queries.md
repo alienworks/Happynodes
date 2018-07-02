@@ -59,17 +59,17 @@ CREATE TABLE IF NOT EXISTS online_history (
 	online boolean
 );
 
-CREATE TABLE IF NOT EXISTS rcp_http_status_history (
+CREATE TABLE IF NOT EXISTS rpc_http_status_history (
 	id serial PRIMARY KEY, 
 	ts TIMESTAMP WITHOUT TIME zone, 
 	address_id INTEGER REFERENCES address(id) , 
-	rcp_http_status boolean);
+	rpc_http_status boolean);
 
-CREATE TABLE IF NOT EXISTS rcp_https_status_history (
+CREATE TABLE IF NOT EXISTS rpc_https_status_history (
 	id serial PRIMARY KEY, 
 	ts TIMESTAMP WITHOUT TIME zone, 
 	address_id INTEGER REFERENCES address(id) , 
-	rcp_https_status boolean);
+	rpc_https_status boolean);
 
 CREATE TABLE IF NOT EXISTS locale (
     id bigserial PRIMARY key,
@@ -136,8 +136,8 @@ DROP TABLE latency_history;
 DROP TABLE mempool_size_history;
 DROP TABLE connection_counts_history;
 DROP TABLE online_history;
-DROP TABLE rcp_http_status_history;
-DROP TABLE rcp_https_status_history;
+DROP TABLE rpc_http_status_history;
+DROP TABLE rpc_https_status_history;
 DROP TABLE edges;
 DROP TABLE ip;
 DROP TABLE locale;

@@ -15,6 +15,7 @@ router.get('/', function(req, res, next) {
   res.json({ title: 'Express' });
 });
 
+// Took 154ms
 // SELECT max(blockheight)
 // FROM  blockheight_history
 // WHERE blockheight IS NOT NULL
@@ -39,6 +40,7 @@ router.get('/bestblock',cache('1 seconds'), function(req, res, next) {
   })
 });
 
+// Took 143ms
 // SELECT Min(ts)
 // FROM blockheight_history
 // WHERE blockheight IN ( SELECT MAX(blockheight)
@@ -532,8 +534,8 @@ router.get('/nodes/:node_id', cache('2 seconds'), function(req, res, next) {
 						lat.latency,
 						200
 					) AS latency,
-					b.rcp_https_status,
-					c.rcp_http_status,
+					b.rpc_https_status as rpc_https_status,
+					c.rpc_http_status as rpc_http_status,
 					coalesce(
 						d.mempool_size,
 						0
@@ -699,17 +701,17 @@ router.get('/nodes/:node_id', cache('2 seconds'), function(req, res, next) {
 						SELECT
 							address_id,
 							coalesce(
-								rcp_https_status,
+								rpc_https_status,
 								FALSE
-							) AS rcp_https_status
+							) AS rpc_https_status
 						FROM
 							(
 								SELECT
 									address_id,
 									ts,
-									rcp_https_status
+									rpc_https_status
 								FROM
-									rcp_https_status_history
+									rpc_https_status_history
 								WHERE
 									(
 										address_id,
@@ -719,7 +721,7 @@ router.get('/nodes/:node_id', cache('2 seconds'), function(req, res, next) {
 											address_id,
 											max(ts) AS ts
 										FROM
-											rcp_https_status_history
+											rpc_https_status_history
 										GROUP BY
 											address_id
 									)
@@ -730,17 +732,17 @@ router.get('/nodes/:node_id', cache('2 seconds'), function(req, res, next) {
 						SELECT
 							address_id,
 							coalesce(
-								rcp_http_status,
+								rpc_http_status,
 								FALSE
-							) AS rcp_http_status
+							) AS rpc_http_status
 						FROM
 							(
 								SELECT
 									address_id,
 									ts,
-									rcp_http_status
+									rpc_http_status
 								FROM
-									rcp_http_status_history
+									rpc_http_status_history
 								WHERE
 									(
 										address_id,
@@ -750,7 +752,7 @@ router.get('/nodes/:node_id', cache('2 seconds'), function(req, res, next) {
 											address_id,
 											max(ts) AS ts
 										FROM
-											rcp_http_status_history
+											rpc_http_status_history
 										GROUP BY
 											address_id
 									)
