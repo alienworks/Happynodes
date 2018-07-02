@@ -5,7 +5,6 @@
  <img src="https://img.shields.io/badge/status-online-green.svg">
  <img src="https://img.shields.io/github/stars/F27Ventures/Happynodes.svg">
  <img src="https://img.shields.io/github/license/F27Ventures/Happynodes.svg">
-  
  <a><img src="https://img.shields.io/discord/461663571219054592.svg?logo=discord" alt="chat on Discord"></a></p>
  
 # Overview
