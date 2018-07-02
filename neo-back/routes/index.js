@@ -8,6 +8,8 @@ types.setTypeParser(20, function(val) {
   return parseInt(val)
 })
 
+types.setTypeParser(1700, 'text', parseFloat);
+
 let cache = apicache.middleware
 
 const pool = new Pool({
