@@ -3,6 +3,11 @@ var router = express.Router();
 var apicache = require('apicache');
 const { Pool } = require('pg')
 
+var types = require('pg').types
+types.setTypeParser(20, function(val) {
+  return parseInt(val)
+})
+
 let cache = apicache.middleware
 
 const pool = new Pool({
