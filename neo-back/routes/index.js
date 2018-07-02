@@ -3,6 +3,13 @@ var router = express.Router();
 var apicache = require('apicache');
 const { Pool } = require('pg')
 
+var types = require('pg').types
+types.setTypeParser(20, function(val) {
+  return parseInt(val)
+})
+
+types.setTypeParser(1700, 'text', parseFloat);
+
 let cache = apicache.middleware
 
 const pool = new Pool({
@@ -15,6 +22,7 @@ router.get('/', function(req, res, next) {
   res.json({ title: 'Express' });
 });
 
+// Took 154ms
 // SELECT max(blockheight)
 // FROM  blockheight_history
 // WHERE blockheight IS NOT NULL
@@ -39,6 +47,7 @@ router.get('/bestblock',cache('1 seconds'), function(req, res, next) {
   })
 });
 
+// Took 143ms
 // SELECT Min(ts)
 // FROM blockheight_history
 // WHERE blockheight IN ( SELECT MAX(blockheight)
@@ -486,476 +495,507 @@ router.get('/nodes/:node_id', cache('2 seconds'), function(req, res, next) {
 			*
 		FROM
 			(
-				SELECT
-					addr.id,
-					addr.address AS hostname,
-					proto.protocol,
-					po.port,
-							 COALESCE(p2p_tcp_status, false) AS p2p_tcp_status,
-					concat( proto.protocol, '://', addr.address, ':' , po.port ) AS address,
-					coalesce(
-						vpt.validated_peers_counts,
+				select
+	addr.id,
+	addr.address as hostname,
+	proto.protocol,
+	po.port,
+	coalesce(
+		activep2p.p2p_tcp_status,
+		false
+	) as p2p_tcp_status,
+	coalesce(
+		activep2pws.p2p_ws_status,
+		false
+	) as p2p_ws_status,
+	concat( proto.protocol, '://', addr.address, ':' , po.port ) as address,
+	coalesce(
+		vpt.validated_peers_counts,
+		0
+	) as validated_peers_counts,
+	coalesce(
+		stab.stability,
+		0
+	) as stability,
+	coalesce(
+		bhs.blockheight_score* 100,
+		0
+	) as blockheight_score,
+	coalesce(
+		(latency_score)* 100,
+		0
+	) as normalised_latency_score,
+	coalesce(
+		vpt.validated_peers_counts_score * 100,
+		0
+	) as validated_peers_counts_score,
+	(
+		coalesce(
+			vpt.validated_peers_counts_score,
+			0
+		) * 100 + coalesce(
+			stab.stability,
+			0
+		) + coalesce(
+			(latency_score)* 100,
+			0
+		) + coalesce(
+			bhs.blockheight_score,
+			0
+		) * 100
+	)/ 4.0 as health_score,
+	coalesce(
+		lat.latency,
+		200
+	) as latency,
+	b.rpc_https_status as rpc_https_status,
+	c.rpc_http_status as rpc_http_status,
+	coalesce(
+		d.mempool_size,
+		0
+	) as mempool_size,
+	coalesce(
+		e.connection_counts,
+		0
+	) as connection_counts,
+	f.online,
+	coalesce(
+		g.blockheight,
+		0
+	) as blockheight,
+	co.lat,
+	co.long,
+	lo.locale,
+	version,
+	max_blockheight.max_blockheight
+from
+	address addr
+inner join coordinates co on
+	addr.id = co.address_id
+inner join locale lo on
+	addr.id = lo.address_id
+inner join port po on
+	addr.id = po.address_id
+inner join protocol proto on
+	addr.id = proto.address_id
+left join (
+		select
+			address_id,
+			p2p_tcp_status
+		from
+			p2p_tcp_status_history
+		where
+			ts = (
+				select
+					max( ts )
+				from
+					p2p_tcp_status_history
+			)
+	) activep2p on
+	activep2p.address_id = addr.id
+left join (
+		select
+			address_id,
+			p2p_ws_status
+		from
+			p2p_ws_status_history
+		where
+			ts = (
+				select
+					max( ts )
+				from
+					p2p_ws_status_history
+			)
+	) activep2pws on
+	activep2pws.address_id = addr.id
+left join (
+		select
+			address_id,
+			(
+				case
+					when (
+						(
+							max_blockheight - blockheight
+						) < 50
+					) then coalesce(
+						1 - (
+							(
+								max_blockheight + 0.0
+							) - blockheight
+						)/ 50,
 						0
-					) AS validated_peers_counts,
+					)
+					else 0
+				end
+			) as blockheight_score,
+			max_blockheight
+		from
+			(
+				select
+					t.address_id,
 					coalesce(
-						stab.stability,
+						m.blockheight,
 						0
-					) AS stability,
-					coalesce(
-						bhs.blockheight_score* 100,
-						0
-					) AS blockheight_score,
-					coalesce(
-						(latency_score)* 100,
-						0
-					) AS normalised_latency_score,
-					coalesce(
-						vpt.validated_peers_counts_score * 100,
-						0
-					) AS validated_peers_counts_score,
+					) as blockheight
+				from
 					(
-						coalesce(
-							vpt.validated_peers_counts_score,
-							0
-						) * 100 + coalesce(
-							stab.stability,
-							0
-						) + coalesce(
-							(latency_score)* 100,
-							0
-						) + coalesce(
-							bhs.blockheight_score,
-							0
-						) * 100
-					)/ 4.0 AS health_score,
-					coalesce(
-						lat.latency,
-						200
-					) AS latency,
-					b.rcp_https_status,
-					c.rcp_http_status,
-					coalesce(
-						d.mempool_size,
-						0
-					) AS mempool_size,
-					coalesce(
-						e.connection_counts,
-						0
-					) AS connection_counts,
-					f.online,
-					coalesce(
-						g.blockheight,
-						0
-					) AS blockheight,
-					co.lat,
-					co.long,
-					lo.locale,
-					version,
-					max_blockheight.max_blockheight
-				FROM
-					address addr
-				INNER JOIN coordinates co ON
-					addr.id = co.address_id
-				INNER JOIN locale lo ON
-					addr.id = lo.address_id
-				INNER JOIN port po ON
-					addr.id = po.address_id
-				INNER JOIN protocol proto ON
-					addr.id = proto.address_id
-				LEFT JOIN
-				(SELECT address_id, p2p_tcp_status
-				FROM p2p_tcp_status_history
-				WHERE ts = (SELECT max(ts)
-				FROM p2p_tcp_status_history)) activep2p
-				ON activep2p.address_id = addr.id
-				LEFT JOIN (
-						SELECT
+						select
 							address_id,
-							(
-								CASE
-									WHEN (
-										(
-											max_blockheight - blockheight
-										) < 50
-									) THEN coalesce(
-										1 - (
-											(
-												max_blockheight + 0.0
-											) - blockheight
-										)/ 50,
-										0
-									)
-									ELSE 0
-								END
-							) AS blockheight_score,
-							max_blockheight
-						FROM
-							(
-								SELECT
-									t.address_id,
-									coalesce(
-										m.blockheight,
-										0
-									) AS blockheight
-								FROM
-									(
-										SELECT
-											address_id,
-											max(ts) AS ts
-										FROM
-											blockheight_history
-										GROUP BY
-											address_id
-									) t
-								JOIN blockheight_history m ON
-									m.address_id = t.address_id
-									AND t.ts = m.ts
-							) temp CROSS
-						JOIN (
-								SELECT
-									max(m.blockheight) AS max_blockheight
-								FROM
-									(
-										SELECT
-											blo_h.address_id,
-											max(blo_h.ts) AS ts
-										FROM
-											blockheight_history blo_h
-										GROUP BY
-											address_id
-									) t
-								JOIN blockheight_history m ON
-									m.address_id = t.address_id
-									AND t.ts = m.ts
-							) sub2
-					) bhs ON
-					bhs.address_id = addr.id
-				LEFT JOIN (
-						SELECT
-							z.address_id,
-							sum( CASE WHEN online = TRUE THEN 1 ELSE 0 END ) AS stability
-						FROM
-							(
-								SELECT
-									*,
-									row_number() OVER (
-										PARTITION by address_id
-									ORDER BY
-										id DESC
-									)
-								FROM
-									online_history
-							) z
-						WHERE
-							z.row_number <= 100
-						GROUP BY
-							z.address_id
-					) AS stab ON
-					stab.address_id = addr.id
-				LEFT JOIN (
-						SELECT
+							max( ts ) as ts
+						from
+							blockheight_history
+						group by
+							address_id
+					) t
+				join blockheight_history m on
+					m.address_id = t.address_id
+					and t.ts = m.ts
+			) temp cross
+		join (
+				select
+					max( m.blockheight ) as max_blockheight
+				from
+					(
+						select
+							blo_h.address_id,
+							max( blo_h.ts ) as ts
+						from
+							blockheight_history blo_h
+						group by
+							address_id
+					) t
+				join blockheight_history m on
+					m.address_id = t.address_id
+					and t.ts = m.ts
+			) sub2
+	) bhs on
+	bhs.address_id = addr.id
+left join (
+		select
+			z.address_id,
+			sum( case when online = true then 1 else 0 end ) as stability
+		from
+			(
+				select
+					*,
+					row_number() over (
+						partition by address_id
+					order by
+						id desc
+					)
+				from
+					online_history
+			) z
+		where
+			z.row_number <= 100
+		group by
+			z.address_id
+	) as stab on
+	stab.address_id = addr.id
+left join (
+		select
+			address_id,
+			latency_threshold,
+			max_latency,
+			latency,
+			1 - (
+				latency_threshold / 2
+			) as latency_score
+		from
+			(
+				select
+					t.address_id,
+					case
+						when (
+							latency_history < 2
+						) then latency_history
+						else 2
+					end as latency_threshold,
+					m.latency_history as latency,
+					max_latency
+				from
+					(
+						select
+							lat_h.address_id,
+							max( lat_h.ts ) as mx
+						from
+							latency_history lat_h
+						group by
+							lat_h.address_id
+					) t
+				join latency_history m on
+					m.address_id = t.address_id
+					and t.mx = m.ts cross
+				join (
+						select
+							max( latency_history ) as max_latency
+						from
+							latency_history
+					) max_latency_table
+			) latency_threshold_table
+	) as lat on
+	lat.address_id = addr.id
+left join (
+		select
+			address_id,
+			coalesce(
+				rpc_https_status,
+				false
+			) as rpc_https_status
+		from
+			(
+				select
+					address_id,
+					ts,
+					rpc_https_status
+				from
+					rpc_https_status_history
+				where
+					(
+						address_id,
+						ts
+					) in (
+						select
 							address_id,
-							latency_threshold,
-							max_latency,
-							latency,
-							1 - (
-								latency_threshold / 2
-							) AS latency_score
-						FROM
-							(
-								SELECT
-									t.address_id,
-									CASE
-										WHEN (
-											latency_history < 2
-										) THEN latency_history
-										ELSE 2
-									END AS latency_threshold,
-									m.latency_history AS latency,
-									max_latency
-								FROM
-									(
-										SELECT
-											lat_h.address_id,
-											max(lat_h.ts) AS mx
-										FROM
-											latency_history lat_h
-										GROUP BY
-											lat_h.address_id
-									) t
-								JOIN latency_history m ON
-									m.address_id = t.address_id
-									AND t.mx = m.ts CROSS
-								JOIN (
-										SELECT
-											max(latency_history) AS max_latency
-										FROM
-											latency_history
-									) max_latency_table
-							) latency_threshold_table
-					) AS lat ON
-					lat.address_id = addr.id
-				LEFT JOIN (
-						SELECT
+							max( ts ) as ts
+						from
+							rpc_https_status_history
+						group by
+							address_id
+					)
+			) temp
+	) b on
+	b.address_id = addr.id
+left join (
+		select
+			address_id,
+			coalesce(
+				rpc_http_status,
+				false
+			) as rpc_http_status
+		from
+			(
+				select
+					address_id,
+					ts,
+					rpc_http_status
+				from
+					rpc_http_status_history
+				where
+					(
+						address_id,
+						ts
+					) in (
+						select
 							address_id,
-							coalesce(
-								rcp_https_status,
-								FALSE
-							) AS rcp_https_status
-						FROM
-							(
-								SELECT
-									address_id,
-									ts,
-									rcp_https_status
-								FROM
-									rcp_https_status_history
-								WHERE
-									(
-										address_id,
-										ts
-									) IN (
-										SELECT
-											address_id,
-											max(ts) AS ts
-										FROM
-											rcp_https_status_history
-										GROUP BY
-											address_id
-									)
-							) temp
-					) b ON
-					b.address_id = addr.id
-				LEFT JOIN (
-						SELECT
+							max( ts ) as ts
+						from
+							rpc_http_status_history
+						group by
+							address_id
+					)
+			) temp
+	) c on
+	c.address_id = addr.id
+left join (
+		select
+			address_id,
+			coalesce(
+				mempool_size,
+				0
+			) as mempool_size
+		from
+			(
+				select
+					t.address_id,
+					mempool_size
+				from
+					(
+						select
 							address_id,
-							coalesce(
-								rcp_http_status,
-								FALSE
-							) AS rcp_http_status
-						FROM
-							(
-								SELECT
-									address_id,
-									ts,
-									rcp_http_status
-								FROM
-									rcp_http_status_history
-								WHERE
-									(
-										address_id,
-										ts
-									) IN (
-										SELECT
-											address_id,
-											max(ts) AS ts
-										FROM
-											rcp_http_status_history
-										GROUP BY
-											address_id
-									)
-							) temp
-					) c ON
-					c.address_id = addr.id
-				LEFT JOIN (
-						SELECT
+							max( ts ) as ts
+						from
+							mempool_size_history
+						group by
+							address_id
+					) t
+				join mempool_size_history m on
+					m.address_id = t.address_id
+					and t.ts = m.ts
+			) temp
+	) d on
+	d.address_id = addr.id
+left join (
+		select
+			address_id,
+			coalesce(
+				connection_counts,
+				0
+			) as connection_counts
+		from
+			(
+				select
+					t.address_id,
+					connection_counts
+				from
+					(
+						select
 							address_id,
-							coalesce(
-								mempool_size,
-								0
-							) AS mempool_size
-						FROM
-							(
-								SELECT
-									t.address_id,
-									mempool_size
-								FROM
-									(
-										SELECT
-											address_id,
-											max(ts) AS ts
-										FROM
-											mempool_size_history
-										GROUP BY
-											address_id
-									) t
-								JOIN mempool_size_history m ON
-									m.address_id = t.address_id
-									AND t.ts = m.ts
-							) temp
-					) d ON
-					d.address_id = addr.id
-				LEFT JOIN (
-						SELECT
+							max( ts ) as ts
+						from
+							connection_counts_history
+						group by
+							address_id
+					) t
+				join connection_counts_history m on
+					m.address_id = t.address_id
+					and t.ts = m.ts
+			) temp
+	) e on
+	e.address_id = addr.id
+left join (
+		select
+			address_id,
+			coalesce(
+				online,
+				false
+			) as online
+		from
+			(
+				select
+					address_id,
+					ts,
+					online
+				from
+					online_history
+				where
+					(
+						address_id,
+						ts
+					) in (
+						select
 							address_id,
-							coalesce(
-								connection_counts,
-								0
-							) AS connection_counts
-						FROM
-							(
-								SELECT
-									t.address_id,
-									connection_counts
-								FROM
-									(
-										SELECT
-											address_id,
-											max(ts) AS ts
-										FROM
-											connection_counts_history
-										GROUP BY
-											address_id
-									) t
-								JOIN connection_counts_history m ON
-									m.address_id = t.address_id
-									AND t.ts = m.ts
-							) temp
-					) e ON
-					e.address_id = addr.id
-				LEFT JOIN (
-						SELECT
+							max( ts ) as ts
+						from
+							online_history
+						group by
+							address_id
+					)
+			) temp
+	) f on
+	f.address_id = addr.id
+left join (
+		select
+			t.address_id,
+			blockheight
+		from
+			(
+				select
+					address_id,
+					max( ts ) as ts
+				from
+					blockheight_history
+				group by
+					address_id
+			) t
+		join blockheight_history m on
+			m.address_id = t.address_id
+			and t.ts = m.ts
+	) g on
+	g.address_id = addr.id
+left join (
+		select
+			address_id,
+			coalesce(
+				validated_peers_counts,
+				0
+			) as validated_peers_counts,
+			coalesce(
+				validated_peers_counts*1.0 / max,
+				0
+			) as validated_peers_counts_score
+		from
+			(
+				select
+					t.address_id,
+					validated_peers_counts
+				from
+					(
+						select
 							address_id,
-							coalesce(
-								online,
-								FALSE
-							) AS online
-						FROM
-							(
-								SELECT
-									address_id,
-									ts,
-									online
-								FROM
-									online_history
-								WHERE
-									(
-										address_id,
-										ts
-									) IN (
-										SELECT
-											address_id,
-											max(ts) AS ts
-										FROM
-											online_history
-										GROUP BY
-											address_id
-									)
-							) temp
-					) f ON
-					f.address_id = addr.id
-				LEFT JOIN (
-						SELECT
+							max( ts ) as ts
+						from
+							validated_peers_counts_history
+						group by
+							address_id
+					) t
+				join validated_peers_counts_history m on
+					m.address_id = t.address_id
+					and t.ts = m.ts
+			) sub1 cross
+		join (
+				select
+					max( validated_peers_counts )
+				from
+					(
+						select
 							t.address_id,
-							blockheight
-						FROM
+							validated_peers_counts
+						from
 							(
-								SELECT
+								select
 									address_id,
-									max(ts) AS ts
-								FROM
-									blockheight_history
-								GROUP BY
+									max( ts ) as ts
+								from
+									validated_peers_counts_history
+								group by
 									address_id
 							) t
-						JOIN blockheight_history m ON
+						join validated_peers_counts_history m on
 							m.address_id = t.address_id
-							AND t.ts = m.ts
-					) g ON
-					g.address_id = addr.id
-				LEFT JOIN (
-						SELECT
+							and t.ts = m.ts
+					) sub2
+			) sub3
+	) vpt on
+	vpt.address_id = addr.id
+left join (
+		select
+			address_id,
+			coalesce(
+				version,
+				null
+			) as version
+		from
+			(
+				select
+					t.address_id,
+					version
+				from
+					(
+						select
 							address_id,
-							coalesce(
-								validated_peers_counts,
-								0
-							) AS validated_peers_counts,
-							coalesce(
-								validated_peers_counts*1.0 / max,
-								0
-							) AS validated_peers_counts_score
-						FROM
-							(
-								SELECT
-									t.address_id,
-									validated_peers_counts
-								FROM
-									(
-										SELECT
-											address_id,
-											max(ts) AS ts
-										FROM
-											validated_peers_counts_history
-										GROUP BY
-											address_id
-									) t
-								JOIN validated_peers_counts_history m ON
-									m.address_id = t.address_id
-									AND t.ts = m.ts
-							) sub1 CROSS
-						JOIN (
-								SELECT
-									max(validated_peers_counts)
-								FROM
-									(
-										SELECT
-											t.address_id,
-											validated_peers_counts
-										FROM
-											(
-												SELECT
-													address_id,
-													max(ts) AS ts
-												FROM
-													validated_peers_counts_history
-												GROUP BY
-													address_id
-											) t
-										JOIN validated_peers_counts_history m ON
-											m.address_id = t.address_id
-											AND t.ts = m.ts
-									) sub2
-							) sub3
-					) vpt ON
-					vpt.address_id = addr.id
-				LEFT JOIN (
-						SELECT
-							address_id,
-							coalesce(
-								version,
-								NULL
-							) AS version
-						FROM
-							(
-								SELECT
-									t.address_id,
-									version
-								FROM
-									(
-										SELECT
-											address_id,
-											max(ts) AS ts
-										FROM
-											version_history
-										GROUP BY
-											address_id
-									) t
-								JOIN version_history m ON
-									m.address_id = t.address_id
-									AND t.ts = m.ts
-							) temp
-					) v ON
-					v.address_id = addr.id CROSS
-				JOIN (
-						SELECT
-							max(blockheight) AS max_blockheight
-						FROM
-							blockheight_history
-						WHERE
-							blockheight IS NOT NULL
-					) max_blockheight
-				ORDER BY
-					health_score DESC
+							max( ts ) as ts
+						from
+							version_history
+						group by
+							address_id
+					) t
+				join version_history m on
+					m.address_id = t.address_id
+					and t.ts = m.ts
+			) temp
+	) v on
+	v.address_id = addr.id cross
+join (
+		select
+			max( blockheight ) as max_blockheight
+		from
+			blockheight_history
+		where
+			blockheight is not null
+	) max_blockheight
+order by
+	health_score desc
 			) bigtable
 		WHERE
 			id = $1`, [req.params.node_id])

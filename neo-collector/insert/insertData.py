@@ -71,7 +71,7 @@ def getProtocol(cursor):
         protocol_dict[addressId] = protocol
     return protocol_dict
 
-def get_lantency(addr):
+def get_latency(addr):
     start = time.time()
     response = requests.post(addr, json={'jsonrpc': '2.0', 'method': 'getblockcount', 'params': [], 'id': 1}, )
     end = time.time()
@@ -159,7 +159,7 @@ if __name__ == "__main__":
                     print("{} Blockheight: {}".format(address, height))
                     cursor.execute("INSERT INTO blockheight_history (ts, address_id, blockheight) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, height])
 
-                    latency = get_lantency(endpoint.addr)
+                    latency = get_latency(endpoint.addr)
                     print("Latency: {}".format(latency))
                     cursor.execute("INSERT INTO latency_history (ts, address_id, latency_history) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, latency])
                     try:
@@ -189,22 +189,22 @@ if __name__ == "__main__":
                             for tx in raw_mempool:
                                 cursor.execute("INSERT INTO unconfirmed_tx (last_blockheight, address_id, tx) VALUES (%s, %s, %s)", [height, addressId, tx])
 
-                    rcp_https_service = test_port(address,JSON_RPC_HTTPS_PORT)
-                    rcp_http_service = test_port(address,JSON_RPC_HTTP_PORT)
+                    rpc_https_service = test_port(address,JSON_RPC_HTTPS_PORT)
+                    rpc_http_service = test_port(address,JSON_RPC_HTTP_PORT)
 
-                    if rcp_https_service:
+                    if rpc_https_service:
                         print("JSON_RPC_HTTPS_PORT okay")
-                        cursor.execute("INSERT INTO rcp_http_status_history (ts, address_id, rcp_http_status) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, True])
+                        cursor.execute("INSERT INTO rpc_http_status_history (ts, address_id, rpc_http_status) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, True])
                     else:
                         print("JSON_RPC_HTTPS_PORT not avaliable")
-                        cursor.execute("INSERT INTO rcp_http_status_history (ts, address_id, rcp_http_status) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, False])
+                        cursor.execute("INSERT INTO rpc_http_status_history (ts, address_id, rpc_http_status) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, False])
 
-                    if rcp_http_service:
+                    if rpc_http_service:
                         print("JSON_RPC_HTTP_PORT okay")
-                        cursor.execute("INSERT INTO rcp_https_status_history (ts, address_id, rcp_https_status) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, True])
+                        cursor.execute("INSERT INTO rpc_https_status_history (ts, address_id, rpc_https_status) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, True])
                     else:
                         print("JSON_RPC_HTTP_PORT not avaliable")
-                        cursor.execute("INSERT INTO rcp_https_status_history (ts, address_id, rcp_https_status) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, False])
+                        cursor.execute("INSERT INTO rpc_https_status_history (ts, address_id, rpc_https_status) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, False])
 
                     try:
                         peers = client.get_peers(endpoint=endpoint)
