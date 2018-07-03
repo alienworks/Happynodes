@@ -20,8 +20,11 @@ Current Release: [0.9.0](https://github.com/neo-ngd/Happynodes/releases/tag/v0.9
 * [Component Structure](#component-structure)
 * [Production Setup](#production-setup)
 * [History](#history)
-* [Notes on F27 Ventures](#notes-on-f27-ventures)
 * [Licence](#licence)
+* [Recommended reading](#recommended-reading)
+* [Related Projects](#related-projects)
+* [Notes on F27 Ventures](#notes-on-f27-ventures)
+
 
 </details>
 
@@ -102,6 +105,17 @@ Our Innovations:
 ## Licence
 
 This project is licensed under the terms of the **MIT** license.
+
+## Recommended Reading
+
+* neo.org JSON-RPC documentation http://docs.neo.org/en-us/node/cli/apigen.html
+
+## Related Projects
+
+* City of Zion Monitor - [neo-mon](https://github.com/CityOfZion/neo-mon), [live](http://monitor.cityofzion.io/)
+* State of Neo Monitor - [state-of-neo](https://github.com/neo-ngd/state-of-neo-server)
+* City of Zion Neo-Python - [neo-python](https://github.com/CityOfZion/neo-python)
+* City of Zion neon-js - [neon-js](https://github.com/CityOfZion/neon-js)
 
 ## Notes on F27 Ventures
 
