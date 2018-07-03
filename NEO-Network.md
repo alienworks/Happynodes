@@ -11,11 +11,13 @@ Having these Nodes distributed around the world and run independently provides s
 
 The NEO Blockchain makes a further distinction, which is that only a select number of Full Nodes can be Consensus Nodes (called Bookkeepers).
 
-These Consensus Nodes are responsible for voting on which transactions make it into each block using NEO's dBFT consensus protocol.
+These Consensus Nodes are responsible for voting on which transactions make it into each block using NEO's dBFT consensus protocol. The dBFT consensus protocol ensures that the network cannot be compromised as long as an attacker does not gain control of 2/3 of the consensus nodes.
 
-At the moment, there is no economic incentive for Consensus Nodes (they earn no GAS or NEO or otherwise), unlike Mining in Bitcoin/Ethereum.
+At the moment, there is no economic incentive for Consensus Nodes (they earn no GAS or NEO or otherwise), unlike Mining in Bitcoin/Ethereum. Being a Consensus Node just involves cost (unless you plan to use it to control the block finalization process).
 
 As a result, the consensus nodes are all operated by the NEO core team themselves. Whilst this is efficient and secure, it is not a long term option as it is not decentralised.
+
+NEO 3.0 will provide an incentive structure that should offset the cost of running nodes and allow for more separately run nodes and therefore more security.
 
 # Decentralisation 2018
 
@@ -49,3 +51,6 @@ In ranked order, this is what will make the network successful:
 * Lots of P2P Nodes = Lots of places storing the full blockchain
 * Lots of JSON-RPC Nodes = Lots of places to get information on the blockchain, reducing likelihood of DDOS attacks
 
+## Reading Material
+
+* CoZ's December 2017 Update - https://medium.com/proof-of-working/decentralization-from-coopetition-b10d7ce3b9d
