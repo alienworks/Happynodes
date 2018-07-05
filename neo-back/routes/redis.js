@@ -63,6 +63,15 @@ router.get('/unconfirmed', function (req, res, next) {
     });
 });
 
+router.get('/nodes_flat', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.hgetall(namespace.concat("node"), function (err, reply) {
+        const nodes = reply;
+        res.json({ result: nodes});
+    });
+});
+
 router.get('/nodes', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
@@ -104,13 +113,16 @@ router.get('/nodes', function (req, res, next) {
     });
 });
 
-
 router.get('/nodes/:node_id', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
     client.hget(namespace.concat("node"), req.params.node_id, function (err, reply) {
         const txs = JSON.parse(reply);
-        res.json(txs);
+        if (txs === null){
+            res.json({txs:[]});
+        } else {
+            res.json(txs);
+        }
     });
 });
 
@@ -119,7 +131,11 @@ router.get('/nodes/:node_id/validatedpeers', function (req, res, next) {
     const namespace = process.env.REDIS_NAMESPACE
     client.hget(namespace.concat("validatedpeers"), req.params.node_id, function (err, reply) {
         const validatedpeers = JSON.parse(reply);
-        res.json(validatedpeers);
+        if (validatedpeers === null){
+            res.json([]);
+        } else {
+            res.json(validatedpeers);
+        }
     });
 });
 
