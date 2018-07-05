@@ -1,20 +1,30 @@
 import redis
 import psycopg2
 
-from config import CONNECTION_STR, DSN
-from config import REDIS_HOST, REDIS_PASSWORD, REDIS_PORT, REDIS_DB,  NAMESPACE
 import time
 import json
+import os
 
+
+host = str(os.environ['PGHOST'])
+databasename = str(os.environ['PGDATABASE'])
+user = str(os.environ['PGUSER'])
+password = str(os.environ['PGPASSWORD'])
+
+connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password)
+
+redisHost = str(os.environ['REDIS_HOST'])
+redisPassword = str(os.environ['REDIS_PASSWORD'])
+redisPort = str(os.environ['REDIS_PORT'])
+redisDb = str(os.environ['REDIS_DB'])
+redisNamespace = str(os.environ['REDIS_NAMESPACE'])
 
 if __name__ == "__main__":
     while True:
         r = redis.StrictRedis(
-            host=REDIS_HOST, password=REDIS_PASSWORD, port=REDIS_PORT, db=REDIS_DB)
+            host=redisHost, password=redisPassword, port=redisPort, db=redisDb)
 
-        connect_str = CONNECTION_STR
-
-        conn = psycopg2.connect(connect_str)
+        conn = psycopg2.connect(connection_str)
 
         cursor = conn.cursor()
 
@@ -53,5 +63,5 @@ if __name__ == "__main__":
             nodes.append(node)
 
         for node in nodes:
-            r.hset(NAMESPACE + 'node', node["id"], json.dumps(node))
+            r.hset(redisNamespace + 'node', node["id"], json.dumps(node))
         time.sleep(60)

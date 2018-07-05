@@ -1,20 +1,30 @@
 import redis
 import psycopg2
 import time
-
-from config import CONNECTION_STR, DSN
-from config import REDIS_HOST, REDIS_PASSWORD, REDIS_PORT, REDIS_DB, NAMESPACE
-
 import json
+import os
+
+host = str(os.environ['PGHOST'])
+databasename = str(os.environ['PGDATABASE'])
+user = str(os.environ['PGUSER'])
+password = str(os.environ['PGPASSWORD'])
+
+connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password)
+
+redisHost = str(os.environ['REDIS_HOST'])
+redisPassword = str(os.environ['REDIS_PASSWORD'])
+redisPort = str(os.environ['REDIS_PORT'])
+redisDb = str(os.environ['REDIS_DB'])
+redisNamespace = str(os.environ['REDIS_NAMESPACE'])
+
+
 
 if __name__ == "__main__":
     while True:
         r = redis.StrictRedis(
-            host=REDIS_HOST, password=REDIS_PASSWORD, port=REDIS_PORT, db=REDIS_DB)
-        
-        connect_str = CONNECTION_STR
+            host=redisHost, password=redisPassword, port=redisPort, db=redisDb)
 
-        conn = psycopg2.connect(connect_str)
+        conn = psycopg2.connect(connection_str)
 
         cursor = conn.cursor()
 
@@ -24,7 +34,7 @@ if __name__ == "__main__":
 
         result = cursor.fetchall()
 
-        r.set(NAMESPACE+'bestblock', result[0][0])
+        r.set(redisNamespace+'bestblock', result[0][0])
 
         cursor.execute("SELECT EXTRACT(EPOCH FROM Min(ts) AT TIME ZONE 'UTC') as min_ts  \
                             FROM  blockheight_history \
@@ -33,7 +43,7 @@ if __name__ == "__main__":
 
         result = cursor.fetchall()
 
-        r.set(NAMESPACE+'lastblock', result[0][0])
+        r.set(redisNamespace+'lastblock', result[0][0])
 
         print(float(r.get('lastblock')))
 
@@ -64,7 +74,7 @@ if __name__ == "__main__":
         result = cursor.fetchall()
         print(result[0][0].total_seconds())
 
-        r.set(NAMESPACE+'blocktime', result[0][0].total_seconds())
+        r.set(redisNamespace+'blocktime', result[0][0].total_seconds())
 
         print(float(r.get('blocktime')))
         time.sleep(2)

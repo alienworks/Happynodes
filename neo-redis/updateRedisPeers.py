@@ -2,19 +2,29 @@ import redis
 import psycopg2
 import time
 
-from config import CONNECTION_STR, DSN
-from config import REDIS_HOST, REDIS_PASSWORD, REDIS_PORT, REDIS_DB, NAMESPACE
-
 import json
+import os
+
+host = str(os.environ['PGHOST'])
+databasename = str(os.environ['PGDATABASE'])
+user = str(os.environ['PGUSER'])
+password = str(os.environ['PGPASSWORD'])
+
+connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password)
+
+redisHost = str(os.environ['REDIS_HOST'])
+redisPassword = str(os.environ['REDIS_PASSWORD'])
+redisPort = str(os.environ['REDIS_PORT'])
+redisDb = str(os.environ['REDIS_DB'])
+redisNamespace = str(os.environ['REDIS_NAMESPACE'])
+
 
 if __name__ == "__main__":
     while True:
         r = redis.StrictRedis(
-            host=REDIS_HOST, password=REDIS_PASSWORD, port=REDIS_PORT, db=REDIS_DB)
-        
-        connect_str = CONNECTION_STR
+            host=redisHost, password=redisPassword, port=redisPort, db=redisDb)
 
-        conn = psycopg2.connect(connect_str)
+        conn = psycopg2.connect(connection_str)
 
         cursor = conn.cursor()
 
@@ -38,7 +48,7 @@ if __name__ == "__main__":
 
         for node_key in peers_table:
             node_peers = peers_table[node_key]
-            r.hset(NAMESPACE+'validatedpeers', node_key, json.dumps(node_peers))
+            r.hset(redisNamespace+'validatedpeers', node_key, json.dumps(node_peers))
 
         cursor.execute("select max_ts_validated_peers_table.address_id as source_address_id, concat( protob.protocol, '://', address_b.address ) as source_address, validated_peers_address_Id, concat( protoa.protocol, '://', address_a.address ) validated_peers_address from ( select address_id, ts, validated_peers_address_Id from validated_peers_history where ( address_id, ts ) in ( select address_id, max(ts) from validated_peers_history group by address_id ) ) max_ts_validated_peers_table inner join address address_a on address_a.id = max_ts_validated_peers_table.validated_peers_address_Id inner join address address_b on address_b.id = max_ts_validated_peers_table.address_Id inner join protocol protoa on protoa.address_id = address_a.id inner join protocol protob on protob.address_id = address_b.id")
         result = cursor.fetchall()
@@ -54,7 +64,7 @@ if __name__ == "__main__":
             }
             edges.append(edge_format)
 
-        r.set(NAMESPACE+"edges", json.dumps(edges))
+        r.set(redisNamespace+"edges", json.dumps(edges))
 
         cursor.execute("select adr.id, address as hostname, protocol, CONCAT(proto.protocol, '://', adr.address) as address from address adr inner join protocol proto on adr.id = proto.address_id")
         result = cursor.fetchall()
@@ -67,7 +77,7 @@ if __name__ == "__main__":
             "address":node[3]}
             nodeslist.append(node_format)
 
-        r.set(NAMESPACE+"nodeslist", json.dumps(nodeslist))
+        r.set(redisNamespace+"nodeslist", json.dumps(nodeslist))
         time.sleep(60)
 
 
