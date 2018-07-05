@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var redis = require("redis")
-var namespace = process.env.NAMESPACE
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -16,7 +15,7 @@ router.get('/bestblock', function (req, res, next) {
         port: process.env.REDIS_PORT,
         db: process.env.REDIS_DB
     });
-    const namespace = process.env.NAMESPACE
+    const namespace = process.env.REDIS_NAMESPACE
     client.get(namespace.concat("bestblock"), function (err, reply) {
         res.json({ bestblock: reply })
     });
@@ -29,7 +28,7 @@ router.get('/lastblock', function (req, res, next) {
         port: process.env.REDIS_PORT,
         db: process.env.REDIS_DB
     });
-    const namespace = process.env.NAMESPACE
+    const namespace = process.env.REDIS_NAMESPACE
     client.get(namespace.concat("lastblock"), function (err, reply) {
         res.json({ lastblock: reply })
     });
@@ -42,7 +41,7 @@ router.get('/blocktime', function (req, res, next) {
         port: process.env.REDIS_PORT,
         db: process.env.REDIS_DB
     });
-    const namespace = process.env.NAMESPACE
+    const namespace = process.env.REDIS_NAMESPACE
     client.get(namespace.concat("blocktime"), function (err, reply) {
         res.json({ blocktime: reply })
     });
@@ -56,7 +55,7 @@ router.get('/unconfirmed', function (req, res, next) {
         port: process.env.REDIS_PORT,
         db: process.env.REDIS_DB
     });
-    const namespace = process.env.NAMESPACE
+    const namespace = process.env.REDIS_NAMESPACE
     client.get(namespace.concat("unconfirmed"), function (err, reply) {
         const txs = JSON.parse(reply);
         res.json(txs);
@@ -70,7 +69,7 @@ router.get('/nodes', function (req, res, next) {
         port: process.env.REDIS_PORT,
         db: process.env.REDIS_DB
     });
-    const namespace = process.env.NAMESPACE
+    const namespace = process.env.REDIS_NAMESPACE
     client.hgetall(namespace.concat("node"), function (err, reply) {
         let nodes = reply
 
@@ -117,7 +116,7 @@ router.get('/nodes/:node_id', function (req, res, next) {
         port: process.env.REDIS_PORT,
         db: process.env.REDIS_DB
     });
-    const namespace = process.env.NAMESPACE
+    const namespace = process.env.REDIS_NAMESPACE
     client.hget(namespace.concat("node"), req.params.node_id, function (err, reply) {
         const txs = JSON.parse(reply);
         res.json(txs);
@@ -131,7 +130,7 @@ router.get('/nodes/:node_id/validatedpeers', function (req, res, next) {
         port: process.env.REDIS_PORT,
         db: process.env.REDIS_DB
     });
-    const namespace = process.env.NAMESPACE
+    const namespace = process.env.REDIS_NAMESPACE
     client.hget(namespace.concat("validatedpeers"), req.params.node_id, function (err, reply) {
         const validatedpeers = JSON.parse(reply);
         res.json(validatedpeers);
@@ -145,7 +144,7 @@ router.get('/edges', function (req, res, next) {
         port: process.env.REDIS_PORT,
         db: process.env.REDIS_DB
     });
-    const namespace = process.env.NAMESPACE
+    const namespace = process.env.REDIS_NAMESPACE
     client.get(namespace.concat("edges"), function (err, reply) {
         const edges = JSON.parse(reply);
         res.json(edges);
@@ -159,7 +158,7 @@ router.get('/nodeslist', function (req, res, next) {
         port: process.env.REDIS_PORT,
         db: process.env.REDIS_DB
     });
-    const namespace = process.env.NAMESPACE
+    const namespace = process.env.REDIS_NAMESPACE
     client.get(namespace.concat("nodeslist"), function (err, reply) {
         const edges = JSON.parse(reply);
         res.json(edges);
