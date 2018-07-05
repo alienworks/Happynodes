@@ -9,8 +9,6 @@ RUN apk update \
 
 WORKDIR /usr/src/app
 
-COPY config.json .
-
 COPY updateRedisPeers.py .
 
 # start app
