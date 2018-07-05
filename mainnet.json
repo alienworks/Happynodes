@@ -369,7 +369,7 @@
    },
    {
       "service": "pyrest",
-      "url":"https://pyrest3.org.network/v1/",
+      "url":"https://pyrest3.narrative.org/v1/",
       "location":"London",
       "locale":"gb",
       "type":"REST"
