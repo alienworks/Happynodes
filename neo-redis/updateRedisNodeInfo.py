@@ -3,7 +3,7 @@ import psycopg2
 
 from config import CONNECTION_STR, DSN
 from config import REDIS_HOST, REDIS_PASSWORD, REDIS_PORT, REDIS_DB,  NAMESPACE
-
+import time
 import json
 
 

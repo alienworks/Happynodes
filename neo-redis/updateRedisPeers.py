@@ -3,7 +3,7 @@ import psycopg2
 import time
 
 from config import CONNECTION_STR, DSN
-from config import REDIS_HOST, REDIS_PASSWORD, REDIS_PORT, REDIS_DB
+from config import REDIS_HOST, REDIS_PASSWORD, REDIS_PORT, REDIS_DB, NAMESPACE
 
 import json
 
@@ -54,7 +54,7 @@ if __name__ == "__main__":
             }
             edges.append(edge_format)
 
-        r.set("edges", json.dumps(edges))
+        r.set(NAMESPACE+"edges", json.dumps(edges))
 
         cursor.execute("select adr.id, address as hostname, protocol, CONCAT(proto.protocol, '://', adr.address) as address from address adr inner join protocol proto on adr.id = proto.address_id")
         result = cursor.fetchall()
@@ -67,7 +67,7 @@ if __name__ == "__main__":
             "address":node[3]}
             nodeslist.append(node_format)
 
-        r.set("nodeslist", json.dumps(nodeslist))
+        r.set(NAMESPACE+"nodeslist", json.dumps(nodeslist))
         time.sleep(60)
 
 
