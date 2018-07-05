@@ -76,7 +76,7 @@ router.get('/nodes', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
     client.hgetall(namespace.concat("node"), function (err, reply) {
-        let nodes = reply.sort((a,b)=>{return a.health_score - b.health_score})
+        let nodes = reply.sort((a,b)=>{return b.health_score - a.health_score})
 
         let online_asia_nodes = []
         let online_north_america_nodes = []
