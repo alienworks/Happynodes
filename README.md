@@ -32,7 +32,7 @@ Current Release: [0.9.0](https://github.com/neo-ngd/Happynodes/releases/tag/v0.9
 
 > Last Recording: 30th June 2018
 
-<img src="https://github.com/neo-ngd/Happynodes/blob/master/HappyNodes-1.gif">
+<img src="https://github.com/neo-ngd/Happynodes/blob/master/assets/HappyNodes-1.gif">
 
 ## Component Structure
 
@@ -54,7 +54,7 @@ Since HappyNodes currently has no revenue stream, it was important to keep the S
 
 We expect future versions to contain major revisions to the production setup.
 
-<img src="https://github.com/neo-ngd/Happynodes/blob/master/Happynodes.svg" width=100% />
+<img src="https://github.com/neo-ngd/Happynodes/blob/master/assets/Happynodes.svg" width=100% />
 
 
 
@@ -80,7 +80,7 @@ Based on the rules of the Hackathon and from our experiences of City of Zion's m
 * Adding historical information (CoZ's monitor is database-less, so can't monitor evolution over time)
 * Providing some innovation not seen in the existing monitor or any other NEO tool
 
-<img src="https://github.com/neo-ngd/Happynodes/blob/master/Happynodes%20Interface%20Screenshot.png" width=50% />
+<img src="https://github.com/neo-ngd/Happynodes/blob/master/assets/Happynodes%20Interface%20Screenshot.png" width=50% />
 
 
 ### NGD's London Hackathon 2018
