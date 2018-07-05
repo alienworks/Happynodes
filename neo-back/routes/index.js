@@ -1054,7 +1054,7 @@ router.get('/nodes/:node_id/validatedpeers', cache('1 minute'), function(req, re
   left join address on \
     address.id = updated_peers_table.validated_peers_address_id \
   left join protocol proto on \
-    proto.address_id = updated_peers_table.validated_peers_address_id ', [req.params.node_id])
+    proto.address_id = updated_peers_table.validated_peers_address_id', [req.params.node_id])
     .catch((error)=>{
       client.release();
       console.log(error)
