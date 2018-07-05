@@ -138,7 +138,6 @@ router.get('/nodes/:node_id/validatedpeers', function (req, res, next) {
     });
 });
 
-
 router.get('/edges', function (req, res, next) {
     const client = redis.createClient({
         host: process.env.REDIS_HOST,
@@ -166,6 +165,5 @@ router.get('/nodeslist', function (req, res, next) {
         res.json(edges);
     });
 });
-
 
 module.exports = router;

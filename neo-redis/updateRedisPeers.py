@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
         for node_key in peers_table:
             node_peers = peers_table[node_key]
-            r.hset('validatedpeers', node_key, json.dumps(node_peers))
+            r.hset(NAMESPACE+'validatedpeers', node_key, json.dumps(node_peers))
 
         cursor.execute("select max_ts_validated_peers_table.address_id as source_address_id, concat( protob.protocol, '://', address_b.address ) as source_address, validated_peers_address_Id, concat( protoa.protocol, '://', address_a.address ) validated_peers_address from ( select address_id, ts, validated_peers_address_Id from validated_peers_history where ( address_id, ts ) in ( select address_id, max(ts) from validated_peers_history group by address_id ) ) max_ts_validated_peers_table inner join address address_a on address_a.id = max_ts_validated_peers_table.validated_peers_address_Id inner join address address_b on address_b.id = max_ts_validated_peers_table.address_Id inner join protocol protoa on protoa.address_id = address_a.id inner join protocol protob on protob.address_id = address_b.id")
         result = cursor.fetchall()
