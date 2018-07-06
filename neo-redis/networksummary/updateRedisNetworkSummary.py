@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
         r.set(redisNamespace+'blocktime', result[0][0].total_seconds())
 
-        print(float(r.get('blocktime')))
+        print(float(r.get(redisNamespace+'blocktime')))
         time.sleep(2)
 
 
