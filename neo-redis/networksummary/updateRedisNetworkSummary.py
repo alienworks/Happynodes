@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
         r.set(redisNamespace+'lastblock', result[0][0])
 
-        print(float(r.get('lastblock')))
+        print(float(r.get(redisNamespace+'lastblock')))
 
         cursor.execute("SELECT avg(e.diff)  \
             FROM   \
