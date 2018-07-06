@@ -12,7 +12,6 @@ password = str(os.environ['PGPASSWORD'])
 connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password)
 
 redisHost = str(os.environ['REDIS_HOST'])
-redisPassword = str(os.environ['REDIS_PASSWORD'])
 redisPort = str(os.environ['REDIS_PORT'])
 redisDb = str(os.environ['REDIS_DB'])
 redisNamespace = str(os.environ['REDIS_NAMESPACE'])
@@ -22,7 +21,7 @@ redisNamespace = str(os.environ['REDIS_NAMESPACE'])
 if __name__ == "__main__":
     while True:
         r = redis.StrictRedis(
-            host=redisHost, password=redisPassword, port=redisPort, db=redisDb)
+            host=redisHost, port=redisPort, db=redisDb)
 
         conn = psycopg2.connect(connection_str)
 
@@ -45,7 +44,7 @@ if __name__ == "__main__":
 
         r.set(redisNamespace+'lastblock', result[0][0])
 
-        print(float(r.get('lastblock')))
+        print(float(r.get(redisNamespace+'lastblock')))
 
         cursor.execute("SELECT avg(e.diff)  \
             FROM   \
@@ -76,7 +75,7 @@ if __name__ == "__main__":
 
         r.set(redisNamespace+'blocktime', result[0][0].total_seconds())
 
-        print(float(r.get('blocktime')))
+        print(float(r.get(redisNamespace+'blocktime')))
         time.sleep(2)
 
 
