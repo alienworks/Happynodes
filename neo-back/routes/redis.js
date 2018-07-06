@@ -17,6 +17,7 @@ function openRedisConnection() {
     redisClient = redis.createClient({
         host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT,
+        //password: process.env.REDIS_PASSWORD,
         db: process.env.REDIS_DB
     });
     return redisClient;
@@ -66,8 +67,9 @@ router.get('/nodes_flat', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
     client.hgetall(namespace.concat("node"), function (err, reply) {
-        const nodes = reply;
-        res.json({ result: nodes});
+        let nodes = Object.values(reply).sort((a,b)=>{return JSON.parse(b).health_score - JSON.parse(a).health_score})
+        res.json(nodes.map(a=>JSON.parse(a)));
+
     });
 });
 
@@ -75,7 +77,8 @@ router.get('/nodes', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
     client.hgetall(namespace.concat("node"), function (err, reply) {
-        let nodes = reply.sort((a,b)=>{return b.health_score - a.health_score})
+        
+        let nodes = Object.values(reply).sort((a,b)=>{return JSON.parse(b).health_score - JSON.parse(a).health_score})
 
         let online_asia_nodes = []
         let online_north_america_nodes = []
@@ -85,10 +88,10 @@ router.get('/nodes', function (req, res, next) {
         let offline_north_america_nodes = []
         let offline_europe_nodes = []
 
-        for (var key in nodes) {
-            let node = JSON.parse(nodes[key])
-            console.log(node)
+        for (var index in nodes) {
+            let node = JSON.parse(nodes[index])
             if (node.online == true) {
+
                 if (node.locale == "jp" || node.locale == "cn" || node.locale == "sg" || node.locale == "in" || node.locale == "au") {
                     online_asia_nodes.push(node)
                 } else if (node.locale == "de" || node.locale == "gb" || node.locale == "nl") {
