@@ -27,7 +27,7 @@ class UnconfirmedTx extends Component {
                 </div></div>
             )
         } else if (unconfirmed.fulfilled && bestBlock.fulfilled) {
-            console.log(bestBlock.value)
+            console.log(unconfirmed.value)
 
             const txs = unconfirmed.value['txs'];
             const last_block = Number(bestBlock.value.bestblock);
@@ -50,7 +50,7 @@ class UnconfirmedTx extends Component {
                             <tbody>
                                 {top_10_txs.map((item, i) =>
                                     <tr key={i}>
-                                        <td className="tx_td"><a target="_blank" href={'https://neotracker.io/tx/' + item.tx.substring(2)}>{item.tx.substring(2)}</a></td><td className="node_td">{item.node_count}</td>
+                                        <td className="tx_td"><a target="_blank" href={'/unconfirmedtxinfo/' + item.tx.substring(2) + '/' + item.addressid}>{item.tx.substring(2)}</a></td><td className="node_td">{item.node_count}</td>
                                     </tr>
                                 )}
                             </tbody></table>
