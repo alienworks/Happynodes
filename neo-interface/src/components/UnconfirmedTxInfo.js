@@ -50,7 +50,7 @@ class UnconfirmedTxInfo extends Component {
 export default connect((props) => ({
     unconfirmTxInfo: {
         method: 'POST',
-        url: config.api_url.concat(`/unconfirmed/tx`),
+        url: config.api_url.replace('/redis','').concat(`/unconfirmed/tx`),
         body: JSON.stringify({'tx': props.tx, 'addressid': props.addressid})
     }
 }))(UnconfirmedTxInfo)
