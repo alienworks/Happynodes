@@ -25,22 +25,22 @@ if __name__ == "__main__":
 
         cursor = conn.cursor()
 
-        cursor.execute('SELECT proto.protocol, addr.address AS hostname, po.port, unconfirm_tx_table.node_count, unconfirm_tx_table.tx, unconfirm_tx_table.last_blockheight \
-		FROM  \
-		(SELECT max(address_id) AS address_id, count(address_id) AS node_count, tx, max(last_blockheight) AS last_blockheight \
-		FROM public.unconfirmed_tx  \
-		WHERE last_blockheight = (SELECT max(blockheight) FROM blockheight_history)  \
-		GROUP BY tx  \
-		ORDER BY node_count DESC) unconfirm_tx_table \
-		INNER JOIN \
-		address addr \
-		ON addr.id = unconfirm_tx_table.address_id \
-		INNER JOIN \
-		protocol proto \
-		ON addr.id = proto.address_id \
-		INNER JOIN \
-		port po \
-		ON addr.id = po.address_id')
+        cursor.execute('SELECT addr.id as addressid, proto.protocol, addr.address as hostname, po.port, unconfirm_tx_table.node_count, unconfirm_tx_table.tx, unconfirm_tx_table.last_blockheight \
+				FROM  \
+				(SELECT max(address_id) AS address_id, count(address_id) AS node_count, tx, max(last_blockheight) AS last_blockheight \
+				FROM public.unconfirmed_tx  \
+				WHERE last_blockheight = (SELECT max(blockheight) FROM blockheight_history)  \
+				GROUP BY tx  \
+				ORDER BY node_count DESC) unconfirm_tx_table \
+				INNER JOIN \
+				address addr \
+				ON addr.id = unconfirm_tx_table.address_id \
+				INNER JOIN \
+				protocol proto \
+				ON addr.id = proto.address_id \
+				INNER JOIN \
+				port po \
+				ON addr.id = po.address_id')
         
         result = cursor.fetchall()
         print(result)
@@ -48,12 +48,13 @@ if __name__ == "__main__":
         txs = []
 
         for unconfirmed_tx in result:
-            tx = {"protocol": unconfirmed_tx[0],
-                "hostname": unconfirmed_tx[1],
-                "port": unconfirmed_tx[2],
-                "node_count": unconfirmed_tx[3],
-                "tx": unconfirmed_tx[4],
-                "last_blockheight": unconfirmed_tx[5]
+            tx = {"addressid": unconfirmed_tx[0],
+                "protocol": unconfirmed_tx[1],
+                "hostname": unconfirmed_tx[2],
+                "port": unconfirmed_tx[3],
+                "node_count": unconfirmed_tx[4],
+                "tx": unconfirmed_tx[5],
+                "last_blockheight": unconfirmed_tx[6]
                 }
             txs.append(tx)
         unconfirmed_txs = {"txs": txs}

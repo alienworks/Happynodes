@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var apicache = require('apicache');
-var axios =  require('axios') ;
+var axios = require('axios');
 
 const { Pool } = require('pg')
 
@@ -15,6 +15,10 @@ types.setTypeParser(1700, 'text', parseFloat);
 let cache = apicache.middleware
 
 const pool = new Pool({
+	user: process.env.PGUSER,
+	host: process.env.PGHOST,
+	database: process.env.PGDATABASE,
+	password: process.env.PGPASSWORD,
 	max: 200,
 	idleTimeoutMillis: 3000,
 	connectionTimeoutMillis: 3000
@@ -83,30 +87,28 @@ router.get('/unconfirmed', cache('2 seconds'), function (req, res, next) {
 			console.log("pool.totalCount", pool.totalCount)
 			console.log("pool.idleCount", pool.idleCount)
 			console.log("pool.waitingCount", pool.waitingCount)
-			return client.query(`SELECT proto.protocol, addr.address as hostname, po.port, unconfirm_tx_table.node_count, unconfirm_tx_table.tx, unconfirm_tx_table.last_blockheight
-		FROM 
-		(SELECT max(address_id) AS address_id, count(address_id) AS node_count, tx, max(last_blockheight) AS last_blockheight
-		FROM public.unconfirmed_tx 
-		WHERE last_blockheight = (SELECT max(blockheight) FROM blockheight_history) 
-		GROUP BY tx 
-		ORDER BY node_count DESC) unconfirm_tx_table
-		INNER JOIN
-		address addr
-		ON addr.id = unconfirm_tx_table.address_id
-		INNER JOIN
-		protocol proto
-		ON addr.id = proto.address_id
-		INNER JOIN
-		port po
-		ON addr.id = po.address_id`)
+			return client.query(`SELECT addr.id as addressid, proto.protocol, addr.address as hostname, po.port, unconfirm_tx_table.node_count, unconfirm_tx_table.tx, unconfirm_tx_table.last_blockheight
+				FROM 
+				(SELECT max(address_id) AS address_id, count(address_id) AS node_count, tx, max(last_blockheight) AS last_blockheight
+				FROM public.unconfirmed_tx 
+				WHERE last_blockheight = (SELECT max(blockheight) FROM blockheight_history) 
+				GROUP BY tx 
+				ORDER BY node_count DESC) unconfirm_tx_table
+				INNER JOIN
+				address addr
+				ON addr.id = unconfirm_tx_table.address_id
+				INNER JOIN
+				protocol proto
+				ON addr.id = proto.address_id
+				INNER JOIN
+				port po
+				ON addr.id = po.address_id`)
 				.catch((error) => {
 					client.release();
 					console.log(error)
 				})
 				.then(breakdown => {
 					client.release()
-
-					console.log('/unconfirmed length', breakdown.rows.length);
 					res.json({ txs: breakdown.rows });
 				})
 		})
@@ -114,23 +116,40 @@ router.get('/unconfirmed', cache('2 seconds'), function (req, res, next) {
 
 router.post('/unconfirmed/tx', cache('2 seconds'), function (req, res, next) {
 	let tx = req.body.tx;
-	let url = req.body.url;
+	let addressid = req.body.addressid;
 
-	axios.post(url
-	, {
-		"jsonrpc": "2.0",
-		"method": "getrawtransaction",
-		"params": [tx, 1],
-		"id": 1
-	})
-		.then(function (response) {
-			console.log(response);
-			res.json({ data:response.data });
+	pool.connect()
+		.then(client => {
+			return client.query(`SELECT CONCAT(proto.protocol, '://',  addr.address, ':', po.port) AS url
+			FROM address addr
+			INNER JOIN protocol proto
+			ON proto.address_id=addr.id
+			INNER JOIN port po
+			ON po.address_id =addr.id
+			WHERE addr.id=$1`, [addressid])
+				.catch((error) => {
+					client.release();
+					console.log(error)
+				})
+				.then(breakdown => {
+					client.release()
+					let url = breakdown.rows[0].url
+					axios.post(url, {
+							"jsonrpc": "2.0",
+							"method": "getrawtransaction",
+							"params": [tx, 1],
+							"id": 1
+						})
+						.then(function (response) {
+							console.log(response);
+							res.json({ data: response.data });
+						})
+						.catch(function (error) {
+							console.log(error);
+							res.json({ error });
+						});
+				})
 		})
-		.catch(function (error) {
-			console.log(error);
-			res.json({ reserrorponse });
-		});
 });
 
 // select min(A.ts), min(B.ts), (min(A.ts) - min(B.ts)) / 39 as avg

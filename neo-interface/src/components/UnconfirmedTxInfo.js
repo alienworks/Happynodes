@@ -51,6 +51,6 @@ export default connect((props) => ({
     unconfirmTxInfo: {
         method: 'POST',
         url: config.api_url.concat(`/unconfirmed/tx`),
-        body: JSON.stringify({'tx': props.tx, 'url': props.protocol + '://' + props.hostname + ":" + props.port})
+        body: JSON.stringify({'tx': props.tx, 'addressid': props.addressid})
     }
 }))(UnconfirmedTxInfo)

@@ -40,7 +40,7 @@ class App extends Component {
           <div className="col col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <Route path="/:id(\d+)" render={({match})=><NodeInfo node_id={match.params.id}/>} />
             <Route path="/:id(\d+)" render={({match})=><NodeEdges node_id={match.params.id}/>} />
-            <Route path="/unconfirmedtxinfo/:tx/:protocol/:hostname/:port" render={({match})=><UnconfirmedTxInfo protocol={match.params.protocol} hostname={match.params.hostname} port={match.params.port} tx={match.params.tx}/>} />
+            <Route path="/unconfirmedtxinfo/:tx/:addressid" render={({match})=><UnconfirmedTxInfo  addressid={match.params.addressid} tx={match.params.tx}/>} />
             <Route exact path="/" render={({match})=><NetworkGraph/>} />
             
           </div>
