@@ -15,10 +15,6 @@ class UnconfirmedTxInfo extends Component {
     }
 
     render() {
-        console.log(this.props.tx)
-        console.log(this.props.protocol)
-        console.log(this.props.hostname)
-        console.log(this.props.port)
         const { unconfirmTxInfo } = this.props
 
         if (unconfirmTxInfo.pending) {
