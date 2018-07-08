@@ -13,6 +13,7 @@ import NetworkGraph from './components/NetworkGraph'
 import logo from './HappyNodes_Logo.png'
 import f27logo from './27-light-red.png'
 import UnconfirmedTx from './components/UnconfirmedTx'
+import UnconfirmedTxInfo from './components/UnconfirmedTxInfo'
 import createHistory from 'history/createBrowserHistory'
 import ReactGA from 'react-ga';
 
@@ -40,6 +41,7 @@ class App extends Component {
           <div className="col col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <Route path="/:id(\d+)" render={({match})=><NodeInfo node_id={match.params.id}/>} />
             <Route path="/:id(\d+)" render={({match})=><NodeEdges node_id={match.params.id}/>} />
+            <Route path="/:tx/:url" render={({match})=><UnconfirmedTxInfo url={match.params.url} tx={match.params.tx}/>} />
             <Route exact path="/" render={({match})=><NetworkGraph/>} />
           </div>
           <Route path="/" render={()=><UnconfirmedTx/>} />
