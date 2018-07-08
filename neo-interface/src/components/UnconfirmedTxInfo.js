@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-refetch'
 import config from './config'
 
-class UnconfirmTxInfo extends Component {
+class UnconfirmedTxInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -43,4 +43,4 @@ export default connect((props) => ({
         url: config.api_url.concat(`/unconfirmed/tx`),
         body: JSON.stringify({'tx': props.tx, 'url': props.url})
     }
-}))(UnconfirmTxInfo)
+}))(UnconfirmedTxInfo)
