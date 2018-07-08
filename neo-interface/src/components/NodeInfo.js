@@ -37,7 +37,7 @@ class NodeInfo extends Component {
             return (
                 <div className="jumbotron nodes" style={{ display: 'inline-block', width: '100%' }}>
                     <div className="node-box" style={boxStyle}><p>{Number(data.health_score.toFixed(0))}</p></div>
-                    <h2 style={{ float: 'left' }}>{data.address}</h2>
+                    <h2 style={{ float: 'left', 'overflowWrap': 'break-word', 'width': '100%' }}>{data.address}</h2>
 
                     <hr style={{
                         'clear': 'left',
