@@ -64,7 +64,7 @@ router.get('/unconfirmed', function (req, res, next) {
     });
 });
 
-router.post('/unconfirmed/tx', cache('2 seconds'), function (req, res, next) {
+router.post('/unconfirmed/tx', function (req, res, next) {
 	let tx = req.body.tx;
 	let url = req.body.url;
 
