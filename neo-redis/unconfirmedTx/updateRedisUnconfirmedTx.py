@@ -50,7 +50,7 @@ if __name__ == "__main__":
         for unconfirmed_tx in result:
             tx = {"protocol": unconfirmed_tx[0],
                 "hostname": unconfirmed_tx[1],
-                "port": unconfirmed_tx[2]
+                "port": unconfirmed_tx[2],
                 "node_count": unconfirmed_tx[3],
                 "tx": unconfirmed_tx[4],
                 "last_blockheight": unconfirmed_tx[5]
