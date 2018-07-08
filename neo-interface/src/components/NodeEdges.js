@@ -33,17 +33,10 @@ class NodeEdges extends Component {
                 return map;
             }, {});
 
-
-
-
-
-
             const data = {
                 nodes: d_nodes,
                 edges: d_edges
             };
-
-            console.log(data);
 
             var options = {
                 layout: {
