@@ -1,11 +1,13 @@
 var express = require('express');
 var router = express.Router();
 var apicache = require('apicache');
+var axios =  require('axios') ;
+
 const { Pool } = require('pg')
 
 var types = require('pg').types
-types.setTypeParser(20, function(val) {
-  return parseInt(val)
+types.setTypeParser(20, function (val) {
+	return parseInt(val)
 })
 
 types.setTypeParser(1700, 'text', parseFloat);
@@ -13,38 +15,39 @@ types.setTypeParser(1700, 'text', parseFloat);
 let cache = apicache.middleware
 
 const pool = new Pool({
-  max: 200, 
-  idleTimeoutMillis: 3000,
-  connectionTimeoutMillis: 3000})
+	max: 200,
+	idleTimeoutMillis: 3000,
+	connectionTimeoutMillis: 3000
+})
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.json({ title: 'Express' });
+router.get('/', function (req, res, next) {
+	res.json({ title: 'Express' });
 });
 
 // Took 154ms
 // SELECT max(blockheight)
 // FROM  blockheight_history
 // WHERE blockheight IS NOT NULL
-router.get('/bestblock',cache('1 seconds'), function(req, res, next) {
-  pool.connect()
-  .then( client =>{
-    console.log("pool.totalCount", pool.totalCount)
-    console.log("pool.idleCount", pool.idleCount)
-    console.log("pool.waitingCount", pool.waitingCount)
-    return client.query('SELECT max(blockheight)  \
+router.get('/bestblock', cache('1 seconds'), function (req, res, next) {
+	pool.connect()
+		.then(client => {
+			console.log("pool.totalCount", pool.totalCount)
+			console.log("pool.idleCount", pool.idleCount)
+			console.log("pool.waitingCount", pool.waitingCount)
+			return client.query('SELECT max(blockheight)  \
     FROM  blockheight_history  \
     WHERE blockheight IS NOT NULL')
-    .catch((error)=>{
-      client.release();
-      console.log(error);
-    })
-    .then(breakdown => {
-      client.release()
-			console.log('/bestblock', breakdown.rows);
-			res.json({bestblock:breakdown.rows[0].max});
-    })
-  })
+				.catch((error) => {
+					client.release();
+					console.log(error);
+				})
+				.then(breakdown => {
+					client.release()
+					console.log('/bestblock', breakdown.rows);
+					res.json({ bestblock: breakdown.rows[0].max });
+				})
+		})
 });
 
 // Took 143ms
@@ -52,49 +55,82 @@ router.get('/bestblock',cache('1 seconds'), function(req, res, next) {
 // FROM blockheight_history
 // WHERE blockheight IN ( SELECT MAX(blockheight)
 // FROM blockheight_history );
-router.get('/lastblock', cache('1 seconds'), function(req, res, next) {
-  pool.connect()
-  .then( client =>{
-    console.log("pool.totalCount", pool.totalCount)
-    console.log("pool.idleCount", pool.idleCount)
-    console.log("pool.waitingCount", pool.waitingCount)
-    return client.query("SELECT EXTRACT(EPOCH FROM Min(ts) AT TIME ZONE 'UTC') as min_ts  \
+router.get('/lastblock', cache('1 seconds'), function (req, res, next) {
+	pool.connect()
+		.then(client => {
+			console.log("pool.totalCount", pool.totalCount)
+			console.log("pool.idleCount", pool.idleCount)
+			console.log("pool.waitingCount", pool.waitingCount)
+			return client.query("SELECT EXTRACT(EPOCH FROM Min(ts) AT TIME ZONE 'UTC') as min_ts  \
                           FROM  blockheight_history \
                           WHERE blockheight IN ( SELECT MAX(blockheight) \
                           FROM blockheight_history )")
-    .catch((error)=>{
-      client.release();
-      console.log(error)
-    })
-    .then(breakdown => {
-      client.release()
-			console.log('/lastblock', breakdown.rows);
-			res.json({lastblock:breakdown.rows[0].min_ts});
-    })
-  })
+				.catch((error) => {
+					client.release();
+					console.log(error)
+				})
+				.then(breakdown => {
+					client.release()
+					console.log('/lastblock', breakdown.rows);
+					res.json({ lastblock: breakdown.rows[0].min_ts });
+				})
+		})
 });
 
-router.get('/unconfirmed', cache('2 seconds'), function(req, res, next) {
-  pool.connect()
-  .then( client =>{
-    console.log("pool.totalCount", pool.totalCount)
-    console.log("pool.idleCount", pool.idleCount)
-    console.log("pool.waitingCount", pool.waitingCount)
-    return client.query('SELECT count(address_id) as node_count, tx, max(last_blockheight) \
-		FROM public.unconfirmed_tx \
-		where last_blockheight = (select max(blockheight) from blockheight_history) \
-		group by tx \
-		order by node_count desc')
-    .catch((error)=>{
-      client.release();
-      console.log(error)
-    })
-    .then(breakdown => {
-			client.release()
-			console.log('/unconfirmed length', breakdown.rows.length);
-			res.json({txs:breakdown.rows});
-    })
-  })
+router.get('/unconfirmed', cache('2 seconds'), function (req, res, next) {
+	pool.connect()
+		.then(client => {
+			console.log("pool.totalCount", pool.totalCount)
+			console.log("pool.idleCount", pool.idleCount)
+			console.log("pool.waitingCount", pool.waitingCount)
+			return client.query(`SELECT proto.protocol, addr.address as hostname, po.port, unconfirm_tx_table.node_count, unconfirm_tx_table.tx, unconfirm_tx_table.last_blockheight
+		FROM 
+		(SELECT max(address_id) AS address_id, count(address_id) AS node_count, tx, max(last_blockheight) AS last_blockheight
+		FROM public.unconfirmed_tx 
+		WHERE last_blockheight = (SELECT max(blockheight) FROM blockheight_history) 
+		GROUP BY tx 
+		ORDER BY node_count DESC) unconfirm_tx_table
+		INNER JOIN
+		address addr
+		ON addr.id = unconfirm_tx_table.address_id
+		INNER JOIN
+		protocol proto
+		ON addr.id = proto.address_id
+		INNER JOIN
+		port po
+		ON addr.id = po.address_id`)
+				.catch((error) => {
+					client.release();
+					console.log(error)
+				})
+				.then(breakdown => {
+					client.release()
+
+					console.log('/unconfirmed length', breakdown.rows.length);
+					res.json({ txs: breakdown.rows });
+				})
+		})
+});
+
+router.post('/unconfirmed/tx', cache('2 seconds'), function (req, res, next) {
+	let tx = req.body.tx;
+	let url = req.body.url;
+
+	axios.post(url
+	, {
+		"jsonrpc": "2.0",
+		"method": "getrawtransaction",
+		"params": [tx, 1],
+		"id": 1
+	})
+		.then(function (response) {
+			console.log(response);
+			res.json({ data:response.data });
+		})
+		.catch(function (error) {
+			console.log(error);
+			res.json({ reserrorponse });
+		});
 });
 
 // select min(A.ts), min(B.ts), (min(A.ts) - min(B.ts)) / 39 as avg
@@ -128,13 +164,13 @@ router.get('/unconfirmed', cache('2 seconds'), function(req, res, next) {
 // ORDER BY c.blockheight DESC) D
 // ON C.BLOCKHEIGHT = D.BLOCKHEIGHT+1
 // LIMIT 40) e
-router.get('/blocktime', cache('2 seconds'), function(req, res, next) {
-  pool.connect()
-  .then( client =>{
-    console.log("pool.totalCount", pool.totalCount)
-    console.log("pool.idleCount", pool.idleCount)
-    console.log("pool.waitingCount", pool.waitingCount)
-    return client.query(`SELECT avg(e.diff)
+router.get('/blocktime', cache('2 seconds'), function (req, res, next) {
+	pool.connect()
+		.then(client => {
+			console.log("pool.totalCount", pool.totalCount)
+			console.log("pool.idleCount", pool.idleCount)
+			console.log("pool.waitingCount", pool.waitingCount)
+			return client.query(`SELECT avg(e.diff)
 		FROM 
 		(SELECT (C.ts - D.ts) AS diff
 		FROM 
@@ -157,26 +193,26 @@ router.get('/blocktime', cache('2 seconds'), function(req, res, next) {
 		ORDER BY c.blockheight DESC) D
 		ON C.BLOCKHEIGHT = D.BLOCKHEIGHT+1
 		LIMIT 40) e`)
-    .catch((error)=>{
-      client.release();
-      console.log(error)
-    })
-    .then(breakdown => {
-			client.release()
-			console.log('/blocktime', breakdown.rows);
-			res.json({blocktime:breakdown.rows[0].avg.seconds});
-    })
-  })
+				.catch((error) => {
+					client.release();
+					console.log(error)
+				})
+				.then(breakdown => {
+					client.release()
+					console.log('/blocktime', breakdown.rows);
+					res.json({ blocktime: breakdown.rows[0].avg.seconds });
+				})
+		})
 });
 
-router.get('/nodes', cache('1 minute'), function(req, res, next) {
+router.get('/nodes', cache('1 minute'), function (req, res, next) {
 	console.log(req)
-  pool.connect()
-  .then( client =>{
-    console.log("pool.totalCount", pool.totalCount)
-    console.log("pool.idleCount", pool.idleCount)
-    console.log("pool.waitingCount", pool.waitingCount)
-    return client.query(`select
+	pool.connect()
+		.then(client => {
+			console.log("pool.totalCount", pool.totalCount)
+			console.log("pool.idleCount", pool.idleCount)
+			console.log("pool.waitingCount", pool.waitingCount)
+			return client.query(`select
 		addr.id,
 		addr.address as hostname,
 		proto.protocol,
@@ -439,59 +475,59 @@ router.get('/nodes', cache('1 minute'), function(req, res, next) {
 		) vpt on
 		vpt.address_id = addr.id
 	order by
-		health_score desc`) 
-    .catch((error)=>{
-      client.release();
-      console.log(error)
-    })
-    .then(breakdown => {
-      client.release()
-      console.log('/nodes', breakdown.rows)
-      data = breakdown.rows
+		health_score desc`)
+				.catch((error) => {
+					client.release();
+					console.log(error)
+				})
+				.then(breakdown => {
+					client.release()
+					console.log('/nodes', breakdown.rows)
+					data = breakdown.rows
 
-      let online_asia_nodes = []
-      let online_north_america_nodes = []
-      let online_europe_nodes = []
+					let online_asia_nodes = []
+					let online_north_america_nodes = []
+					let online_europe_nodes = []
 
-      let offline_asia_nodes = []
-      let offline_north_america_nodes = []
-      let offline_europe_nodes = []
+					let offline_asia_nodes = []
+					let offline_north_america_nodes = []
+					let offline_europe_nodes = []
 
-      var i;
-      for (i = 0; i < data.length; i++) { 
-          if (data[i].online==true) {
-            if (data[i].locale=="jp" || data[i].locale=="cn"|| data[i].locale=="sg"|| data[i].locale=="in"|| data[i].locale=="au"){
-              online_asia_nodes.push(data[i])
-            }else if (data[i].locale=="de" || data[i].locale=="gb" || data[i].locale=="nl"){
-              online_europe_nodes.push(data[i])
-            }else if (data[i].locale=="us" || data[i].locale=="ca"){
-              online_north_america_nodes.push(data[i])
-            }
-          }else{
-            if (data[i].locale=="jp" || data[i].locale=="cn"|| data[i].locale=="sg"|| data[i].locale=="in"|| data[i].locale=="au"){
-              offline_asia_nodes.push(data[i]);
-            }else if (data[i].locale=="de" || data[i].locale=="gb" || data[i].locale=="nl"){
-              offline_europe_nodes.push(data[i]);
-            }else if (data[i].locale=="us" || data[i].locale=="ca"){
-              offline_north_america_nodes.push(data[i]);
-            }
-          }
-      }
-      let online_nodes = {asia:online_asia_nodes, europe:online_europe_nodes, americas:online_north_america_nodes}
-      let offline_nodes = {asia:offline_asia_nodes, europe:offline_europe_nodes, americas:offline_north_america_nodes}
-      res.json({online:online_nodes, offline:offline_nodes});
-    })
-  })
+					var i;
+					for (i = 0; i < data.length; i++) {
+						if (data[i].online == true) {
+							if (data[i].locale == "jp" || data[i].locale == "cn" || data[i].locale == "sg" || data[i].locale == "in" || data[i].locale == "au") {
+								online_asia_nodes.push(data[i])
+							} else if (data[i].locale == "de" || data[i].locale == "gb" || data[i].locale == "nl") {
+								online_europe_nodes.push(data[i])
+							} else if (data[i].locale == "us" || data[i].locale == "ca") {
+								online_north_america_nodes.push(data[i])
+							}
+						} else {
+							if (data[i].locale == "jp" || data[i].locale == "cn" || data[i].locale == "sg" || data[i].locale == "in" || data[i].locale == "au") {
+								offline_asia_nodes.push(data[i]);
+							} else if (data[i].locale == "de" || data[i].locale == "gb" || data[i].locale == "nl") {
+								offline_europe_nodes.push(data[i]);
+							} else if (data[i].locale == "us" || data[i].locale == "ca") {
+								offline_north_america_nodes.push(data[i]);
+							}
+						}
+					}
+					let online_nodes = { asia: online_asia_nodes, europe: online_europe_nodes, americas: online_north_america_nodes }
+					let offline_nodes = { asia: offline_asia_nodes, europe: offline_europe_nodes, americas: offline_north_america_nodes }
+					res.json({ online: online_nodes, offline: offline_nodes });
+				})
+		})
 });
 
-router.get('/nodes/:node_id', cache('2 seconds'), function(req, res, next) {
-  console.log(req.params.node_id)
-  pool.connect()
-  .then( client =>{
-    console.log("pool.totalCount", pool.totalCount)
-    console.log("pool.idleCount", pool.idleCount)
-    console.log("pool.waitingCount", pool.waitingCount)
-    return client.query(`SELECT
+router.get('/nodes/:node_id', cache('2 seconds'), function (req, res, next) {
+	console.log(req.params.node_id)
+	pool.connect()
+		.then(client => {
+			console.log("pool.totalCount", pool.totalCount)
+			console.log("pool.idleCount", pool.idleCount)
+			console.log("pool.waitingCount", pool.waitingCount)
+			return client.query(`SELECT
 			*
 		FROM
 			(
@@ -999,16 +1035,16 @@ order by
 			) bigtable
 		WHERE
 			id = $1`, [req.params.node_id])
-    .catch((error)=>{
-      client.release();
-      console.log(error)
-    })
-    .then(breakdown => {
-      client.release()
-      console.log('/nodes/node_id', breakdown.rows)
-      res.json(breakdown.rows[0]);
-    })
-  })
+				.catch((error) => {
+					client.release();
+					console.log(error)
+				})
+				.then(breakdown => {
+					client.release()
+					console.log('/nodes/node_id', breakdown.rows)
+					res.json(breakdown.rows[0]);
+				})
+		})
 });
 
 
@@ -1026,10 +1062,10 @@ order by
 //     LEFT JOIN  
 //     protocol
 //     on protocol.address_id=updated_peers_table.validated_peers_address_id
-router.get('/nodes/:node_id/validatedpeers', cache('1 minute'), function(req, res, next) {
-  pool.connect()
-  .then( client =>{
-    return client.query('select \
+router.get('/nodes/:node_id/validatedpeers', cache('1 minute'), function (req, res, next) {
+	pool.connect()
+		.then(client => {
+			return client.query('select \
     validated_peers_address_id as address_id, \
     address as hostname , \
     protocol, \
@@ -1054,17 +1090,17 @@ router.get('/nodes/:node_id/validatedpeers', cache('1 minute'), function(req, re
   left join address on \
     address.id = updated_peers_table.validated_peers_address_id \
   left join protocol proto on \
-    proto.address_id = updated_peers_table.validated_peers_address_id', [req.params.node_id])
-    .catch((error)=>{
-      client.release();
-      console.log(error)
-    })
-    .then(breakdown => {
-      client.release()
-      console.log('/nodes/node_id/validatedpeers', breakdown.rows)
-      res.json(breakdown.rows);
-    })
-  })
+    proto.address_id = updated_peers_table.validated_peers_address_id ', [req.params.node_id])
+				.catch((error) => {
+					client.release();
+					console.log(error)
+				})
+				.then(breakdown => {
+					client.release()
+					console.log('/nodes/node_id/validatedpeers', breakdown.rows)
+					res.json(breakdown.rows);
+				})
+		})
 });
 
 // select
@@ -1098,13 +1134,13 @@ router.get('/nodes/:node_id/validatedpeers', cache('1 minute'), function(req, re
 // 	address_a.id = max_ts_validated_peers_table.validated_peers_address_Id
 // inner join address address_b on
 // 	address_b.id = max_ts_validated_peers_table.address_Id
-router.get('/edges', cache('1 minute'), function(req, res, next) {
-  pool.connect()
-  .then( client =>{
-    console.log("pool.totalCount", pool.totalCount)
-    console.log("pool.idleCount", pool.idleCount)
-    console.log("pool.waitingCount", pool.waitingCount)
-		return client.query("select \
+router.get('/edges', cache('1 minute'), function (req, res, next) {
+	pool.connect()
+		.then(client => {
+			console.log("pool.totalCount", pool.totalCount)
+			console.log("pool.idleCount", pool.idleCount)
+			console.log("pool.waitingCount", pool.waitingCount)
+			return client.query("select \
 		max_ts_validated_peers_table.address_id as source_address_id, \
 		CONCAT(protob.protocol, '://', address_b.address) as source_address, \
 		validated_peers_address_Id, \
@@ -1139,16 +1175,16 @@ router.get('/edges', cache('1 minute'), function(req, res, next) {
 	 protoa.address_id =address_a.id \
 	inner join protocol protob on \
 	 protob.address_id =address_b.id")
-    .catch((error)=>{
-      client.release();
-      console.log(error)
-    })
-    .then(breakdown => {
-      client.release()
-      console.log('/edges', breakdown.rows)
-      res.json(breakdown.rows);
-    })
-  })
+				.catch((error) => {
+					client.release();
+					console.log(error)
+				})
+				.then(breakdown => {
+					client.release()
+					console.log('/edges', breakdown.rows)
+					res.json(breakdown.rows);
+				})
+		})
 });
 
 /*
@@ -1157,35 +1193,35 @@ from address adr
 inner join protocol proto
 on adr.id = proto.address_id
 */
-router.get('/nodeslist', cache('1 minutes'), function(req, res, next) {
-  pool.connect()
-  .then( client =>{
-    console.log("pool.totalCount", pool.totalCount)
-    console.log("pool.idleCount", pool.idleCount)
-    console.log("pool.waitingCount", pool.waitingCount)
-    return client.query('select adr.id , address as hostname, protocol, CONCAT(proto.protocol, \'://\', adr.address) as address \
+router.get('/nodeslist', cache('1 minutes'), function (req, res, next) {
+	pool.connect()
+		.then(client => {
+			console.log("pool.totalCount", pool.totalCount)
+			console.log("pool.idleCount", pool.idleCount)
+			console.log("pool.waitingCount", pool.waitingCount)
+			return client.query('select adr.id , address as hostname, protocol, CONCAT(proto.protocol, \'://\', adr.address) as address \
     from address adr \
     inner join protocol proto \
     on adr.id = proto.address_id')
-    .catch((error)=>{
-      client.release();
-      console.log(error)
-    })
-    .then(breakdown => {
-      client.release()
-			console.log('/nodeslist', breakdown.rows)
-      res.json(breakdown.rows);
-    })
-  })
+				.catch((error) => {
+					client.release();
+					console.log(error)
+				})
+				.then(breakdown => {
+					client.release()
+					console.log('/nodeslist', breakdown.rows)
+					res.json(breakdown.rows);
+				})
+		})
 });
 
-router.get('/summary', function(req, res, next) {
-  pool.connect()
-  .then( client =>{
-    console.log("pool.totalCount", pool.totalCount)
-    console.log("pool.idleCount", pool.idleCount)
-    console.log("pool.waitingCount", pool.waitingCount)
-    return client.query('SELECT *  \
+router.get('/summary', function (req, res, next) {
+	pool.connect()
+		.then(client => {
+			console.log("pool.totalCount", pool.totalCount)
+			console.log("pool.idleCount", pool.idleCount)
+			console.log("pool.waitingCount", pool.waitingCount)
+			return client.query('SELECT *  \
     FROM   \
     (SELECT blockheight   \
     FROM  blockheight_history  \
@@ -1221,15 +1257,15 @@ router.get('/summary', function(req, res, next) {
     ORDER BY c.blockheight DESC) D  \
     ON C.BLOCKHEIGHT = D.BLOCKHEIGHT+1  \
     LIMIT 40) e) z')
-    .catch((error)=>{
-      client.release();
-      console.log(error)
-    })
-    .then(breakdown => {
-      client.release()
-      res.json(breakdown.rows);
-    })
-  })
+				.catch((error) => {
+					client.release();
+					console.log(error)
+				})
+				.then(breakdown => {
+					client.release()
+					res.json(breakdown.rows);
+				})
+		})
 });
 
 module.exports = router;

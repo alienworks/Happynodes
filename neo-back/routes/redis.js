@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var redis = require("redis")
+var axios =  require('axios') ;
 
 // Global (Avoids Duplicate Connections)
 var redisClient = null;
@@ -61,6 +62,27 @@ router.get('/unconfirmed', function (req, res, next) {
         const txs = JSON.parse(reply);
         res.json(txs);
     });
+});
+
+router.post('/unconfirmed/tx', function (req, res, next) {
+	let tx = req.body.tx;
+	let url = req.body.url;
+
+	axios.post(url
+	, {
+		"jsonrpc": "2.0",
+		"method": "getrawtransaction",
+		"params": [tx, 1],
+		"id": 1
+	})
+		.then(function (response) {
+			console.log(response);
+			res.json({ data:response.data });
+		})
+		.catch(function (error) {
+			console.log(error);
+			res.json({ reserrorponse });
+		});
 });
 
 router.get('/nodes_flat', function (req, res, next) {
