@@ -64,27 +64,6 @@ router.get('/unconfirmed', function (req, res, next) {
     });
 });
 
-router.post('/unconfirmed/tx', function (req, res, next) {
-	let tx = req.body.tx;
-	let url = req.body.url;
-
-	axios.post(url
-	, {
-		"jsonrpc": "2.0",
-		"method": "getrawtransaction",
-		"params": [tx, 1],
-		"id": 1
-	})
-		.then(function (response) {
-			console.log(response);
-			res.json({ data:response.data });
-		})
-		.catch(function (error) {
-			console.log(error);
-			res.json({ error:error});
-		});
-});
-
 router.get('/nodes_flat', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
