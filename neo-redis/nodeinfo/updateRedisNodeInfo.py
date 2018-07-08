@@ -47,7 +47,7 @@ if __name__ == "__main__":
                     "normalised_latency_score": node_info[10],
                     "validated_peers_counts_score": float(node_info[11]),
                     "health_score": node_info[12],
-                    "latency": node_info[13],
+                    "latency": node_info[13]*1000,
                     "rcp_https_status": node_info[14],
                     "rcp_http_status": node_info[15],
                     "mempool_size": node_info[16],
