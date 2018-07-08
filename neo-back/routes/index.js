@@ -83,7 +83,7 @@ router.get('/unconfirmed', cache('2 seconds'), function (req, res, next) {
 			console.log("pool.totalCount", pool.totalCount)
 			console.log("pool.idleCount", pool.idleCount)
 			console.log("pool.waitingCount", pool.waitingCount)
-			return client.query(`SELECT CONCAT(proto.protocol, '://', addr.address,':', po.port) AS url, unconfirm_tx_table.node_count, unconfirm_tx_table.tx, unconfirm_tx_table.last_blockheight
+			return client.query(`SELECT proto.protocol, addr.address as hostname, po.port, unconfirm_tx_table.node_count, unconfirm_tx_table.tx, unconfirm_tx_table.last_blockheight
 		FROM 
 		(SELECT max(address_id) AS address_id, count(address_id) AS node_count, tx, max(last_blockheight) AS last_blockheight
 		FROM public.unconfirmed_tx 
