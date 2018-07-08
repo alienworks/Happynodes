@@ -1,5 +1,5 @@
 const config = {
-    api_url:process.env.REACT_APP_API_URL
+    api_url:"http://api.happynodes-integration.f27.ventures/redis"
 }
 
 export default config
