@@ -10,6 +10,7 @@ import NodesByRegion from './components/NodesByRegion'
 import NodeInfo from './components/NodeInfo'
 import NodeEdges from './components/NodeEdges'
 import NetworkGraph from './components/NetworkGraph'
+import NetworkTable from './components/NetworkTable'
 import logo from './HappyNodes_Logo.png'
 import f27logo from './27-light-red.png'
 import UnconfirmedTx from './components/UnconfirmedTx'
@@ -37,14 +38,17 @@ class App extends Component {
         <div className="App-intro">
           <div className="container-fluid">
           <Route exact path="/" render={({match})=><NodesByRegion/>} />
-          <Route path="/:id" render={({match})=><NodesByRegion node_id={match.params.id}/>} />
+          <Route path="/:id(\d+)" render={({match})=><NodesByRegion node_id={match.params.id}/>} />
           <div className="col col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <Route path="/:id(\d+)" render={({match})=><NodeInfo node_id={match.params.id}/>} />
             <Route path="/:id(\d+)" render={({match})=><NodeEdges node_id={match.params.id}/>} />
             <Route path="/:tx/:url" render={({match})=><UnconfirmedTxInfo url={match.params.url} tx={match.params.tx}/>} />
             <Route exact path="/" render={({match})=><NetworkGraph/>} />
+            
           </div>
-          <Route path="/" render={()=><UnconfirmedTx/>} />
+          <Route exact path="/table" render={({match})=><NetworkTable/>} />
+          <Route exact path="/" render={()=><UnconfirmedTx/>} />
+          <Route path="/:id(\d+)" render={()=><UnconfirmedTx/>} />
           </div>
         </div>
         <footer className="App-footer">
