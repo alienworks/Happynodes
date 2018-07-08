@@ -61,7 +61,7 @@ class NodeInfo extends Component {
                     </div>
 
                     <div className="infoblock">
-                        <h4>{Number((Number(data.latency) * 1000).toFixed(0)).toLocaleString()}</h4>
+                        <h4>{Number((Number(data.latency)).toFixed(0)).toLocaleString()}</h4>
                         <h5>Server Side Latency (ms)</h5>
                     </div>
 

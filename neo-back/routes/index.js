@@ -214,7 +214,7 @@ router.get('/nodes', cache('1 minute'), function(req, res, next) {
 			) * 100
 		)/ 4.0 as health_score,
 		coalesce(
-			lat.latency,
+			lat.latency* 1000,
 			200
 		) as latency,
 		f.online,
@@ -545,7 +545,7 @@ router.get('/nodes/:node_id', cache('2 seconds'), function(req, res, next) {
 		) * 100
 	)/ 4.0 as health_score,
 	coalesce(
-		lat.latency,
+		lat.latency* 1000,
 		200
 	) as latency,
 	b.rpc_https_status as rpc_https_status,
