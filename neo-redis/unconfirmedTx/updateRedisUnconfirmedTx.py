@@ -48,9 +48,12 @@ if __name__ == "__main__":
         txs = []
 
         for unconfirmed_tx in result:
-            tx = {"node_count": unconfirmed_tx[0],
-                "tx": unconfirmed_tx[1],
-                "max": unconfirmed_tx[2]
+            tx = {"protocol": unconfirmed_tx[0],
+                "hostname": unconfirmed_tx[1],
+                "port": unconfirmed_tx[2]
+                "node_count": unconfirmed_tx[3],
+                "tx": unconfirmed_tx[4],
+                "last_blockheight": unconfirmed_tx[5]
                 }
             txs.append(tx)
         unconfirmed_txs = {"txs": txs}
