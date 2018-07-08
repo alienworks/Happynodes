@@ -81,7 +81,7 @@ router.post('/unconfirmed/tx', function (req, res, next) {
 		})
 		.catch(function (error) {
 			console.log(error);
-			res.json({ reserrorponse });
+			res.json({ error:error});
 		});
 });
 
