@@ -40,6 +40,11 @@ html {
     color: #3b3b3b;
 }
 
+.jumbotron.nodes.padgraph {
+    padding-bottom: 8rem !important;
+
+}
+
 html body {
 
     background-image: url(https://i.imgur.com/P53rMza.png);

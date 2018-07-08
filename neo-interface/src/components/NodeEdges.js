@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-refetch'
-import { Graph } from 'react-d3-graph'
+import Graph from 'react-graph-vis'
 import config from './config'
 
 class NodeEdges extends Component {
@@ -25,8 +25,8 @@ class NodeEdges extends Component {
             const raw_data = nodeedges.value;
             const node_id = this.props.node_id;
 
-            const d_edges = raw_data.map((item, i) => { return { "source": this.props.node_id, "target": item.address } });
-            const d_nodes = raw_data.map((item, i) => { return { "id": item.address } }).concat([{ "id": this.props.node_id }]);
+            const d_edges = raw_data.map((item, i) => { return { "from": this.props.node_id, "to": item.address } });
+            const d_nodes = raw_data.map((item, i) => { return { "id": item.address, label: item.address } }).concat([{ "id": this.props.node_id, label: this.props.node_id }]);
 
             const node_lookup = raw_data.reduce(function (map, obj) {
                 map[obj.address] = obj.address_id;
@@ -35,57 +35,60 @@ class NodeEdges extends Component {
 
 
 
+
+
+
             const data = {
                 nodes: d_nodes,
-                links: d_edges
+                edges: d_edges
             };
-            const myConfig = {
-                nodeHighlightBehavior: true,
-                width: '500',
-                node: {
-                    color: '#1FB6FF',
-                    size: 120,
-                    highlightStrokeColor: '#1FB6FF'
+
+            console.log(data);
+
+            var options = {
+                layout: {
+                    hierarchical: false
                 },
-                link: {
-                    highlightColor: 'lightblue'
+                edges: {
+                    color: "#000000"
+                },
+                nodes: {
+                    shape: "hexagon"
+                },
+                physics:{
+                    stabilization: false,
+                    maxVelocity: 30,
+                    solver: 'forceAtlas2Based',
+                  }
+            };
+             
+            var events = {
+                select: function(event) {
+                    var { nodes, edges } = event;
+                    console.log(nodes, edges);
+                    if (nodes.length === 1){
+                        window.location = "./" + node_lookup[nodes[0]];
+                    }
+                    
                 }
-            };
-            const onMouseOverNode = function (nodeId) {
-                //window.alert(`Mouse over node ${nodeId}`);
-            };
-
-            const onClickNode = function (nodeId) {
-                if (nodeId !== node_id) {
-                    window.location = './' + node_lookup[nodeId];
-                }
-
-            };
+            }
 
 
             return (
 
-                <div className="jumbotron nodes">
+                <div className="jumbotron nodes padgraph" style={{'width': '100%', 'height':'900px'}}>
 
 
                     <h2>Direct Peers</h2>
                     <hr style={{
                         'borderColor': '#78cadd', 'borderWidth': '3px'
                     }} />
-                    <div className="container">
-                        <Graph
-                            id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error
-                            data={data}
-                            config={myConfig}
 
-                            onMouseOverNode={onMouseOverNode}
-                            onClickNode={onClickNode}
-
-                        />
+                    <Graph graph={data} options={options} events={events} />
 
 
-
-                    </div></div>
+      
+                      </div>
             )
         }
     }
