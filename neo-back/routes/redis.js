@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var redis = require("redis")
-var axios =  require('axios') ;
 
 // Global (Avoids Duplicate Connections)
 var redisClient = null;
