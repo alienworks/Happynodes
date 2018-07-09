@@ -1,0 +1,87 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: neo-monitor-integration
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: neo-monitor-integration 
+  template:
+    metadata:
+      labels:
+        app: neo-monitor-integration
+    spec:
+      containers:
+      - name: front 
+        image: GCP_IMAGE_LOCATION/integration/neofront:v1
+        ports:
+        - containerPort: 3000
+      - name: back 
+        image: GCP_IMAGE_LOCATION/integration/neoback:v1
+        ports:
+        - containerPort: 3001
+        env:
+            - name: PGHOST
+              value: 127.0.0.1
+            - name: PGDATABASE
+              value: "postgres"
+            # [START cloudsql_secrets]
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: password    
+      - name: cloudsql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.11
+        command: ["/cloud_sql_proxy",
+                  "-instances=[instance connection name]=tcp:5432",
+                  "-credential_file=/secrets/cloudsql/credentials.json"]
+        volumeMounts:
+          - name: cloudsql-instance-credentials
+            mountPath: /secrets/cloudsql
+            readOnly: true
+        # [START volumes]
+      volumes:
+        - name: cloudsql-instance-credentials
+          secret:
+            secretName: cloudsql-instance-credentials
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: neo-monitor-integration-svc
+  name: neo-monitor-integration-svc
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 3000
+    protocol: TCP
+    name: http
+  selector:
+    app: neo-monitor-integration 
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: neo-monitor-integration-svc-2
+  name: neo-monitor-integration-svc-2
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 3001
+    protocol: TCP
+    name: http
+  selector:
+    app: neo-monitor-integration 
