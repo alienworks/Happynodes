@@ -1,0 +1,157 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: neo-monitor-integration-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: neo-monitor-integration-redis 
+  template:
+    metadata:
+      labels:
+        app: neo-monitor-integration-redis
+    spec:
+      containers:
+      - name: redis-network-summary
+        image: GCP_IMAGE_LOCATION/integration/redis-network-summary:v4
+        env:
+            - name: PGHOST
+              value: 127.0.0.1
+            - name: PGDATABASE
+              value: "XXXX"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: password
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: redishost
+                  key: REDISHOST
+            - name: REDIS_DB
+              value: "0"
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: redisport
+                  key: REDISPORT
+            - name: REDIS_NAMESPACE
+              value: "HN_INTEGRATION_"
+      - name: redis-nodes-info
+        image: GCP_IMAGE_LOCATION/integration/redis-nodes-info:v4
+        env:
+            - name: PGHOST
+              value: 127.0.0.1
+            - name: PGDATABASE
+              value: "XXXX"
+            # [START cloudsql_secrets]
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: password
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: redishost
+                  key: REDISHOST
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: redisport
+                  key: REDISPORT
+            - name: REDIS_DB
+              value: "0"
+            - name: REDIS_NAMESPACE
+              value: "HN_INTEGRATION_"
+      - name: redis-peers-info
+        image: GCP_IMAGE_LOCATION/integration/redis-peers-info:v4
+        env:
+            - name: PGHOST
+              value: 127.0.0.1
+            - name: PGDATABASE
+              value: "XXXX"
+            # [START cloudsql_secrets]
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: password
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: redishost
+                  key: REDISHOST
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: redisport
+                  key: REDISPORT
+            - name: REDIS_DB
+              value: "0"
+            - name: REDIS_NAMESPACE
+              value: "HN_INTEGRATION_"
+      - name: redis-unconfirmedtx-info
+        image: GCP_IMAGE_LOCATION/integration/redis-unconfirmedtx-info:v4
+        env:
+            - name: PGHOST
+              value: 127.0.0.1
+            - name: PGDATABASE
+              value: "XXXX"
+            # [START cloudsql_secrets]
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: password
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: redishost
+                  key: REDISHOST
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: redisport
+                  key: REDISPORT
+            - name: REDIS_DB
+              value: "0"
+            - name: REDIS_NAMESPACE
+              value: "HN_INTEGRATION_"
+      - name: cloudsql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.11
+        command: ["/cloud_sql_proxy",
+                  "-instances=[instance connection name]=tcp:5432",
+                  "-credential_file=/secrets/cloudsql/credentials.json"]
+        volumeMounts:
+          - name: cloudsql-instance-credentials
+            mountPath: /secrets/cloudsql
+            readOnly: true
+        # [START volumes]
+      volumes:
+        - name: cloudsql-instance-credentials
+          secret:
+            secretName: cloudsql-instance-credentials
