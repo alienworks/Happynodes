@@ -18,7 +18,6 @@ JSON_RPC_HTTP_PORT=10332
 P2P_TCP_PORT=10333
 P2P_WS_PORT=10334
 
-
 host = str(os.environ['PGHOST'])
 databasename = str(os.environ['PGDATABASE'])
 user = str(os.environ['PGUSER'])
@@ -37,6 +36,25 @@ tcp = ThreadedConnectionPool(MIN_CON, MAX_CON, dsn)
 def getSqlDateTime(ts):
     return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
+
+def getAddress(cursor):
+    address_dict = {}
+    reverse_address_dict = {}
+    cursor.execute("SELECT addr.id, concat(proto.protocol, '://', addr.address,':' , po.port) AS url \
+    FROM address addr \
+    INNER JOIN protocol proto \
+    ON addr.id=proto.address_Id \
+    INNER JOIN port po \
+    ON addr.id=po.address_Id")
+    results = cursor.fetchall()
+
+    for result in results:
+        id, url = result
+        address_dict[id]=url
+        reverse_address_dict[url]=id
+    return address_dict, reverse_address_dict
+
+
 def getIpId(cursor):
     address_dict = {}
     cursor.execute("SELECT * FROM ip;")
@@ -46,30 +64,30 @@ def getIpId(cursor):
         address_dict[ip] = (ip_id, address_id, ip)
     return address_dict
 
-def getAddressId(cursor):
-    address_dict = {}
-    cursor.execute("SELECT * FROM address;")
-    address_list = cursor.fetchall()
-    for source in address_list:
-        addressId, addressname = source
-        address_dict[addressId] = (addressId, addressname)
-    dict_address_port = {}
-    cursor.execute("SELECT * FROM port;")
-    port_list = cursor.fetchall()
-    for source in port_list:
-        portId, address_id, port = source
-        addressId, addressname = address_dict[address_id]
-        dict_address_port[addressname] = (addressId, addressname, port)       
-    return dict_address_port, address_dict
+# def getAddressId(cursor):
+#     address_dict = {}
+#     cursor.execute("SELECT * FROM address;")
+#     address_list = cursor.fetchall()
+#     for source in address_list:
+#         addressId, addressname = source
+#         address_dict[addressId] = (addressId, addressname)
+#     dict_address_port = {}
+#     cursor.execute("SELECT * FROM port;")
+#     port_list = cursor.fetchall()
+#     for source in port_list:
+#         portId, address_id, port = source
+#         addressId, addressname = address_dict[address_id]
+#         dict_address_port[addressname] = (addressId, addressname, port)       
+#     return dict_address_port, address_dict
 
-def getProtocol(cursor):
-    protocol_dict = {}
-    cursor.execute("SELECT * FROM protocol;")
-    protocol_list = cursor.fetchall()
-    for source in protocol_list:
-        _, addressId, protocol = source
-        protocol_dict[addressId] = protocol
-    return protocol_dict
+# def getProtocol(cursor):
+#     protocol_dict = {}
+#     cursor.execute("SELECT * FROM protocol;")
+#     protocol_list = cursor.fetchall()
+#     for source in protocol_list:
+#         _, addressId, protocol = source
+#         protocol_dict[addressId] = protocol
+#     return protocol_dict
 
 def get_latency(addr):
     start = time.time()
@@ -103,11 +121,9 @@ if __name__ == "__main__":
 
     cursor = conn.cursor()
     
-    dict_address_port, address_dict = getAddressId(cursor)
+    address_dict, reverse_address_dict = getAddress(cursor)
 
-    protocol_dict = getProtocol(cursor)
-
-    list_of_address = [protocol_dict[dict_address_port[key][0]] + "://"+key+":"+str(dict_address_port[key][2]) for key in dict_address_port]
+    list_of_address = [address for address in reverse_address_dict]
 
     settings = SettingsHolder()
 
@@ -118,10 +134,11 @@ if __name__ == "__main__":
     ip_dict = getIpId(cursor)
 
     resolver = dns.resolver.Resolver(configure=False)
-    resolver.nameservers = ["208.67.222.222", "208.67.220.220", '8.8.8.8', '2001:4860:4860::8888',
+    resolver.nameservers = ["208.67.222.222", "208.67.220.220", 
+                        '8.8.8.8', '2001:4860:4860::8888',
                         '8.8.4.4', '2001:4860:4860::8844']
 
-    def update(endpoints, client, dict_address_port):
+    def update(endpoints, client):
         # Avoid synchronisation
         time.sleep(random.uniform(0, 1)*10)
         
@@ -134,21 +151,24 @@ if __name__ == "__main__":
 
                     time.sleep(random.uniform(0, 1)*10)
                     
-                    dict_address_port, address_dict = getAddressId(cursor)
+                    address_dict, reverse_address_dict = getAddress(cursor)
 
                     address = endpoint.addr
                     print("=========================================================")
                     print("address: {}".format(address))
 
-                    address_dict_key = address.split("://")[1].split(":")[0]
-                    addressId, addressname, port = dict_address_port[address_dict_key]
+                    addressId = reverse_address_dict[address]
+                    
                     
                     try:
                         endpoint.setup() 
-                        print("online")
-                        cursor.execute("INSERT INTO online_history (ts, address_id, online) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, True])
+                        print("parametere")
+                        print(getSqlDateTime(time.time()))
+                        print(addressId)
+                        info = cursor.execute("INSERT INTO online_history (ts, address_id, online) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, True])
+                        print("{} online".format(address))
                     except:
-                        print("OFFLINE")
+                        print("{} offline".format(address))
                         cursor.execute("INSERT INTO online_history (ts, address_id, online) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, False])
                         cursor.execute("INSERT INTO latency_history (ts, address_id, latency_history) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, 200])
                         conn.commit()
@@ -256,7 +276,7 @@ if __name__ == "__main__":
 
     chuncksOfEndpoints = chunkIt(client.endpoints, 20)
     for endpoints in chuncksOfEndpoints:
-        t = threading.Thread(target=update, args = (endpoints, client, dict_address_port))
+        t = threading.Thread(target=update, args = (endpoints, client))
         t.daemon = True
         t.start()
 
