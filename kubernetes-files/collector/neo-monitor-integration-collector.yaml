@@ -1,0 +1,110 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: neo-monitor-integration-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: neo-monitor-integration-collector 
+  template:
+    metadata:
+      labels:
+        app: neo-monitor-integration-collector
+    spec:
+      containers:
+      - name: insert 
+        image: GCP_IMAGE_LOCATION/integration/neoinsert:v1
+        ports:
+        - containerPort: 3001
+        env:
+            - name: PGHOST
+              value: 127.0.0.1
+            - name: PGDATABASE
+              value: XXX
+            # [START cloudsql_secrets]
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: password 
+      - name: delete 
+        image: GCP_IMAGE_LOCATION/integration/neodelete:v1
+        ports:
+        - containerPort: 3001
+        env:
+            - name: PGHOST
+              value: 127.0.0.1
+            - name: PGDATABASE
+              value: XXX
+            # [START cloudsql_secrets]
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: password 
+      - name: neonode-p2p-ws 
+        image: GCP_IMAGE_LOCATION/integration/neonode-p2p-ws:v1
+        ports:
+        - containerPort: 3001
+        env:
+            - name: PGHOST
+              value: 127.0.0.1
+            - name: PGDATABASE
+              value: XXX
+            # [START cloudsql_secrets]
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: password
+      - name: neonode-p2p-tcp 
+        image: GCP_IMAGE_LOCATION/integration/neonode-p2p-tcp:v1
+        ports:
+        - containerPort: 3001
+        env:
+            - name: PGHOST
+              value: 127.0.0.1
+            - name: PGDATABASE
+              value: XXX
+            # [START cloudsql_secrets]
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: password
+      - name: cloudsql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.11
+        command: ["/cloud_sql_proxy",
+                  "-instances=INSTANCE-CONNECTION-NAME=tcp:5432",
+                  "-credential_file=/secrets/cloudsql/credentials.json"]
+        volumeMounts:
+          - name: cloudsql-instance-credentials
+            mountPath: /secrets/cloudsql
+            readOnly: true
+        # [START volumes]
+      volumes:
+        - name: cloudsql-instance-credentials
+          secret:
+            secretName: cloudsql-instance-credentials

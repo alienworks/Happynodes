@@ -37,7 +37,7 @@ class NodeInfo extends Component {
             return (
                 <div className="jumbotron nodes" style={{ display: 'inline-block', width: '100%' }}>
                     <div className="node-box" style={boxStyle}><p>{Number(data.health_score.toFixed(0))}</p></div>
-                    <h2 style={{ float: 'left' }}>{data.address}</h2>
+                    <h2 style={{ float: 'left', 'overflowWrap': 'break-word', 'width': '80%' }}>{data.address}</h2>
 
                     <hr style={{
                         'clear': 'left',
@@ -61,7 +61,7 @@ class NodeInfo extends Component {
                     </div>
 
                     <div className="infoblock">
-                        <h4>{Number((Number(data.latency) * 1000).toFixed(0)).toLocaleString()}</h4>
+                        <h4>{Number((Number(data.latency)).toFixed(0)).toLocaleString()}</h4>
                         <h5>Server Side Latency (ms)</h5>
                     </div>
 

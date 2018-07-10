@@ -17,13 +17,17 @@
     "react": "^16.4.1",
     "react-addons-css-transition-group": "^15.6.2",
     "react-bootstrap": "^0.32.1",
+    "react-bootstrap-table-next": "^0.1.14",
+    "react-bootstrap-table2-filter": "^0.3.0",
     "react-d3-graph": "^1.2.2",
     "react-dom": "^16.4.1",
     "react-ga": "^2.5.3",
+    "react-graph-vis": "^1.0.2",
     "react-interval-renderer": "1.0.1",
     "react-refetch": "^1.0.4",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "^1.1.4"
+    "react-scripts": "^1.1.4",
+    "react-virtualized": "^9.20.0"
   },
   "scripts": {
     "start": "react-scripts start",

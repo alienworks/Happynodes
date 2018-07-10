@@ -6,10 +6,29 @@ html {
       min-height: 100%;
 }
 
+.compact th{
+  font-size:1rem;
+}
+
 .top-block.blue p {
     background-color: #78cadd;
     color: #3b3b3b;
 }
+
+.react-bootstrap-table .table th{
+  font-size: 1rem;
+  vertical-align: top;
+}
+
+@media only screen and (max-width: 1300px) {
+    .react-bootstrap-table .table {
+      overflow: auto;
+      display: block;
+      table-layout: auto!important;
+    }
+}
+
+
 
 .top-block.yellow p {
     background-color: #f5e860;
@@ -19,6 +38,11 @@ html {
 .top-block.pink p {
     background-color: #f1b9d6;
     color: #3b3b3b;
+}
+
+.jumbotron.nodes.padgraph {
+    padding-bottom: 8rem !important;
+
 }
 
 html body {

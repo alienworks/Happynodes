@@ -41,7 +41,7 @@ This protects the database from being hit with too many requests at one time.
 > Summary: Continue NEO's global mission by translating the front-end as well as the documentation. 
 We will support major languages which will further support the development of the global NEO Community.
 
-## 1.4.0 Codename CANDY
+## 2.0.0 Codename CANDY
 
 > Summary: Knockout Historic visualisation to be best-in-class for the blockchain universe and show off the progress NEO has made in 2018.
 
