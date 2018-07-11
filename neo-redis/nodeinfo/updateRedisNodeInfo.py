@@ -63,4 +63,4 @@ if __name__ == "__main__":
 
         for node in nodes:
             r.hset(redisNamespace + 'node', node["id"], json.dumps(node))
-        time.sleep(60)
+        time.sleep(5)
