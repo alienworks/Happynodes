@@ -93,19 +93,19 @@ router.get('/nodes', function (req, res, next) {
             let node = JSON.parse(nodes[index])
             if (node.online == true) {
 
-                if (node.locale == "jp" || node.locale == "cn" || node.locale == "sg" || node.locale == "in" || node.locale == "au") {
+                if (node.locale == "jp" || node.locale == "kr" || node.locale == "cn" || node.locale == "sg" || node.locale == "in" || node.locale == "au") {
                     online_asia_nodes.push(node)
-                } else if (node.locale == "de" || node.locale == "gb" || node.locale == "nl") {
+                } else if (node.locale == "de" || node.locale == "ch" || node.locale == "gb" || node.locale == "nl") {
                     online_europe_nodes.push(node)
-                } else if (node.locale == "us" || node.locale == "ca") {
+                } else if (node.locale == "us" || node.locale == "br" || node.locale == "ca") {
                     online_north_america_nodes.push(node)
                 }
             } else {
-                if (node.locale == "jp" || node.locale == "cn" || node.locale == "sg" || node.locale == "in" || node.locale == "au") {
+                if (node.locale == "jp" || node.locale == "kr" || node.locale == "cn" || node.locale == "sg" || node.locale == "in" || node.locale == "au") {
                     offline_asia_nodes.push(node);
-                } else if (node.locale == "de" || node.locale == "gb" || node.locale == "nl") {
+                } else if (node.locale == "de" || node.locale == "ch" || node.locale == "gb" || node.locale == "nl") {
                     offline_europe_nodes.push(node);
-                } else if (node.locale == "us" || node.locale == "ca") {
+                } else if (node.locale == "us" || node.locale == "br" || node.locale == "ca") {
                     offline_north_america_nodes.push(node);
                 }
             }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-refetch'
-import { Graph } from 'react-d3-graph'
+import Graph from 'react-graph-vis'
 import config from './config'
 
 class NetworkGraph extends Component {
@@ -26,69 +26,70 @@ class NetworkGraph extends Component {
             const nodeslist_data = nodeslist.value;
 
 
-            const d_edges = edges_data.map((item, i) => { return { "source": item.source_address, "target": item.validated_peers_address } });
-            const d_nodes = nodeslist_data.map((item, i) => { return { "id": item.address } });
+            const d_edges = edges_data.map((item, i) => { return { "from": item.source_address_id, "to": item.validated_peers_address_id } });
+            let edgeCount = {}
 
-            const node_lookup = nodeslist_data.reduce(function (map, obj) {
-                map[obj.address] = obj.id;
-                return map;
-            }, {});
+            for (let i = 0; i < edges_data.length; i++){               
+               edgeCount[edges_data[i]['source_address_id']] = edges_data[i]['source_address_id'] in edgeCount ? 1+edgeCount[edges_data[i]['source_address_id']] : 1
+            }
+
+
+
+            const d_nodes = nodeslist_data.map((item, i) => { return { "id": item.id, label: item.address,  size: 1+(edgeCount[item.id])} });
 
             const data = {
                 nodes: d_nodes,
-                links: d_edges
+                edges: d_edges
             };
-            const myConfig = {
-                nodeHighlightBehavior: true,
-                automaticRearrangeAfterDropNode: true,
-                linkHighlightBehavior: true,
-                panAndZoom: true,
-                width: '500',
-                node: {
-                    color: '#1FB6FF',
-                    size: 120,
-                    highlightStrokeColor: '#1FB6FF'
+
+
+
+           
+
+            var options = {
+                layout: {
+                    hierarchical: false
                 },
-                link: {
-                    highlightColor: 'lightblue'
+                edges: {
+                    color: "#000000"
+                },
+                nodes: {
+                    shape: "hexagon"
+                },
+                physics:{
+                    stabilization: false,
+                    maxVelocity: 30,
+                    solver: 'forceAtlas2Based',
+                  }
+            };
+             
+            var events = {
+                select: function(event) {
+                    var { nodes, edges } = event;
+                    console.log(nodes, edges);
+                    if (nodes.length === 1){
+                        window.location = "./" + nodes[0];
+                    }
+                    
                 }
-            };
-            const onMouseOverNode = function (nodeId) {
-                //window.alert(`Mouse over node ${nodeId}`);
-            };
-
-            const onClickNode = function (nodeId) {
-                window.location = './' + node_lookup[nodeId];
-
-
-            };
+            }
 
 
             return (
 
-                <div className="jumbotron nodes">
+                <div className="jumbotron nodes padgraph" style={{'width': '100%', 'height':'900px'}}>
 
 
                     <h2>Direct Peers</h2>
                     <hr style={{
                         'borderColor': '#78cadd', 'borderWidth': '3px'
                     }} />
-                    <div style={{ width: '500px' }}>
 
-                        <Graph
-                            id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error
-                            data={data}
-                            config={myConfig}
-                            restartSimulation
-
-                            onMouseOverNode={onMouseOverNode}
-                            onClickNode={onClickNode}
-
-                        />
+                    <Graph graph={data} options={options} events={events} />
 
 
-
-                    </div></div>
+      
+                      </div>
             )
         }
     }

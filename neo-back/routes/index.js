@@ -269,7 +269,7 @@ router.get('/nodes', cache('1 minute'), function (req, res, next) {
 			) * 100
 		)/ 4.0 as health_score,
 		coalesce(
-			lat.latency,
+			lat.latency* 1000,
 			200
 		) as latency,
 		f.online,
@@ -515,19 +515,19 @@ router.get('/nodes', cache('1 minute'), function (req, res, next) {
 					var i;
 					for (i = 0; i < data.length; i++) {
 						if (data[i].online == true) {
-							if (data[i].locale == "jp" || data[i].locale == "cn" || data[i].locale == "sg" || data[i].locale == "in" || data[i].locale == "au") {
+							if (data[i].locale == "jp" || data[i].locale == "kr" || data[i].locale == "cn" || data[i].locale == "sg" || data[i].locale == "in" || data[i].locale == "au") {
 								online_asia_nodes.push(data[i])
-							} else if (data[i].locale == "de" || data[i].locale == "gb" || data[i].locale == "nl") {
+							} else if (data[i].locale == "de" || data[i].locale == "ch" || data[i].locale == "gb" || data[i].locale == "nl") {
 								online_europe_nodes.push(data[i])
-							} else if (data[i].locale == "us" || data[i].locale == "ca") {
+							} else if (data[i].locale == "us" || data[i].locale == "br" || data[i].locale == "ca") {
 								online_north_america_nodes.push(data[i])
 							}
 						} else {
-							if (data[i].locale == "jp" || data[i].locale == "cn" || data[i].locale == "sg" || data[i].locale == "in" || data[i].locale == "au") {
+							if (data[i].locale == "jp" || data[i].locale == "kr" || data[i].locale == "cn" || data[i].locale == "sg" || data[i].locale == "in" || data[i].locale == "au") {
 								offline_asia_nodes.push(data[i]);
-							} else if (data[i].locale == "de" || data[i].locale == "gb" || data[i].locale == "nl") {
+							} else if (data[i].locale == "de" || data[i].locale == "ch" || data[i].locale == "gb" || data[i].locale == "nl") {
 								offline_europe_nodes.push(data[i]);
-							} else if (data[i].locale == "us" || data[i].locale == "ca") {
+							} else if (data[i].locale == "us" || data[i].locale == "br" || data[i].locale == "ca") {
 								offline_north_america_nodes.push(data[i]);
 							}
 						}
@@ -600,7 +600,7 @@ router.get('/nodes/:node_id', cache('2 seconds'), function (req, res, next) {
 		) * 100
 	)/ 4.0 as health_score,
 	coalesce(
-		lat.latency,
+		lat.latency* 1000,
 		200
 	) as latency,
 	b.rpc_https_status as rpc_https_status,

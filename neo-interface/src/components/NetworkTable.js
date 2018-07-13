@@ -98,7 +98,7 @@ class NetworkTable extends Component {
               dataField: 'latency',
               text: 'Latency',
               sort: true,
-              formatter: (cell)=>{return cell===200 ? "Can't be reached" : parseFloat(cell * 1000).toFixed(2)}
+              formatter: (cell)=>{return cell===200 ? "Can't be reached" : parseFloat(cell).toFixed(2)}
             }, {
               dataField: 'mempool_size',
               text: 'Unconfirmed Tx',

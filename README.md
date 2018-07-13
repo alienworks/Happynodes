@@ -11,7 +11,7 @@
 
 Happynodes is a blockchain network monitor and visualisation tool designed for the NEO Smart Economy Blockchain. It is live on https://happynodes.f27.ventures. It is developed and run by F27 with support from NGD. There is also an API under development that powers the front-end but will have useful metrics for the NEO community that are currently not available anywhere else (primarily historic information).
 
-Current Release: [0.9.0](https://github.com/neo-ngd/Happynodes/releases/tag/v0.9.0). You can see our [Milestones](https://github.com/neo-ngd/Happynodes/milestones) for more information on what is in each major release, as well as our [Releases](https://github.com/neo-ngd/Happynodes/releases/latest) log.
+Current Release: [1.0.0](https://github.com/neo-ngd/Happynodes/releases/tag/v1.0.0). You can see our [Milestones](https://github.com/neo-ngd/Happynodes/milestones) for more information on what is in each major release, as well as our [Releases](https://github.com/neo-ngd/Happynodes/releases/latest) log.
 
 <details>
  <summary><strong>Table of Contents</strong> (click to expand)</summary>
@@ -44,7 +44,7 @@ The HappyNodes repo is a split into a number of components we have developed to 
 * *neo-collector* - backend processing (making JSON-RPC and Ping tests on nodes and updating database), written in Python 3.6+.
 * *neo-interface* - front-end responsive web app, written in Node.js, Express and React. Live on https://happynodes.f27.ventures
 * *neo-node* - lightweight NEO node to test out P2P connections on nodes, written using Python 3.6+ and neo-python. 
-
+* *neo-redis* - pushes latest aggregated data into Redis client essentially as a caching layer to accelerate the API response time performance.
 
 ## Production Setup
 
@@ -55,7 +55,6 @@ Since HappyNodes currently has no revenue stream, it was important to keep the S
 We expect future versions to contain major revisions to the production setup.
 
 <img src="https://github.com/neo-ngd/Happynodes/blob/master/assets/Happynodes.svg" width=100% />
-
 
 
 ## Local Deployment Instructions
@@ -109,13 +108,15 @@ This project is licensed under the terms of the **MIT** license.
 ## Recommended Reading
 
 * neo.org JSON-RPC documentation http://docs.neo.org/en-us/node/cli/apigen.html
+* Neo News Today article on Happynodes and the London Blockchain Challenge https://neonewstoday.com/general/happynodes-winner-of-neo-london-blockchain-challenge/
 
 ## Related Projects
 
 * City of Zion Monitor - [neo-mon](https://github.com/CityOfZion/neo-mon), [live](http://monitor.cityofzion.io/)
-* State of Neo Monitor - [state-of-neo](https://github.com/neo-ngd/state-of-neo-server)
+* State of Neo Monitor - [state-of-neo](https://github.com/neo-ngd/state-of-neo-server), [live](http://stateofneo.io/)
 * City of Zion Neo-Python - [neo-python](https://github.com/CityOfZion/neo-python)
 * City of Zion neon-js - [neon-js](https://github.com/CityOfZion/neon-js)
+* Polymon Network Monitor - [polymon.network](https://polymon.network/)
 
 ## Notes on F27 Ventures
 
