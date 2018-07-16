@@ -58,9 +58,6 @@ class UnconfirmedTxInfo extends Component {
                 <p>blockhash: {unconfirmTxInfo.value.data.result.blockhash}</p>
                 <p>blocktime: {unconfirmTxInfo.value.data.result.blocktime}</p>
                 <p>type: {unconfirmTxInfo.value.data.result.type}</p>
-                {/* <p>vin: {unconfirmTxInfo.value.data.result.vin}</p>
-                <p>vout: {unconfirmTxInfo.value.data.result.vout}</p> */}
-
                 {unconfirmTxInfo.value.data.result.vin.map(v => <p key={v.txid} >  vin: {v.addr} {v.value} {v.asset} </p>)}
                 {unconfirmTxInfo.value.data.result.vout.map(v => <p key={v.txid} >  vout: {v.address} {v.value} {assettable[v.asset]} </p>)}
 
