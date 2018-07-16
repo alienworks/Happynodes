@@ -59,7 +59,7 @@ if __name__ == "__main__":
                     "locale": node_info[22],
                     "version": node_info[23],
                     "max_blockheight": node_info[24],
-                    "all_times_stability": node_info[25]
+                    "all_times_stability": float(node_info[25])
                     }
             nodes.append(node)
 
