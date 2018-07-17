@@ -7,6 +7,7 @@ import dns.resolver
 import socket
 import os
 import requests
+import time
 
 resolver = dns.resolver.Resolver(configure=False)
 resolver.nameservers = ["208.67.222.222", "208.67.220.220", '8.8.8.8', '2001:4860:4860::8888',
@@ -107,22 +108,43 @@ def create_connectionendpoints_rows(cursor, data):
                 # this connection endpoints does not exist in the database
                 print("insert into connection endpoints, hostname:{}  node_id: {} protocol: {} port: {}".format(hostname, int(node_id), str(protocol), int(port)))
                 cursor.execute("INSERT INTO public.connection_endpoints  (node_id, protocol, port) VALUES (%s, %s, %s)", [int(node_id), str(protocol), int(port)])
+                cursor.execute('SELECT LASTVAL()')
+
+                lastid = cursor.fetchone()['lastval']
+
+                cursor.execute("INSERT INTO locale (connection_id, locale) VALUES (%s, %s)", [
+                               lastid, endpoint["locale"]])
+                cursor.execute("INSERT INTO location (connection_id, location) VALUES (%s, %s)", [
+                               lastid, endpoint["location"]])
+
+                response = requests.get("https://geoip.nekudo.com/api/"+ip)
+                json_data = json.loads(response.text)
+
+                lat = json_data["location"]['latitude']
+                long = json_data["location"]['longitude']
+
+                cursor.execute("INSERT INTO coordinates (connection_id, lat, long) VALUES (%s, %s, %s)", [lastid, lat, long])
         
 if __name__ == "__main__":
-    connect_str = connection_str
+    while True:
+        connect_str = connection_str
 
-    conn = psycopg2.connect(connect_str)
+        conn = psycopg2.connect(connect_str)
 
-    cursor = conn.cursor()
+        cursor = conn.cursor()
 
-    data = get_coz_mainnet_json()
+        data = get_coz_mainnet_json()
 
-    create_or_update_nodes_rows(cursor, data)
-    conn.commit()
+        create_or_update_nodes_rows(cursor, data)
+        conn.commit()
 
-    create_connectionendpoints_rows(cursor, data)
-    conn.commit()
+        create_connectionendpoints_rows(cursor, data)
+        conn.commit()
 
-    cursor.close()
-    conn.close()
+        cursor.close()
+        conn.close()
+
+        # sleep for a day
+        time.sleep(60*60*24)
+
 
