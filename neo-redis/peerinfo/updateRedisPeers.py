@@ -49,7 +49,7 @@ if __name__ == "__main__":
             node_peers = peers_table[node_key]
             r.hset(redisNamespace+'validatedpeers', node_key, json.dumps(node_peers))
 
-        cursor.execute("select max_ts_validated_peers_table.address_id as source_address_id, concat( protob.protocol, '://', address_b.address ) as source_address, validated_peers_address_Id, concat( protoa.protocol, '://', address_a.address ) validated_peers_address from ( select address_id, ts, validated_peers_address_Id from validated_peers_history where ( address_id, ts ) in ( select address_id, max(ts) from validated_peers_history group by address_id ) ) max_ts_validated_peers_table inner join address address_a on address_a.id = max_ts_validated_peers_table.validated_peers_address_Id inner join address address_b on address_b.id = max_ts_validated_peers_table.address_Id inner join protocol protoa on protoa.address_id = address_a.id inner join protocol protob on protob.address_id = address_b.id")
+        cursor.execute("select max_ts_validated_peers_table.connection_id as source_connection_id, concat( endpoint_b.protocol, '://', node_b.hostname ) as source_address, validated_peers_connection_id, concat( endpoint_a.protocol, '://', node_a.hostname ) validated_peers_address from ( select connection_id, ts, validated_peers_connection_id from validated_peers_history where ( connection_id, ts ) in ( select connection_id, max(ts) from validated_peers_history group by connection_id ) ) max_ts_validated_peers_table inner join connection_endpoints endpoint_a on endpoint_a.id = max_ts_validated_peers_table.validated_peers_connection_id inner join connection_endpoints endpoint_b on endpoint_b.id = max_ts_validated_peers_table.connection_id inner join nodes node_a on node_a.id = endpoint_a.node_id inner join nodes node_b on node_b.id = endpoint_b.node_id")
         result = cursor.fetchall()
 
         edges = []
@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
         r.set(redisNamespace+"edges", json.dumps(edges))
 
-        cursor.execute("select adr.id, address as hostname, protocol, CONCAT(proto.protocol, '://', adr.address) as address from address adr inner join protocol proto on adr.id = proto.address_id")
+        cursor.execute("select max_ts_validated_peers_table.connection_id as source_connection_id, concat( endpoint_b.protocol, '://', node_b.hostname ) as source_address, validated_peers_connection_id, concat( endpoint_a.protocol, '://', node_a.hostname ) validated_peers_address from ( select connection_id, ts, validated_peers_connection_id from validated_peers_history where ( connection_id, ts ) in ( select connection_id, max(ts) from validated_peers_history group by connection_id ) ) max_ts_validated_peers_table inner join connection_endpoints endpoint_a on endpoint_a.id = max_ts_validated_peers_table.validated_peers_connection_id inner join connection_endpoints endpoint_b on endpoint_b.id = max_ts_validated_peers_table.connection_id inner join nodes node_a on node_a.id = endpoint_a.node_id inner join nodes node_b on node_b.id = endpoint_b.node_id")
         result = cursor.fetchall()
 
         nodeslist = []
