@@ -24,9 +24,6 @@ router.get('/', function (req, res, next) {
 });
 
 // Took 154ms
-// SELECT max(blockheight)
-// FROM  blockheight_history
-// WHERE blockheight IS NOT NULL
 router.get('/bestblock', cache('1 seconds'), function (req, res, next) {
 	pool.connect()
 		.then(client => {
