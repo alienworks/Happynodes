@@ -29,7 +29,7 @@ def get_coz_mainnet_json():
         'https://raw.githubusercontent.com/CityOfZion/neo-mon/master/docs/assets/mainnet.json')
     return json.loads(r.text)
 
-def get_existed_nodes(cursor):
+def get_existing_nodes(cursor):
     # For mainnet json, we use hostanme to check whether a node
     # exists in our database, since there is a chance that 
     # that a node has multiple ips for load-balancing
@@ -42,7 +42,7 @@ def get_existed_nodes(cursor):
 
     return nodes_dict
 
-def get_existed_connections(cursor):
+def get_existing_connections(cursor):
     connections_dict = {}
     cursor.execute("select id, hostname, node_id, protocol, port from connection_endpoints")
 
@@ -61,7 +61,7 @@ def create_or_update_nodes_rows(cursor, data):
             hostname = endpoint["url"].split("//")[-1].split(":")[0]
             ip = socket.gethostbyname(endpoint["url"])
 
-            nodes_dict = get_existed_nodes(cursor)
+            nodes_dict = get_existing_nodes(cursor)
             
             if hostname not in nodes_dict:
                 # add new rows in nodes
@@ -93,7 +93,7 @@ def create_connectionendpoints_rows(cursor, data):
             hostname = endpoint["url"].split("//")[-1].split(":")[0]
             ip = socket.gethostbyname(endpoint["url"])
 
-            nodes_dict = get_existed_nodes(cursor)
+            nodes_dict = get_existing_nodes(cursor)
 
             (node_id, hostnameFromDatabase, ipFromDatabase) = nodes_dict[hostname]
 

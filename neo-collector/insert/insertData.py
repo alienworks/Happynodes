@@ -40,10 +40,10 @@ def getSqlDateTime(ts):
 def getAddress(cursor):
     address_dict = {}
     reverse_address_dict = {}
-    cursor.execute("SELECT endpoint.id, concat(endpoint.protocol, '://', nod.hostname,':' , endpoint.port) AS url \
+    cursor.execute("SELECT endpoint.id, concat(endpoint.protocol, '://', n.hostname,':' , endpoint.port) AS url \
                     FROM connection_endpoints endpoint  \
-                    INNER JOIN nodes nod  \
-                    ON nod.id=endpoint.node_id")
+                    INNER JOIN nodes n  \
+                    ON n.id=endpoint.node_id")
     results = cursor.fetchall()
 
     for result in results:
@@ -55,10 +55,10 @@ def getAddress(cursor):
 
 def getIpId(cursor):
     address_dict = {}
-    cursor.execute("select nod.id,ce.id,ip \
+    cursor.execute("select n.id,ce.id,ip \
             from connection_endpoints ce \
-            inner join nodes nod \
-            on nod.id=ce.node_id")
+            inner join nodes n \
+            on n.id=ce.node_id")
     ip_list = cursor.fetchall()
     for ip_id, address_id, ip in ip_list:
         address_dict[ip] = (ip_id, address_id, ip)

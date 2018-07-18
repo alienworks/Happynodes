@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
         cursor = conn.cursor()
 
-        cursor.execute("select updated_peers_table.connection_id, updated_peers_table.validated_peers_connection_id, nod.hostname as validated_peers_address, ce.protocol as validated_peers_protocol, ce.port as validated_peers_port, concat( ce.protocol, '://', nod.hostname, ':', ce.port ) as validated_peers_fulladdress from ( select vh.connection_id, vh.validated_peers_connection_id from validated_peers_history vh where ( vh.connection_id, vh.ts ) in ( select vh.connection_id, max( vh.ts ) as maxts from validated_peers_history vh group by vh.connection_id ) ) updated_peers_table left join connection_endpoints ce on ce.id = updated_peers_table.validated_peers_connection_id left join nodes nod on ce.node_id = nod.id")
+        cursor.execute("select updated_peers_table.connection_id, updated_peers_table.validated_peers_connection_id, n.hostname as validated_peers_address, ce.protocol as validated_peers_protocol, ce.port as validated_peers_port, concat( ce.protocol, '://', n.hostname, ':', ce.port ) as validated_peers_fulladdress from ( select vh.connection_id, vh.validated_peers_connection_id from validated_peers_history vh where ( vh.connection_id, vh.ts ) in ( select vh.connection_id, max( vh.ts ) as maxts from validated_peers_history vh group by vh.connection_id ) ) updated_peers_table left join connection_endpoints ce on ce.id = updated_peers_table.validated_peers_connection_id left join nodes n on ce.node_id = n.id")
         result = cursor.fetchall()
         print(result)
 
@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
         r.set(redisNamespace+"edges", json.dumps(edges))
 
-        cursor.execute("select endpoint.id , nod.hostname, endpoint.protocol, CONCAT(endpoint.protocol, '://', nod.hostname) as address from connection_endpoints endpoint inner join nodes nod on nod.id = endpoint.node_id")
+        cursor.execute("select endpoint.id , n.hostname, endpoint.protocol, CONCAT(endpoint.protocol, '://', n.hostname) as address from connection_endpoints endpoint inner join nodes n on n.id = endpoint.node_id")
         result = cursor.fetchall()
 
         nodeslist = []

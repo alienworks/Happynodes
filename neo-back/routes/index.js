@@ -176,7 +176,7 @@ router.get('/nodes', cache('1 minute'), function (req, res, next) {
 			console.log("pool.waitingCount", pool.waitingCount)
 			return client.query(`select
 								endpoints.id,
-								nod.hostname,
+								n.hostname,
 								endpoints.protocol,
 								endpoints.port,
 								coalesce(
@@ -187,7 +187,7 @@ router.get('/nodes', cache('1 minute'), function (req, res, next) {
 									activep2pws.p2p_ws_status,
 									false
 								) as p2p_ws_status,
-								concat( endpoints.protocol, '://', nod.hostname, ':' , endpoints.port ) as address,
+								concat( endpoints.protocol, '://', n.hostname, ':' , endpoints.port ) as address,
 								coalesce(
 									vpt.validated_peers_counts,
 									0
@@ -253,8 +253,8 @@ router.get('/nodes', cache('1 minute'), function (req, res, next) {
 								endpoints.id = co.connection_id
 							inner join locale lo on
 								endpoints.id = lo.connection_id
-							inner join nodes nod on
-								endpoints.node_id = nod.id
+							inner join nodes n on
+								endpoints.node_id = n.id
 							left join (
 									select
 										connection_id,
@@ -727,7 +727,7 @@ router.get('/nodes/:node_id', cache('2 seconds'), function (req, res, next) {
 			return client.query(`SELECT * FROM
 				(select
 				endpoints.id,
-				nod.hostname,
+				n.hostname,
 				endpoints.protocol,
 				endpoints.port,
 				coalesce(
@@ -738,7 +738,7 @@ router.get('/nodes/:node_id', cache('2 seconds'), function (req, res, next) {
 					activep2pws.p2p_ws_status,
 					false
 				) as p2p_ws_status,
-				concat( endpoints.protocol, '://', nod.hostname, ':' , endpoints.port ) as address,
+				concat( endpoints.protocol, '://', n.hostname, ':' , endpoints.port ) as address,
 				coalesce(
 					vpt.validated_peers_counts,
 					0
@@ -804,8 +804,8 @@ router.get('/nodes/:node_id', cache('2 seconds'), function (req, res, next) {
 				endpoints.id = co.connection_id
 			inner join locale lo on
 				endpoints.id = lo.connection_id
-			inner join nodes nod on
-				endpoints.node_id = nod.id
+			inner join nodes n on
+				endpoints.node_id = n.id
 			left join (
 					select
 						connection_id,
@@ -1244,9 +1244,9 @@ router.get('/nodes/:node_id/validatedpeers', cache('1 minute'), function (req, r
 		.then(client => {
 			return client.query(`select 
 			validated_peers_connection_id as connection_id, 
-			nod.hostname , 
+			n.hostname , 
 			ce.protocol, 
-			CONCAT(ce.protocol, '://', nod.hostname) as address 
+			CONCAT(ce.protocol, '://', n.hostname) as address 
 		  from 
 			( 
 			  select 
@@ -1266,8 +1266,8 @@ router.get('/nodes/:node_id/validatedpeers', cache('1 minute'), function (req, r
 			) updated_peers_table 
 		  left join connection_endpoints ce on 
 			ce.id = updated_peers_table.validated_peers_connection_id 
-		  left join nodes nod on
-			  ce.node_id=nod.id`, [req.params.node_id])
+		  left join nodes n on
+			  ce.node_id=n.id`, [req.params.node_id])
 				.catch((error) => {
 					client.release();
 					console.log(error)
@@ -1339,10 +1339,10 @@ router.get('/nodeslist', cache('1 minutes'), function (req, res, next) {
 			console.log("pool.totalCount", pool.totalCount)
 			console.log("pool.idleCount", pool.idleCount)
 			console.log("pool.waitingCount", pool.waitingCount)
-			return client.query(`select endpoint.id , nod.hostname, endpoint.protocol, CONCAT(endpoint.protocol, '://', nod.hostname) as address 
+			return client.query(`select endpoint.id , n.hostname, endpoint.protocol, CONCAT(endpoint.protocol, '://', n.hostname) as address 
 								from connection_endpoints endpoint 
-								inner join nodes nod
-								on nod.id = endpoint.node_id`)
+								inner join nodes n
+								on n.id = endpoint.node_id`)
 				.catch((error) => {
 					client.release();
 					console.log(error)
