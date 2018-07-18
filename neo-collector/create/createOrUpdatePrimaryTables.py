@@ -75,15 +75,6 @@ def create_or_update_nodes_rows(cursor, data):
                     # IP has changes, some nodes uses loadbalancing and changes their ip all the time
                     print("update node's ip. hostname: {} id: {} ipFromDatabase: {} ip:{}".format(hostname, id, ipFromDatabase, ip))
                     cursor.execute("UPDATE nodes SET ip=%s WHERE id=%s;", [ip, id])
-            
-            # Update old connections table hack  
-            # node_id = nodes_dict[hostname][0]
-            # port = endpoint["port"] if "port" in endpoint else 10332
-            # protocol = endpoint["protocol"]
-            # print("info {} {} {} {} {}".format(key, hostname, node_id, protocol, port))
-            # cursor.execute(
-            #         "update connection_endpoints SET node_id=%s, protocol=%s, port=%s WHERE id=%s and hostname=%s", [node_id, protocol, port, key, hostname])
-            # key += 1
     
 
 def create_connectionendpoints_rows(cursor, data):
