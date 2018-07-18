@@ -28,10 +28,10 @@ def getSqlDateTime(ts):
 
 def getIpAddressMap(cursor):
     ip_dict = {}
-    cursor.execute("select ce.id, n.id, n.hostname, n.ip \
-                    from connection_endpoints ce\
-                    inner join nodes n\
-                    on n.id=ce.node_id")
+    cursor.execute("""select ce.id, n.id, n.hostname, n.ip 
+                    from connection_endpoints ce
+                    inner join nodes n
+                    on n.id=ce.node_id""")
     results = cursor.fetchall()
     
     for result in results:
