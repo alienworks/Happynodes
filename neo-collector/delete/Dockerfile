@@ -1,4 +1,4 @@
-FROM cityofzion/neo-python
+FROM python:3.6-alpine
 
 RUN apt-get update && apt-get install -y \
     postgresql \
