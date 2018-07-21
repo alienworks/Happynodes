@@ -30,7 +30,7 @@ def get_coz_mainnet_json():
     return json.loads(r.text)
 
 def get_existing_nodes(cursor):
-    # For mainnet json, we use hostanme to check whether a node
+    # For mainnet json, we use hostname to check whether a node
     # exists in our database, since there is a chance that 
     # that a node has multiple ips for load-balancing
     nodes_dict = {}
