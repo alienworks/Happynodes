@@ -144,6 +144,9 @@ if __name__ == "__main__":
 
             cursor.close()
             conn.close()
+        else:
+            raise ValueError("mainnet.json file is not in the right format")
+
 
         # sleep for a day
         time.sleep(60*60*24)
