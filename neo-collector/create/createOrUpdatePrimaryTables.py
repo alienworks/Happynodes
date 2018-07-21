@@ -20,7 +20,9 @@ password = str(os.environ['PGPASSWORD'])
 
 connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(
     databasename, user, host, password)
-dsn = "postgresql://{}:{}@{}/{}".format(user, password, host, databasename)
+
+connection_str = "dbname='{}' user='{}' host='localhost' password='{}'".format(
+    databasename, user, host, password)
 
 print(connection_str)
 
@@ -110,7 +112,7 @@ def create_connectionendpoints_rows(cursor, data):
                 cursor.execute("INSERT INTO public.connection_endpoints  (node_id, protocol, port) VALUES (%s, %s, %s)", [int(node_id), str(protocol), int(port)])
                 cursor.execute('SELECT LASTVAL()')
 
-                lastid = cursor.fetchone()['lastval']
+                lastid = cursor.fetchone()[0]
 
                 cursor.execute("INSERT INTO locale (connection_id, locale) VALUES (%s, %s)", [
                                lastid, endpoint["locale"]])
