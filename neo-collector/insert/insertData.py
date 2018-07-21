@@ -40,12 +40,10 @@ def getSqlDateTime(ts):
 def getAddress(cursor):
     address_dict = {}
     reverse_address_dict = {}
-    cursor.execute("SELECT addr.id, concat(proto.protocol, '://', addr.address,':' , po.port) AS url \
-    FROM address addr \
-    INNER JOIN protocol proto \
-    ON addr.id=proto.address_Id \
-    INNER JOIN port po \
-    ON addr.id=po.address_Id")
+    cursor.execute("SELECT endpoint.id, concat(endpoint.protocol, '://', n.hostname,':' , endpoint.port) AS url \
+                    FROM connection_endpoints endpoint  \
+                    INNER JOIN nodes n  \
+                    ON n.id=endpoint.node_id")
     results = cursor.fetchall()
 
     for result in results:
@@ -57,37 +55,14 @@ def getAddress(cursor):
 
 def getIpId(cursor):
     address_dict = {}
-    cursor.execute("SELECT * FROM ip;")
+    cursor.execute("select n.id,ce.id,ip \
+            from connection_endpoints ce \
+            inner join nodes n \
+            on n.id=ce.node_id")
     ip_list = cursor.fetchall()
-    for source in ip_list:
-        ip_id, address_id, ip = source
+    for ip_id, address_id, ip in ip_list:
         address_dict[ip] = (ip_id, address_id, ip)
     return address_dict
-
-# def getAddressId(cursor):
-#     address_dict = {}
-#     cursor.execute("SELECT * FROM address;")
-#     address_list = cursor.fetchall()
-#     for source in address_list:
-#         addressId, addressname = source
-#         address_dict[addressId] = (addressId, addressname)
-#     dict_address_port = {}
-#     cursor.execute("SELECT * FROM port;")
-#     port_list = cursor.fetchall()
-#     for source in port_list:
-#         portId, address_id, port = source
-#         addressId, addressname = address_dict[address_id]
-#         dict_address_port[addressname] = (addressId, addressname, port)       
-#     return dict_address_port, address_dict
-
-# def getProtocol(cursor):
-#     protocol_dict = {}
-#     cursor.execute("SELECT * FROM protocol;")
-#     protocol_list = cursor.fetchall()
-#     for source in protocol_list:
-#         _, addressId, protocol = source
-#         protocol_dict[addressId] = protocol
-#     return protocol_dict
 
 def get_latency(addr):
     start = time.time()
@@ -165,23 +140,23 @@ if __name__ == "__main__":
                         print("parametere")
                         print(getSqlDateTime(time.time()))
                         print(addressId)
-                        info = cursor.execute("INSERT INTO online_history (ts, address_id, online) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, True])
+                        info = cursor.execute("INSERT INTO online_history (ts, connection_id, online) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, True])
                         print("{} online".format(address))
                     except:
                         print("{} offline".format(address))
-                        cursor.execute("INSERT INTO online_history (ts, address_id, online) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, False])
-                        cursor.execute("INSERT INTO latency_history (ts, address_id, latency_history) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, 200])
+                        cursor.execute("INSERT INTO online_history (ts, connection_id, online) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, False])
+                        cursor.execute("INSERT INTO latency_history (ts, connection_id, latency_history) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, 200])
                         conn.commit()
                         tcp.putconn(conn)
                         continue
 
                     height = client.get_height(endpoint=endpoint)
                     print("{} Blockheight: {}".format(address, height))
-                    cursor.execute("INSERT INTO blockheight_history (ts, address_id, blockheight) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, height])
+                    cursor.execute("INSERT INTO blockheight_history (ts, connection_id, blockheight) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, height])
 
                     latency = get_latency(endpoint.addr)
                     print("Latency: {}".format(latency))
-                    cursor.execute("INSERT INTO latency_history (ts, address_id, latency_history) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, latency])
+                    cursor.execute("INSERT INTO latency_history (ts, connection_id, latency_history) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, latency])
                     try:
                         version = client.get_version(endpoint=endpoint)
                     except:
@@ -190,48 +165,48 @@ if __name__ == "__main__":
 
                     print("version: {}".format(version))
                     if version == None:
-                        cursor.execute("INSERT INTO version_history (ts, address_id, version) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, "Unknown"])
+                        cursor.execute("INSERT INTO version_history (ts, connection_id, version) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, "Unknown"])
                     else:
-                        cursor.execute("INSERT INTO version_history (ts, address_id, version) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, version['useragent']])
+                        cursor.execute("INSERT INTO version_history (ts, connection_id, version) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, version['useragent']])
 
                     connection_counts = client.get_connection_count(endpoint=endpoint)
                     print("connection_counts: {}".format(connection_counts))
-                    cursor.execute("INSERT INTO connection_counts_history (ts, address_id, connection_counts) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, connection_counts])
+                    cursor.execute("INSERT INTO connection_counts_history (ts, connection_id, connection_counts) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, connection_counts])
 
                     raw_mempool = client.get_raw_mempool(endpoint=endpoint)
                     if raw_mempool is None:
                         print("mempool tx count: {}".format(0))
-                        cursor.execute("INSERT INTO mempool_size_history (ts, address_id, mempool_size) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, 0])
+                        cursor.execute("INSERT INTO mempool_size_history (ts, connection_id, mempool_size) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, 0])
                     else:
                         print("mempool tx count: {}".format(len(raw_mempool)))
-                        cursor.execute("INSERT INTO mempool_size_history (ts, address_id, mempool_size) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, len(raw_mempool)])
+                        cursor.execute("INSERT INTO mempool_size_history (ts, connection_id, mempool_size) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, len(raw_mempool)])
                         if height:
                             for tx in raw_mempool:
-                                cursor.execute("INSERT INTO unconfirmed_tx (last_blockheight, address_id, tx) VALUES (%s, %s, %s)", [height, addressId, tx])
+                                cursor.execute("INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) VALUES (%s, %s, %s)", [height, addressId, tx])
 
                     rpc_https_service = test_port(address,JSON_RPC_HTTPS_PORT)
                     rpc_http_service = test_port(address,JSON_RPC_HTTP_PORT)
 
                     if rpc_https_service:
                         print("JSON_RPC_HTTPS_PORT okay")
-                        cursor.execute("INSERT INTO rpc_http_status_history (ts, address_id, rpc_http_status) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, True])
+                        cursor.execute("INSERT INTO rpc_http_status_history (ts, connection_id, rpc_http_status) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, True])
                     else:
                         print("JSON_RPC_HTTPS_PORT not avaliable")
-                        cursor.execute("INSERT INTO rpc_http_status_history (ts, address_id, rpc_http_status) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, False])
+                        cursor.execute("INSERT INTO rpc_http_status_history (ts, connection_id, rpc_http_status) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, False])
 
                     if rpc_http_service:
                         print("JSON_RPC_HTTP_PORT okay")
-                        cursor.execute("INSERT INTO rpc_https_status_history (ts, address_id, rpc_https_status) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, True])
+                        cursor.execute("INSERT INTO rpc_https_status_history (ts, connection_id, rpc_https_status) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, True])
                     else:
                         print("JSON_RPC_HTTP_PORT not avaliable")
-                        cursor.execute("INSERT INTO rpc_https_status_history (ts, address_id, rpc_https_status) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, False])
+                        cursor.execute("INSERT INTO rpc_https_status_history (ts, connection_id, rpc_https_status) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, False])
 
                     try:
                         peers = client.get_peers(endpoint=endpoint)
 
                         if peers == None:
                             print("peers is none")
-                            cursor.execute("INSERT INTO validated_peers_counts_history (ts, address_id, validated_peers_counts) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, 0])
+                            cursor.execute("INSERT INTO validated_peers_counts_history (ts, connection_id, validated_peers_counts) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, 0])
                         else:
                             print("peers is not none")
                             validated_peers = 0
@@ -255,14 +230,14 @@ if __name__ == "__main__":
         
                                 _, validated_peer_address_id, _ = ip_dict[peer_address]    
                                 
-                                cursor.execute("INSERT INTO validated_peers_history (ts, address_id, validated_peers_address_id) VALUES (%s, %s, %s)", [getSqlDateTime(insert_time), addressId, validated_peer_address_id])
+                                cursor.execute("INSERT INTO validated_peers_history (ts, connection_id, validated_peers_connection_id) VALUES (%s, %s, %s)", [getSqlDateTime(insert_time), addressId, validated_peer_address_id])
                                 
                                 validated_peers+=1 
-                            cursor.execute("INSERT INTO validated_peers_counts_history (ts, address_id, validated_peers_counts) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, validated_peers])
+                            cursor.execute("INSERT INTO validated_peers_counts_history (ts, connection_id, validated_peers_counts) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, validated_peers])
 
                     except Exception as e:
                         print(e)
-                        cursor.execute("INSERT INTO validated_peers_counts_history (ts, address_id, validated_peers_counts) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, 0])
+                        cursor.execute("INSERT INTO validated_peers_counts_history (ts, connection_id, validated_peers_counts) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, 0])
                         
                     print("=========================================================")
                     conn.commit()
