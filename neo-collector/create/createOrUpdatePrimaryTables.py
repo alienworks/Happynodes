@@ -76,6 +76,15 @@ def create_or_update_nodes_rows(cursor, data):
                     print("update node's ip. hostname: {} id: {} ipFromDatabase: {} ip:{}".format(hostname, id, ipFromDatabase, ip))
                     cursor.execute("UPDATE nodes SET ip=%s WHERE id=%s;", [ip, id])
     
+def check_mainnet_json(data):
+    # Check if the mainnet has the correct key and structure that is expected
+    if "sites" not in data or "name" not in data or "pollTime" not in data:
+        return False
+    
+    for site in data["sites"]:
+        if "url" not in site or "locale" not in site or "location" not in site or "type" not in site:
+            return False
+    return True
 
 def create_connectionendpoints_rows(cursor, data):
     key = 0
@@ -126,14 +135,15 @@ if __name__ == "__main__":
 
         data = get_coz_mainnet_json()
 
-        create_or_update_nodes_rows(cursor, data)
-        conn.commit()
+        if check_mainnet_json(data):
+            create_or_update_nodes_rows(cursor, data)
+            conn.commit()
 
-        create_connectionendpoints_rows(cursor, data)
-        conn.commit()
+            create_connectionendpoints_rows(cursor, data)
+            conn.commit()
 
-        cursor.close()
-        conn.close()
+            cursor.close()
+            conn.close()
 
         # sleep for a day
         time.sleep(60*60*24)
