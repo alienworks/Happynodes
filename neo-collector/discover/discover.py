@@ -4,8 +4,29 @@ import os
 from neorpc.Settings import SettingsHolder
 from Client import RPCClient, RPCEndpoint
 import socket
-import eventlet
-eventlet.monkey_patch()
+
+client = RPCClient()
+
+class NodeObject:
+    def __init__(self, node_id, url, ip):
+        self.node_id = node_id
+        self.url = url
+        self.ip = ip
+
+        self.endpointHttp10331 = RPCEndpoint(
+            client, "http://" + url + ":10331")
+        self.endpointHttps10331 = RPCEndpoint(
+            client, "https://" + url + ":10331")
+
+        self.endpointHttp10332 = RPCEndpoint(
+            client, "http://" + url + ":10332")
+        self.endpointHttps10332 = RPCEndpoint(
+            client, "https://" + url + ":10332")
+
+        self.hasEndpointHttp10331 = False
+        self.hasEndpointHttps10331 = False
+        self.hasEndpointHttp10332 = False
+        self.hasEndpointHttps10332 = False
 
 host = str(os.environ['PGHOST'])
 databasename = str(os.environ['PGDATABASE'])
@@ -13,6 +34,9 @@ user = str(os.environ['PGUSER'])
 password = str(os.environ['PGPASSWORD'])
 
 connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(
+    databasename, user, host, password)
+
+connection_str = "dbname='{}' user='{}' host='localhost' password='{}'".format(
     databasename, user, host, password)
 
 connect_str = connection_str
@@ -26,7 +50,7 @@ cursor.execute("""select id, hostname, ip from nodes""")
 
 rows = cursor.fetchall()
 
-client = RPCClient()
+
 
 
 class NodeObject:
@@ -35,11 +59,15 @@ class NodeObject:
         self.url = url
         self.ip = ip
 
-        self.endpointHttp10331 = RPCEndpoint(client, "http://" + url + ":10331")
-        self.endpointHttps10331 = RPCEndpoint(client, "https://" + url + ":10331")
+        self.endpointHttp10331 = RPCEndpoint(
+            client, "http://" + url + ":10331")
+        self.endpointHttps10331 = RPCEndpoint(
+            client, "https://" + url + ":10331")
 
-        self.endpointHttp10332 = RPCEndpoint(client, "http://" + url + ":10332")
-        self.endpointHttps10332 = RPCEndpoint(client, "https://" + url + ":10332")
+        self.endpointHttp10332 = RPCEndpoint(
+            client, "http://" + url + ":10332")
+        self.endpointHttps10332 = RPCEndpoint(
+            client, "https://" + url + ":10332")
 
         self.hasEndpointHttp10331 = False
         self.hasEndpointHttps10331 = False
@@ -64,39 +92,60 @@ def bfs(list_of_nodes):
             explored.append(node)
             print("explored.append(node)")
 
-            try:
-                print("neighbours = client.get_peers(endpoint=node.endpointHttp10331)['connected']")
-                neighbours = client.get_peers(endpoint=node.endpointHttp10331)['connected']
-                node.hasEndpointHttp10331=True
-            except:
-                try:
-                    print("neighbours = client.get_peers(endpoint=node.endpointHttps10331)['connected']")
-                    neighbours = client.get_peers(endpoint=node.endpointHttps10331)['connected']
-                    node.hasEndpointHttps10331=True
-                except:
-                    try:
-                        print("neighbours = client.get_peers(endpoint=node.endpointHttp10332)['connected']")
-                        neighbours = client.get_peers(endpoint=node.endpointHttp10332)['connected']
-                        node.hasEndpointHttp10332=True
-                    except:
-                        try:
-                            print("neighbours = client.get_peers(endpoint=node.endpointHttps10332)['connected']")
-                            neighbours = client.get_peers(endpoint=node.endpointHttps10332)['connected']
-                            node.hasEndpointHttps10332=True
-                        except:
-                            print("failed to get any peers")
-                            print("len(queue)"+ str(len(queue)))
-                            print("len(explored)"+ str(len(explored)))
-                            continue
+            neighbours = None
 
-            print("neighbours = client.get_peers(endpoint=node.endpoint)['connected']")
+            try:
+                print(
+                    "neighbours = client.get_peers(endpoint=node.endpointHttp10331)['connected']")
+                neighbourstHttp10331 = client.get_peers(
+                    endpoint=node.endpointHttp10331)['connected']
+                node.hasEndpointHttp10331 = True
+                neighbours = neighbourstHttp10331
+            except:
+                node.hasEndpointHttp10331 = False
+
+            try:
+                print(
+                    "neighbours = client.get_peers(endpoint=node.endpointHttps10331)['connected']")
+                neighboursHttps10331 = client.get_peers(
+                    endpoint=node.endpointHttps10331)['connected']
+                node.hasEndpointHttps10331 = True
+                neighbours = neighboursHttps10331
+            except:
+                node.hasEndpointHttps10331 = False
+
+            try:
+                print(
+                    "neighbours = client.get_peers(endpoint=node.endpointHttp10332)['connected']")
+                neighboursHttp10332 = client.get_peers(
+                    endpoint=node.endpointHttp10332)['connected']
+                node.hasEndpointHttp10332 = True
+                neighbours = neighboursHttp10332
+            except:
+                node.hasEndpointHttp10332 = False
+
+            try:
+                print(
+                    "neighbours = client.get_peers(endpoint=node.endpointHttps10332)['connected']")
+                neighboursHttps10332 = client.get_peers(
+                    endpoint=node.endpointHttps10332)['connected']
+                node.hasEndpointHttps10332 = True
+                neighbours = neighboursHttps10332
+            except:
+                node.hasEndpointHttps10332 = False
+
+            if neighbours == None:
+                continue
+
+            print(
+                "neighbours = client.get_peers(endpoint=node.endpoint)['connected']")
             remoteNodes = getRemoteNodes(neighbours)
             for n in remoteNodes:
                 queue.append(n)
-            
-            # to be removed
-            if len(explored)==50:
-                return explored
+
+            # # to be removed
+            # if len(explored) >= 100:
+            #     return explored
     return explored
 
 
@@ -137,5 +186,30 @@ for explored in explored_nodes:
     rows = cursor.fetchall()
     if len(rows) == 0:
         # IP doesnt exist in database
-        print(explored.ip)
+        if explored.hasEndpointHttp10331 or explored.hasEndpointHttps10331 or explored.hasEndpointHttp10332 or explored.hasEndpointHttps10332:
+            cursor.execute(
+                "INSERT INTO nodes (hostname, ip) VALUES (%s, %s)", [explored.ip, explored.ip])
 
+            cursor.execute('SELECT LASTVAL()')
+
+            nodeId = cursor.fetchone()[0]
+
+            if explored.hasEndpointHttp10331:
+                cursor.execute(
+                    "INSERT INTO connection_endpoints (node_id, protocol, port) VALUES (%s, %s, %s)", [nodeId, "http", 10331])
+
+            if explored.hasEndpointHttps10331:
+                cursor.execute(
+                    "INSERT INTO connection_endpoints (node_id, protocol, port) VALUES (%s, %s, %s)", [nodeId, "https", 10331])
+
+            if explored.hasEndpointHttp10332:
+                cursor.execute(
+                    "INSERT INTO connection_endpoints (node_id, protocol, port) VALUES (%s, %s, %s)", [nodeId ,"http", 10332])
+
+            if explored.hasEndpointHttps10332:
+                cursor.execute(
+                    "INSERT INTO connection_endpoints (node_id, protocol, port) VALUES (%s, %s, %s)", [nodeId, "https", 10332])
+
+conn.commit()
+cursor.close()
+conn.close()
