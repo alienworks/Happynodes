@@ -1,18 +1,20 @@
-FROM python:3.6-alpine
+FROM cityofzion/neo-python
 
-# We need both "testing" and "community" repositories here.
-RUN \
-     echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
-  && echo "@community http://nl.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
-  && apk add --no-cache \
-     git gcc musl-dev leveldb@testing leveldb-dev@testing 
+RUN apt-get update && apt-get install -y \
+    postgresql \
+    postgresql-contrib 
 
+RUN pip3 install psycopg2
 
-RUN apk add --no-cache wget py-pip libressl-dev vim man
+RUN pip3 install dnspython
 
-RUN git clone https://github.com/CityOfZion/neo-python.git
-WORKDIR neo-python
-RUN git checkout $branch
+RUN mkdir /usr/src/app
 
-# Install the dependencies
-RUN pip3 install -e .
+WORKDIR /usr/src/app
+
+COPY Client.py .
+
+COPY discover.py .
+
+# start app
+CMD ["python3", "discover.py"]
