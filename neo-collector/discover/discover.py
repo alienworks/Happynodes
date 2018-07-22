@@ -38,8 +38,8 @@ while True:
     connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(
         databasename, user, host, password)
 
-    connection_str = "dbname='{}' user='{}' host='localhost' password='{}'".format(
-        databasename, user, host, password)
+    # connection_str = "dbname='{}' user='{}' host='localhost' password='{}'".format(
+    #     databasename, user, host, password)
 
     connect_str = connection_str
 
