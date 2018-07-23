@@ -52,9 +52,6 @@ while True:
 
     rows = cursor.fetchall()
 
-
-
-
     class NodeObject:
         def __init__(self, node_id, url, ip):
             self.node_id = node_id
@@ -139,15 +136,12 @@ while True:
                 if neighbours == None:
                     continue
 
-                print(
-                    "neighbours = client.get_peers(endpoint=node.endpoint)['connected']")
+                print("remoteNodes = getRemoteNodes(neighbours)")
                 remoteNodes = getRemoteNodes(neighbours)
+                print("for n in remoteNodes: queue.append(n)")
                 for n in remoteNodes:
                     queue.append(n)
 
-                # # to be removed
-                # if len(explored) >= 100:
-                #     return explored
         return explored
 
 
@@ -181,38 +175,63 @@ while True:
 
     explored_nodes = bfs(list_of_nodes)
 
+    print("bfs done")
+
+    nodes_to_be_inserted = []
+
     for explored in explored_nodes:
+        print("for explored in explored_nodes:")
         cursor.execute("""select * 
                     from nodes n
                     where n.ip=%s""", [explored.ip])
         rows = cursor.fetchall()
+        print("rows")
+        print(rows)
         if len(rows) == 0:
-            # IP doesnt exist in database
             if explored.hasEndpointHttp10331 or explored.hasEndpointHttps10331 or explored.hasEndpointHttp10332 or explored.hasEndpointHttps10332:
-                cursor.execute(
-                    "INSERT INTO nodes (hostname, ip) VALUES (%s, %s)", [explored.ip, explored.ip])
+                nodes_to_be_inserted.append(explored)
 
-                cursor.execute('SELECT LASTVAL()')
 
-                nodeId = cursor.fetchone()[0]
 
-                if explored.hasEndpointHttp10331:
-                    cursor.execute(
-                        "INSERT INTO connection_endpoints (node_id, protocol, port) VALUES (%s, %s, %s)", [nodeId, "http", 10331])
+    for explored in nodes_to_be_inserted:
+        # IP doesnt exist in database
+        cursor.execute(
+            "INSERT INTO nodes (hostname, ip) VALUES (%s, %s)", [explored.ip, explored.ip])
 
-                if explored.hasEndpointHttps10331:
-                    cursor.execute(
-                        "INSERT INTO connection_endpoints (node_id, protocol, port) VALUES (%s, %s, %s)", [nodeId, "https", 10331])
+    conn.commit()
 
-                if explored.hasEndpointHttp10332:
-                    cursor.execute(
-                        "INSERT INTO connection_endpoints (node_id, protocol, port) VALUES (%s, %s, %s)", [nodeId ,"http", 10332])
+    for explored in nodes_to_be_inserted:
+        cursor.execute(
+                """SELECT id, hostname, ip
+                    FROM nodes n
+                    WHERE n.ip=%s """, [ explored.ip])
 
-                if explored.hasEndpointHttps10332:
-                    cursor.execute(
-                        "INSERT INTO connection_endpoints (node_id, protocol, port) VALUES (%s, %s, %s)", [nodeId, "https", 10332])
+        nodeId = cursor.fetchone()[0]
+
+        print("nodeId")
+        print(nodeId)
+
+        print("explored.ip, explored.ip")
+        print(explored.ip)
+
+        if explored.hasEndpointHttp10331:
+            cursor.execute(
+                "INSERT INTO connection_endpoints (node_id, protocol, port) VALUES (%s, %s, %s)", [nodeId, "http", 10331])
+
+        if explored.hasEndpointHttps10331:
+            cursor.execute(
+                "INSERT INTO connection_endpoints (node_id, protocol, port) VALUES (%s, %s, %s)", [nodeId, "https", 10331])
+
+        if explored.hasEndpointHttp10332:
+            cursor.execute(
+                "INSERT INTO connection_endpoints (node_id, protocol, port) VALUES (%s, %s, %s)", [nodeId ,"http", 10332])
+
+        if explored.hasEndpointHttps10332:
+            cursor.execute(
+                "INSERT INTO connection_endpoints (node_id, protocol, port) VALUES (%s, %s, %s)", [nodeId, "https", 10332])
 
     conn.commit()
     cursor.close()
     conn.close()
+    print("time.sleep(60*60*24)")
     time.sleep(60*60*24)

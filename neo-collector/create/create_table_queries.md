@@ -12,6 +12,13 @@ CREATE TABLE IF NOT EXISTS connection_endpoints (
 	port INT not NULL
 );
 
+CREATE TABLE IF NOT EXISTS coordinates (
+    id bigserial PRIMARY key,
+    connection_id INTEGER REFERENCES connection_endpoints(id),
+    lat  INT,
+    long  INT
+);
+
 CREATE TABLE IF NOT EXISTS port (
     id bigserial PRIMARY key,
     connection_id INTEGER REFERENCES connection_endpoints(id),
