@@ -152,6 +152,8 @@ CREATE TABLE IF NOT EXISTS p2p_ws_status_history (
     p2p_ws_status BOOLEAN
 );
 
+
+
 DROP TABLE port;
 DROP TABLE version_history;
 DROP TABLE blockheight_history;
@@ -167,4 +169,15 @@ DROP TABLE locale;
 DROP TABLE location;
 DROP TABLE protocol;
 DROP TABLE unconfirmed_tx;
-DROP TABLE address;
+
+
+DROP TABLE coordinates;
+DROP TABLE disagreements;
+DROP TABLE p2p_tcp_status_history;
+DROP TABLE p2p_ws_status_history;
+DROP TABLE validated_peers_history
+DROP TABLE validated_peers_counts_history
+
+
+DROP TABLE nodes;
+DROP TABLE connection_endpoints
