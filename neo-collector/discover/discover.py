@@ -143,9 +143,6 @@ while True:
                 for n in remoteNodes:
                     queue.append(n)
 
-        if len(explored)>100:
-            return explored
-
         return explored
 
     def isOpen(ip, port):
