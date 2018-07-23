@@ -5,6 +5,7 @@ from neorpc.Settings import SettingsHolder
 from Client import RPCClient, RPCEndpoint
 import socket
 import requests
+import json
 
 client = RPCClient()
 
