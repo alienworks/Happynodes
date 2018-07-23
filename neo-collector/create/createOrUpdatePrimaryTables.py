@@ -21,9 +21,6 @@ password = str(os.environ['PGPASSWORD'])
 connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(
     databasename, user, host, password)
 
-# connection_str = "dbname='{}' user='{}' host='localhost' password='{}'".format(
-#     databasename, user, host, password)
-
 print(connection_str)
 
 def get_coz_mainnet_json():

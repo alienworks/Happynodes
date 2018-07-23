@@ -340,7 +340,7 @@ SUBMIT_BLOCK = 'submitblock'
 VALIDATE_ADDR = 'validateaddress'
 
 
-TIMEOUT = 1
+TIMEOUT = 0.5
 
 
 class RPCEndpoint():
