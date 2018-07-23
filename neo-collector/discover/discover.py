@@ -190,11 +190,15 @@ while True:
         if len(rows) == 0:
             if explored.hasEndpointHttp10331 or explored.hasEndpointHttps10331 or explored.hasEndpointHttp10332 or explored.hasEndpointHttps10332:
                 nodes_to_be_inserted.append(explored)
+                print("nodes_to_be_inserted.append(explored)")
+                print(explored.ip)
 
 
 
     for explored in nodes_to_be_inserted:
         # IP doesnt exist in database
+        print("cursor.execute(
+            "INSERT INTO nodes (hostname, ip) VALUES (%s, %s)", [explored.ip, explored.ip])")
         cursor.execute(
             "INSERT INTO nodes (hostname, ip) VALUES (%s, %s)", [explored.ip, explored.ip])
 
