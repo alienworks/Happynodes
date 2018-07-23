@@ -4,8 +4,10 @@ import os
 from neorpc.Settings import SettingsHolder
 from Client import RPCClient, RPCEndpoint
 import socket
+import requests
 
 client = RPCClient()
+
 
 class NodeObject:
     def __init__(self, node_id, url, ip):
@@ -27,6 +29,7 @@ class NodeObject:
         self.hasEndpointHttps10331 = False
         self.hasEndpointHttp10332 = False
         self.hasEndpointHttps10332 = False
+
 
 while True:
 
@@ -73,13 +76,11 @@ while True:
             self.hasEndpointHttp10332 = False
             self.hasEndpointHttps10332 = False
 
-
     list_of_nodes = []
 
     for node_id, node_url, node_ip in rows:
         n = NodeObject(node_id, node_url, node_ip)
         list_of_nodes.append(n)
-
 
     def bfs(list_of_nodes):
         explored = []
@@ -142,8 +143,10 @@ while True:
                 for n in remoteNodes:
                     queue.append(n)
 
-        return explored
+        if len(explored)>100:
+            return explored
 
+        return explored
 
     def isOpen(ip, port):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -155,13 +158,11 @@ while True:
         except:
             return False
 
-
     def nodeNotExplored(node, explored):
         for explored_node in explored:
             if explored_node.ip == node.ip:
                 return False
         return True
-
 
     def getRemoteNodes(neighbours):
         remote_nodes = []
@@ -171,7 +172,6 @@ while True:
             remote_nodes.append(NodeObject(None, ip, ip))
 
         return remote_nodes
-
 
     explored_nodes = bfs(list_of_nodes)
 
@@ -193,8 +193,6 @@ while True:
                 print("nodes_to_be_inserted.append(explored)")
                 print(explored.ip)
 
-
-
     for explored in nodes_to_be_inserted:
         # IP doesnt exist in database
         print("cursor.execute(explored.ip, explored.ip])")
@@ -205,16 +203,16 @@ while True:
 
     for explored in nodes_to_be_inserted:
         cursor.execute(
-                """SELECT id, hostname, ip
+            """SELECT id, hostname, ip
                     FROM nodes n
-                    WHERE n.ip=%s """, [ explored.ip])
+                    WHERE n.ip=%s """, [explored.ip])
 
         nodeId = cursor.fetchone()[0]
 
         print("nodeId")
         print(nodeId)
 
-        print("explored.ip, explored.ip")
+        print("explored.ip")
         print(explored.ip)
 
         if explored.hasEndpointHttp10331:
@@ -227,11 +225,77 @@ while True:
 
         if explored.hasEndpointHttp10332:
             cursor.execute(
-                "INSERT INTO connection_endpoints (node_id, protocol, port) VALUES (%s, %s, %s)", [nodeId ,"http", 10332])
+                "INSERT INTO connection_endpoints (node_id, protocol, port) VALUES (%s, %s, %s)", [nodeId, "http", 10332])
 
         if explored.hasEndpointHttps10332:
             cursor.execute(
                 "INSERT INTO connection_endpoints (node_id, protocol, port) VALUES (%s, %s, %s)", [nodeId, "https", 10332])
+
+    conn.commit()
+    
+    for explored in nodes_to_be_inserted:
+        cursor.execute(
+            """SELECT id, hostname, ip
+                    FROM nodes n
+                    WHERE n.ip=%s """, [explored.ip])
+
+        nodeId = cursor.fetchone()[0]
+
+        response = requests.get("https://geoip.nekudo.com/api/" + explored.ip)
+        json_data = json.loads(response.text)
+
+        lat = json_data["location"]['latitude']
+        long = json_data["location"]['longitude']
+        location = json_data["country"]['name']
+        locale = json_data["country"]['code']
+        locale = locale.lower()
+
+        if explored.hasEndpointHttp10331:
+            cursor.execute("""SELECT id, node_id, protocol, port
+                                FROM public.connection_endpoints
+                                where node_id=%s and protocol=%s and port=%s """, [nodeId, "http", 10331])
+            
+            endpointId = cursor.fetchone()[0]
+
+            cursor.execute("INSERT INTO coordinates (connection_id, lat, long) VALUES (%s, %s, %s)", [endpointId, lat, long])
+            cursor.execute("INSERT INTO locale (connection_id, locale) VALUES (%s, %s)", [
+                               endpointId, locale])
+            cursor.execute("INSERT INTO location (connection_id, location) VALUES (%s, %s)", [
+                            endpointId, location])
+
+        if explored.hasEndpointHttps10331:
+            cursor.execute("""SELECT id, node_id, protocol, port
+                            FROM public.connection_endpoints
+                            where node_id=%s and protocol=%s and port=%s """, [nodeId, "https", 10331])
+            endpointId = cursor.fetchone()[0]
+
+            cursor.execute("INSERT INTO coordinates (connection_id, lat, long) VALUES (%s, %s, %s)", [endpointId, lat, long])
+            cursor.execute("INSERT INTO locale (connection_id, locale) VALUES (%s, %s)", [
+                               endpointId, locale])
+            cursor.execute("INSERT INTO location (connection_id, location) VALUES (%s, %s)", [
+                            endpointId, location])
+
+        if explored.hasEndpointHttp10332:
+            cursor.execute("""SELECT id, node_id, protocol, port
+                            FROM public.connection_endpoints
+                            where node_id=%s and protocol=%s and port=%s """, [nodeId, "http", 10332])
+            endpointId = cursor.fetchone()[0]
+
+            cursor.execute("INSERT INTO coordinates (connection_id, lat, long) VALUES (%s, %s, %s)", [endpointId, lat, long])
+            cursor.execute("INSERT INTO locale (connection_id, locale) VALUES (%s, %s)", [
+                               endpointId, locale])
+            cursor.execute("INSERT INTO location (connection_id, location) VALUES (%s, %s)", [
+                            endpointId, location])
+
+        if explored.hasEndpointHttps10332:
+            cursor.execute("""SELECT id, node_id, protocol, port
+                            FROM public.connection_endpoints
+                            where node_id=%s and protocol=%s and port=%s """, [nodeId, "https", 10332])
+            endpointId = cursor.fetchone()[0]
+
+            cursor.execute("INSERT INTO coordinates (connection_id, lat, long) VALUES (%s, %s, %s)", [endpointId, lat, long])
+            cursor.execute("INSERT INTO locale (connection_id, locale) VALUES (%s, %s)", [endpointId, locale])
+            cursor.execute("INSERT INTO location (connection_id, location) VALUES (%s, %s)", [endpointId, location])
 
     conn.commit()
     cursor.close()
