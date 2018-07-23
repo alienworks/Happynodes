@@ -175,9 +175,8 @@ DROP TABLE coordinates;
 DROP TABLE disagreements;
 DROP TABLE p2p_tcp_status_history;
 DROP TABLE p2p_ws_status_history;
-DROP TABLE validated_peers_history
-DROP TABLE validated_peers_counts_history
+DROP TABLE validated_connection_counts_history;
+DROP TABLE validated_peers_counts_history;
 
-
+DROP TABLE connection_endpoints;
 DROP TABLE nodes;
-DROP TABLE connection_endpoints
