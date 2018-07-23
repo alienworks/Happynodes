@@ -91,13 +91,9 @@ while True:
             node = queue.pop(0)
             if nodeNotExplored(node, explored):
                 explored.append(node)
-                print("explored.append(node)")
-
                 neighbours = None
 
                 try:
-                    print(
-                        "neighbours = client.get_peers(endpoint=node.endpointHttp10331)['connected']")
                     neighbourstHttp10331 = client.get_peers(
                         endpoint=node.endpointHttp10331)['connected']
                     node.hasEndpointHttp10331 = True
@@ -106,8 +102,6 @@ while True:
                     node.hasEndpointHttp10331 = False
 
                 try:
-                    print(
-                        "neighbours = client.get_peers(endpoint=node.endpointHttps10331)['connected']")
                     neighboursHttps10331 = client.get_peers(
                         endpoint=node.endpointHttps10331)['connected']
                     node.hasEndpointHttps10331 = True
@@ -116,8 +110,6 @@ while True:
                     node.hasEndpointHttps10331 = False
 
                 try:
-                    print(
-                        "neighbours = client.get_peers(endpoint=node.endpointHttp10332)['connected']")
                     neighboursHttp10332 = client.get_peers(
                         endpoint=node.endpointHttp10332)['connected']
                     node.hasEndpointHttp10332 = True
@@ -126,8 +118,6 @@ while True:
                     node.hasEndpointHttp10332 = False
 
                 try:
-                    print(
-                        "neighbours = client.get_peers(endpoint=node.endpointHttps10332)['connected']")
                     neighboursHttps10332 = client.get_peers(
                         endpoint=node.endpointHttps10332)['connected']
                     node.hasEndpointHttps10332 = True
@@ -138,9 +128,7 @@ while True:
                 if neighbours == None:
                     continue
 
-                print("remoteNodes = getRemoteNodes(neighbours)")
                 remoteNodes = getRemoteNodes(neighbours)
-                print("for n in remoteNodes: queue.append(n)")
                 for n in remoteNodes:
                     queue.append(n)
 
@@ -206,12 +194,6 @@ while True:
                     WHERE n.ip=%s """, [explored.ip])
 
         nodeId = cursor.fetchone()[0]
-
-        print("nodeId")
-        print(nodeId)
-
-        print("explored.ip")
-        print(explored.ip)
 
         if explored.hasEndpointHttp10331:
             cursor.execute(
