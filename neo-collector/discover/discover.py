@@ -197,8 +197,7 @@ while True:
 
     for explored in nodes_to_be_inserted:
         # IP doesnt exist in database
-        print("cursor.execute(
-            "INSERT INTO nodes (hostname, ip) VALUES (%s, %s)", [explored.ip, explored.ip])")
+        print("cursor.execute(explored.ip, explored.ip])")
         cursor.execute(
             "INSERT INTO nodes (hostname, ip) VALUES (%s, %s)", [explored.ip, explored.ip])
 
