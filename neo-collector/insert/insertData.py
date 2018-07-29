@@ -249,7 +249,7 @@ if __name__ == "__main__":
                     tcp.putconn(conn)
                     continue
 
-    chuncksOfEndpoints = chunkIt(client.endpoints, 20)
+    chuncksOfEndpoints = chunkIt(client.endpoints, 40)
     for endpoints in chuncksOfEndpoints:
         t = threading.Thread(target=update, args = (endpoints, client))
         t.daemon = True
