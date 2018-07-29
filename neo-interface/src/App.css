@@ -47,10 +47,11 @@ html {
 
 html body {
 
-    background-image: url(https://i.imgur.com/P53rMza.png);
+    /* background-image: url(https://i.imgur.com/P53rMza.png); */
+
     background-attachment: fixed;
     background-size: auto 200px;
-    background-color: white;
+    background-color: #fdfdfd;
 }
 
 .App .jumbotron {
