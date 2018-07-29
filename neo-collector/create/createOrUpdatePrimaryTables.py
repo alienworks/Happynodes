@@ -20,7 +20,8 @@ password = str(os.environ['PGPASSWORD'])
 
 connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(
     databasename, user, host, password)
-dsn = "postgresql://{}:{}@{}/{}".format(user, password, host, databasename)
+# connection_str = "dbname='{}' user='{}' host='localhost' password='{}'".format(
+#         databasename, user, host, password)
 
 print(connection_str)
 
@@ -107,10 +108,9 @@ def create_connectionendpoints_rows(cursor, data):
             if len(rows)==0:
                 # this connection endpoints does not exist in the database
                 print("insert into connection endpoints, hostname:{}  node_id: {} protocol: {} port: {}".format(hostname, int(node_id), str(protocol), int(port)))
-                cursor.execute("INSERT INTO public.connection_endpoints  (node_id, protocol, port) VALUES (%s, %s, %s)", [int(node_id), str(protocol), int(port)])
-                cursor.execute('SELECT LASTVAL()')
+                cursor.execute("INSERT INTO public.connection_endpoints  (node_id, protocol, port) VALUES (%s, %s, %s) RETURNING id", [int(node_id), str(protocol), int(port)])
 
-                lastid = cursor.fetchone()['lastval']
+                lastid = cursor.fetchone()[0]
 
                 cursor.execute("INSERT INTO locale (connection_id, locale) VALUES (%s, %s)", [
                                lastid, endpoint["locale"]])
