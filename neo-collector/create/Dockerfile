@@ -1,4 +1,4 @@
-FROM python:3.6-alpine
+FROM python:3-alpine
 
 RUN apk update && \
  apk add postgresql-libs && \
@@ -11,7 +11,7 @@ RUN apk update && \
 RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 
-COPY deleteOldTx.py .
+COPY createOrUpdatePrimaryTables.py .
 
 # start app
-CMD ["python3", "deleteOldTx.py"]
+CMD ["python3", "createOrUpdatePrimaryTables.py"]

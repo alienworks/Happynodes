@@ -30,6 +30,7 @@ class NodeEdges extends Component {
 
             const node_lookup = raw_data.reduce(function (map, obj) {
                 map[obj.address] = obj.address_id;
+                map[node_id] = node_id;
                 return map;
             }, {});
 
