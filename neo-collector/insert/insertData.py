@@ -160,8 +160,8 @@ if __name__ == "__main__":
                         continue
 
                     result = r.hget(redisNamespace + 'node', addressId)
-                    
-                    print("result {}".format(str(result))))
+
+                    print("result {}".format(str(result)))
 
                     height = client.get_height(endpoint=endpoint)
                     print("{} Blockheight: {}".format(address, height))
