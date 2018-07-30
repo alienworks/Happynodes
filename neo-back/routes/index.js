@@ -130,7 +130,7 @@ router.get('/unconfirmed', cache('2 seconds'), function (req, res, next) {
 
 router.post('/unconfirmed/tx', cache('2 seconds'), function (req, res, next) {
 	let tx = req.body.tx;
-	let addressid = req.body.addressid;
+	let connection_id = req.body.connection_id;
 
 	pool.connect()
 		.then(client => {
@@ -141,7 +141,7 @@ router.post('/unconfirmed/tx', cache('2 seconds'), function (req, res, next) {
 				inner join nodes n on
 					ce.node_id = n.id
 				where
-					ce.id = $1`, [addressid])
+					ce.id = $1`, [connection_id])
 				.catch((error) => {
 					client.release();
 					console.log(error)
