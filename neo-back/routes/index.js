@@ -1400,7 +1400,7 @@ router.get('/endpoints', cache('1 minutes'), function (req, res, next) {
 							"locale": locale,
 							"port": port
 						}
-						sites.append(site)
+						sites.push(site)
 					}
 
 					res.json({ "name": "MainNet", "pollTime": "5000", "sites": sites});
