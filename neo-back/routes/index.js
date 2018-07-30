@@ -148,6 +148,7 @@ router.post('/unconfirmed/tx', cache('2 seconds'), function (req, res, next) {
 				})
 				.then(breakdown => {
 					client.release()
+					console.log(reakdown.rows)
 					let url = breakdown.rows[0].url
 					axios.post(url, {
 							"jsonrpc": "2.0",
