@@ -708,7 +708,7 @@ health_score desc""")
             redis_node = r.hget(redisNamespace + 'node', nodeid)
             print(redis_node)
             stability_1000 = node_info[25]
-            redis_node = json.load(redis_node)
+            redis_node = json.loads(redis_node)
 
             if stability_1000 != 0:
                 node = {"id": node_info[0],
