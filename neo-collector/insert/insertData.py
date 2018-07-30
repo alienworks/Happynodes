@@ -169,33 +169,9 @@ if __name__ == "__main__":
 
                     print("result {}".format(str(node_info)))
 
-                    node = {"id": node_info[0],
-                        "hostname": node_info[1],
-                        "protocol": node_info[2],
-                        "port": node_info[3],
-                        "p2p_tcp_status": node_info[4],
-                        "p2p_ws_status": node_info[5],
-                        "address": node_info[6],
-                        "validated_peers_counts": node_info[7],
-                        "stability": node_info[8],
-                        "blockheight_score": float(node_info[9]),
-                        "normalised_latency_score": node_info[10],
-                        "validated_peers_counts_score": float(node_info[11]),
-                        "health_score": node_info[12],
-                        "latency": node_info[13],
-                        "rcp_https_status": node_info[14],
-                        "rcp_http_status": node_info[15],
-                        "mempool_size": node_info[16],
-                        "connection_counts": node_info[17],
-                        "online": node_info[18],
-                        "blockheight": node_info[19],
-                        "lat": node_info[20],
-                        "long": node_info[21],
-                        "locale": node_info[22],
-                        "version": node_info[23],
-                        "max_blockheight": node_info[24]}
+                    node_info["blockheight"] = height
                     
-                    r.hset(redisNamespace + 'node', addressId, json.dumps(node))
+                    r.hset(redisNamespace + 'node', addressId, json.dumps(node_info))
                     
                     latency = get_latency(endpoint.addr)
                     print("Latency: {}".format(latency))
