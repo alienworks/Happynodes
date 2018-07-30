@@ -706,6 +706,7 @@ if __name__ == "__main__":
         for node_info in result:
             nodeid = node_info[0]
             redis_node = r.hget(redisNamespace + 'node', nodeid)
+			print(redis_node)
             stability_1000 = node_info[25]
             redis_node = json.load(redis_node)
 
