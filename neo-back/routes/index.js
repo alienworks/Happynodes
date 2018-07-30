@@ -1355,4 +1355,57 @@ router.get('/nodeslist', cache('1 minutes'), function (req, res, next) {
 		})
 });
 
+router.get('/endpoints', cache('1 minutes'), function (req, res, next) {
+	pool.connect()
+		.then(client => {
+			console.log("pool.totalCount", pool.totalCount)
+			console.log("pool.idleCount", pool.idleCount)
+			console.log("pool.waitingCount", pool.waitingCount)
+			return client.query(`select ce.protocol, n.hostname as url, n.ip as address,  ce.port, loc.locale, loca.location
+								from connection_endpoints ce
+								inner join
+								nodes n
+								on n.id=ce.node_id
+								inner join
+								locale loc
+								on ce.id=loc.connection_id
+								inner join
+								location loca
+								on ce.id=loca.connection_id`)
+				.catch((error) => {
+					client.release();
+					console.log(error)
+				})
+				.then(breakdown => {
+					client.release()
+					console.log('/endpoints', breakdown.rows)
+					data = breakdown.rows
+					
+					var sites = []
+
+					var i;
+					for (i = 0; i < data.length; i++) {
+						let protocol = data[0]
+						let url = data[1]
+						let address = data[2]
+						let port = data[3]
+						let locale = data[4]
+						let location = data[5]
+
+						site = {
+							"protocol": protocol,
+							"url": url,
+							"location": location,
+							"address": address,
+							"locale": locale,
+							"port": port
+						}
+						sites.append(site)
+					}
+
+					res.json({ "name": "MainNet", "pollTime": "5000", "sites": sites});
+				})
+		})
+});
+
 module.exports = router;
