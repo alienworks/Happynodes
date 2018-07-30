@@ -10,6 +10,7 @@ import threading
 import random
 from psycopg2.pool import ThreadedConnectionPool
 import os
+import redis
 
 import dns.resolver
 
@@ -22,6 +23,11 @@ host = str(os.environ['PGHOST'])
 databasename = str(os.environ['PGDATABASE'])
 user = str(os.environ['PGUSER'])
 password = str(os.environ['PGPASSWORD'])
+
+redisHost = str(os.environ['REDIS_HOST'])
+redisPort = str(os.environ['REDIS_PORT'])
+redisDb = str(os.environ['REDIS_DB'])
+redisNamespace = str(os.environ['REDIS_NAMESPACE'])
 
 connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password)
 dsn="postgresql://{}:{}@{}/{}".format(user, password, host, databasename)
@@ -116,6 +122,9 @@ if __name__ == "__main__":
     def update(endpoints, client):
         # Avoid synchronisation
         time.sleep(random.uniform(0, 1)*10)
+
+        r = redis.StrictRedis(
+            host=redisHost, port=redisPort, db=redisDb)
         
         while True:
             for endpoint in endpoints:
@@ -149,6 +158,10 @@ if __name__ == "__main__":
                         conn.commit()
                         tcp.putconn(conn)
                         continue
+
+                    result = r.hget(redisNamespace + 'node', addressId)
+                    
+                    print("result {}".format(str(result))))
 
                     height = client.get_height(endpoint=endpoint)
                     print("{} Blockheight: {}".format(address, height))
