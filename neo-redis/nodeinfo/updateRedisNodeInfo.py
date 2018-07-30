@@ -711,6 +711,9 @@ if __name__ == "__main__":
             stability_1000 = node_info[25]
             nodeid = node_info[0]
             if stability_1000!=0:
+				result = r.hget(redisNamespace + 'node', addressId)
+				result = json.loads(result)
+				
                 node = {"id": node_info[0],
                         "hostname": node_info[1],
                         "protocol": node_info[2],
@@ -730,7 +733,7 @@ if __name__ == "__main__":
                         "mempool_size": node_info[16],
                         "connection_counts": node_info[17],
                         "online": node_info[18],
-                        "blockheight": node_info[19],
+                        "blockheight": result["blockheight"],
                         "lat": node_info[20],
                         "long": node_info[21],
                         "locale": node_info[22],
