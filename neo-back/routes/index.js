@@ -1398,7 +1398,8 @@ router.get('/endpoints', cache('1 minutes'), function (req, res, next) {
 							"location": location,
 							"address": address,
 							"locale": locale,
-							"port": port
+							"port": port,
+							"type": "RPC"
 						}
 						sites.push(site)
 					}
