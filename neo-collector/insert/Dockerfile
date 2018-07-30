@@ -16,5 +16,7 @@ COPY Client.py .
 
 COPY insertData.py .
 
+RUN pip install redis
+
 # start app
 CMD ["python3", "insertData.py"]
