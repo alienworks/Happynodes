@@ -21,11 +21,11 @@ redisDb = str(os.environ['REDIS_DB'])
 redisNamespace = str(os.environ['REDIS_NAMESPACE'])
 
 if __name__ == "__main__":
-	while True:
-		r = redis.StrictRedis(host=redisHost, port=redisPort, db=redisDb)
-		conn = psycopg2.connect(connection_str)
-		cursor = conn.cursor()
-		cursor.execute("""select
+    while True:
+        r = redis.StrictRedis(host=redisHost, port=redisPort, db=redisDb)
+        conn = psycopg2.connect(connection_str)
+        cursor = conn.cursor()
+        cursor.execute("""select
 			endpoints.id,
 			n.hostname,
 			endpoints.protocol,
@@ -702,15 +702,15 @@ if __name__ == "__main__":
 		order by
 			health_score desc""")
 
-		result = cursor.fetchall()
-		for node_info in result:
-			nodeid=node_info[0]
-			redis_node = r.hget(redisNamespace + 'node', nodeid)
-			stability_1000 = node_info[25]
-			redis_node = json.load(redis_node)
+        result = cursor.fetchall()
+        for node_info in result:
+            nodeid = node_info[0]
+            redis_node = r.hget(redisNamespace + 'node', nodeid)
+            stability_1000 = node_info[25]
+            redis_node = json.load(redis_node)
 
-			if stability_1000 != 0:
-				node = {"id": node_info[0],
+            if stability_1000 != 0:
+                node = {"id": node_info[0],
                         "hostname": node_info[1],
                         "protocol": node_info[2],
                         "port": node_info[3],
@@ -735,8 +735,8 @@ if __name__ == "__main__":
                         "locale": node_info[22],
                         "version": node_info[23],
                         "max_blockheight": node_info[24]}
-				r.hset(redisNamespace + 'node', nodeid, json.dumps(node))
-			else:
-				r.hdel(redisNamespace + 'node', nodeid)
+                r.hset(redisNamespace + 'node', nodeid, json.dumps(node))
+            else:
+                r.hdel(redisNamespace + 'node', nodeid)
 
-        time.sleep(1)
+    time.sleep(1)
