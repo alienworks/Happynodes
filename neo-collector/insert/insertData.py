@@ -165,8 +165,9 @@ if __name__ == "__main__":
                     print("{} Blockheight: {}".format(address, height))
                     cursor.execute("INSERT INTO blockheight_history (ts, connection_id, blockheight) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, height])
 
-                    print("result {}".format(str(result)))
                     node_info=json.loads(result)
+
+                    print("result {}".format(str(node_info)))
 
                     node = {"id": node_info[0],
                         "hostname": node_info[1],
