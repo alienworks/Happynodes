@@ -77,6 +77,6 @@ export default connect((props) => ({
     unconfirmTxInfo: {
         method: 'POST',
         url: config.api_url.replace('/redis', '').concat(`/unconfirmed/tx`),
-        body: JSON.stringify({ 'tx': props.tx, 'addressid': props.addressid })
+        body: JSON.stringify({ 'tx': props.tx, 'connection_id': props.connection_id })
     }
 }))(UnconfirmedTxInfo)
