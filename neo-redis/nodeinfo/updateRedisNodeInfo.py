@@ -706,7 +706,8 @@ health_score desc""")
         for node_info in result:
             nodeid = node_info[0]
             redis_node = r.hget(redisNamespace + 'node', nodeid)
-            print(redis_node)
+            if(redis_node==None):
+                continue
             stability_1000 = node_info[25]
             redis_node = json.loads(redis_node)
 
