@@ -711,10 +711,10 @@ order by
             stability_1000 = node_info[25]
             nodeid = node_info[0]
             if stability_1000!=0:
-				result = r.hget(redisNamespace + 'node', addressId)
+				result = r.hget(redisNamespace + 'node', nodeid)
 				result = json.loads(result)
-
-                node = {"id": node_info[0],
+				
+				node = {"id": node_info[0],
                         "hostname": node_info[1],
                         "protocol": node_info[2],
                         "port": node_info[3],
