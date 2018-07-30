@@ -2,8 +2,9 @@ import redis
 import psycopg2
 
 import time
-import json
+
 import os
+import json
 
 
 host = str(os.environ['PGHOST'])
@@ -708,11 +709,12 @@ order by
         result = cursor.fetchall()
 
         for node_info in result:
-            old = json.load(r.hget(redisNamespace + 'node', node_info[0]))
+            redis_node = r.hget(redisNamespace + 'node', node_info[0])
             stability_1000 = node_info[25]
-            nodeid = node_info[0]
+            old = json.load(redis_node)
 
             if stability_1000 != 0:
+				
                 node = {"id": node_info[0],
                         "hostname": node_info[1],
                         "protocol": node_info[2],
@@ -738,8 +740,8 @@ order by
                         "locale": node_info[22],
                         "version": node_info[23],
                         "max_blockheight": node_info[24]}
-                r.hset(redisNamespace + 'node', nodeid, json.dumps(node))
+                r.hset(redisNamespace + 'node', node_info[0], json.dumps(node))
             else:
-                r.hdel(redisNamespace + 'node', nodeid)
+                r.hdel(redisNamespace + 'node', node_info[0])
 
         time.sleep(1)
