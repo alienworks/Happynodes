@@ -51,11 +51,6 @@ if __name__ == "__main__":
                                 end isonline
                             from
                                 public.online_history
-                            where
-                                to_char(
-                                    ts,
-                                    'yyyy-mm-dd'
-                                ) between '2018-06-14' and '2018-08-04'
                             group by
                                 to_char(
                                     ts,
@@ -119,11 +114,6 @@ if __name__ == "__main__":
                             end isonline
                         from
                             public.online_history
-                        where
-                            to_char(
-                                ts,
-                                'yyyy-mm-dd'
-                            ) between '2018-06-14' and '2018-08-04'
                         group by
                                 year,
                                 week,
@@ -171,11 +161,6 @@ if __name__ == "__main__":
                                 from
                                     public.online_history
                                 where
-                                    to_char(
-                                        ts,
-                                        'yyyy-mm-dd'
-                                    ) between '2018-06-14' and '2018-08-04'
-                                    and 
                                     connection_id=%s
                                 group by
                                     to_char(
@@ -237,11 +222,7 @@ if __name__ == "__main__":
                                     from
                                         public.online_history
                                     where
-                                        to_char(
-                                            ts,
-                                            'yyyy-mm-dd'
-                                        ) between '2018-06-14' and '2018-08-04'
-                                        and connection_id = %s
+                                        connection_id = %s
                                     group by
                                         year,
                                         week
