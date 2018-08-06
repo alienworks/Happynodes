@@ -304,8 +304,9 @@ if __name__ == "__main__":
                             lt.timeday = dl.timeday
                             """, [id])
             result = cursor.fetchall()
-            print(result)
+            print(key, id, result)
             r.hset(key, id, result)
+            print("r.hget(key, id)", r.hget(key, id))
 
         key = redisNamespace+"node_latency_weekly"
 
@@ -371,8 +372,10 @@ if __name__ == "__main__":
                                 and lt.week = ws.week
                             """, [id])
             result = cursor.fetchall()
+            print(key, id, result)
             print(result)
             r.hset(key, id, result)
+            print("r.hget(key, id)", r.hget(key, id))
 
         time.sleep(60*60*24)
 
