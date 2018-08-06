@@ -164,8 +164,8 @@ router.get('/network/size/daily', function (req, res, next) {
     const namespace = process.env.REDIS_NAMESPACE
     client.hgetall(namespace.concat("nodes_online_daily"), function (err, reply) {
         console.log(reply)
-        const networksize = JSON.parse(reply);
-        res.json(networksize);
+
+        res.json(reply);
     });
 });
 
