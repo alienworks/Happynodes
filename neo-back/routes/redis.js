@@ -159,4 +159,14 @@ router.get('/nodeslist', function (req, res, next) {
     });
 });
 
+router.get('/network/size/daily', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.hgetall(namespace.concat("nodes_online_daily"), function (err, reply) {
+        console.log(reply)
+        const networksize = JSON.parse(reply);
+        res.json(networksize);
+    });
+});
+
 module.exports = router;

@@ -17,7 +17,6 @@ redisDb = str(os.environ['REDIS_DB'])
 redisNamespace = str(os.environ['REDIS_NAMESPACE'])
 
 
-
 if __name__ == "__main__":
     while True:
         r = redis.StrictRedis(
