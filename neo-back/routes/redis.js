@@ -172,4 +172,17 @@ router.get('/network/size/daily', function (req, res, next) {
     });
 });
 
+router.get('/network/size/weekly', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.hgetall(namespace.concat("nodes_online_weekly"), function (err, reply) {
+        var data_list = []
+        for (var key in reply) {
+            var data = JSON.parse(reply[key]);
+            data_list.push({date:key, totalonline:data.totalonline, total:data.total})
+        }
+        res.json({data:data_list});
+    });
+});
+
 module.exports = router;
