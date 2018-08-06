@@ -188,7 +188,12 @@ router.get('/historic/network/size/weekly', function (req, res, next) {
 router.get('/historic/node/stability/daily/:node_id', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
-    client.hget(namespace.concat("node_stability_daily"), req.params.node_id, function (err, reply) {
+    // client.hget(namespace.concat("node_stability_daily"), req.params.node_id, function (err, reply) {
+    //     console.log(reply)
+    //     res.json({reply});
+    // });
+
+    client.hgetall(namespace.concat("node_stability_daily"), function (err, reply) {
         console.log(reply)
         res.json({reply});
     });
@@ -197,7 +202,12 @@ router.get('/historic/node/stability/daily/:node_id', function (req, res, next) 
 router.get('/historic/node/stability/weekly/:node_id', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
-    client.hget(namespace.concat("nodes_online_weekly"), req.params.node_id, function (err, reply) {
+    // client.hget(namespace.concat("node_stability_weekly"), req.params.node_id, function (err, reply) {
+    //     console.log(reply)
+    //     res.json({reply});
+    // });
+
+    client.hgetall(namespace.concat("node_stability_weekly"), function (err, reply) {
         console.log(reply)
         res.json({reply});
     });
