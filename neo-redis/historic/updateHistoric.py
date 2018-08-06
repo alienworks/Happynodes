@@ -253,7 +253,7 @@ if __name__ == "__main__":
                                 and ohw.week = ws.week
                             """, [id])
             result = cursor.fetchall()
-            print(key, result)
+            print(key, id, result)
             r.hset(key, id, result)
             print("r.hget(key, id)", r.hget(key, id))
 
