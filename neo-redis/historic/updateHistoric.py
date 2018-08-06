@@ -186,7 +186,7 @@ if __name__ == "__main__":
                                 on st.timeday = dl.timeday
                             """, [id])
             result = cursor.fetchall()
-            print(key, result)
+            print(key, id[0],result)
             r.hset(key, id[0], result)
             print("r.hget(key, id)", r.hget(key, id[0]))
 
@@ -253,7 +253,7 @@ if __name__ == "__main__":
                                 and ohw.week = ws.week
                             """, [id])
             result = cursor.fetchall()
-            print(key, id, result)
+            print(key, id[0], result)
             r.hset(key, id[0], result)
             print("r.hget(key, id)", r.hget(key, id[0]))
 
@@ -304,7 +304,7 @@ if __name__ == "__main__":
                             lt.timeday = dl.timeday
                             """, [id])
             result = cursor.fetchall()
-            print(key, id, result)
+            print(key, id[0], result)
             r.hset(key, id[0], result)
             print("r.hget(key, id)", r.hget(key, id[0]))
 
@@ -372,7 +372,7 @@ if __name__ == "__main__":
                                 and lt.week = ws.week
                             """, [id])
             result = cursor.fetchall()
-            print(key, id, result)
+            print(key, id[0], result)
             print(result)
             r.hset(key, id[0], result)
             print("r.hget(key, id)", r.hget(key, id[0]))
