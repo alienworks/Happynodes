@@ -163,10 +163,12 @@ router.get('/network/size/daily', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
     client.hgetall(namespace.concat("nodes_online_daily"), function (err, reply) {
-        console.log(reply)
-        const networksize = JSON.parse(reply);
-        console.log(networksize)
-        res.json(reply);
+        var data_list = []
+        for (var key in reply) {
+            var data = JSON.parse(reply[key]);
+            data_list.push({date:key, totalonline:data.totalonline, total:data.total})
+        }
+        res.json({data:data_list});
     });
 });
 
