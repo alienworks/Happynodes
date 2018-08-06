@@ -67,14 +67,10 @@ if __name__ == "__main__":
 
         results = cursor.fetchall()
 
-        print(results)
-
         key = redisNamespace+"nodes_online_daily"
 
         for (day, totalonline, total) in results:
             r.hset(key, day, json.dumps({"totalonline":totalonline, "total":total}))
-
-        print((r.hgetall(key)))
 
         cursor.execute("""select
                             ws.year,
@@ -139,16 +135,11 @@ if __name__ == "__main__":
 
         results = cursor.fetchall()
 
-        print(results)
-
         key = redisNamespace+"nodes_online_weekly"
 
         for (year, week, totalonline, total) in results:
             year_week = str(int(year))+ "-" + str(int(week))
             r.hset(key, year_week, json.dumps({"totalonline":totalonline, "total":total}))
-
-        print((r.hgetall(key)))
-
 
         cursor.execute("""select id from public.connection_endpoints""")
 
@@ -195,8 +186,9 @@ if __name__ == "__main__":
                                 on st.timeday = dl.timeday
                             """, [id])
             result = cursor.fetchall()
-            print(result)
+            print(key, result)
             r.hset(key, id, result)
+            print("r.hget(key, id)", r.hget(key, id))
 
         key = redisNamespace+"node_stability_weekly"
 
@@ -261,8 +253,9 @@ if __name__ == "__main__":
                                 and ohw.week = ws.week
                             """, [id])
             result = cursor.fetchall()
-            print(result)
+            print(key, result)
             r.hset(key, id, result)
+            print("r.hget(key, id)", r.hget(key, id))
 
         key = redisNamespace+"node_latency_daily"
 
