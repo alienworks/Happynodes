@@ -203,4 +203,22 @@ router.get('/historic/node/stability/weekly/:node_id', function (req, res, next)
     });
 });
 
+router.get('/historic/node/latency/daily/:node_id', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.hget(namespace.concat("node_latency_daily"), req.params.node_id.toString(), function (err, reply) {
+        console.log(reply)
+        res.json({reply});
+    });
+});
+
+router.get('/historic/node/latency/weekly/:node_id', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.hget(namespace.concat("node_latency_weekly"), req.params.node_id.toString(), function (err, reply) {
+        console.log(reply)
+        res.json({reply});
+    });
+});
+
 module.exports = router;

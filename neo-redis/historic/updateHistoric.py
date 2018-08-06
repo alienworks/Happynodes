@@ -291,10 +291,6 @@ if __name__ == "__main__":
                                     public.latency_history
                                 where
                                     connection_id = %s
-                                    and to_char(
-                                        ts,
-                                        'yyyy-mm-dd'
-                                    ) between '2018-06-14' and '2018-07-30'
                                 group by
                                     to_char(
                                         ts,
@@ -357,10 +353,6 @@ if __name__ == "__main__":
                                 public.latency_history
                             where
                                 connection_id = %s
-                                and to_char(
-                                    ts,
-                                    'yyyy-mm-dd'
-                                ) between '2018-06-14' and '2018-07-30'
                             group by
                                 year,
                                 week,
