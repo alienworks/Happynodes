@@ -187,7 +187,7 @@ if __name__ == "__main__":
                             """, [id])
             result = cursor.fetchall()
             print(key, id[0],result)
-            r.hset(key, id[0], result)
+            r.hset(key, int(id[0]), result)
             print("r.hget(key, id)", r.hget(key, id[0]))
 
         key = redisNamespace+"node_stability_weekly"
@@ -254,7 +254,7 @@ if __name__ == "__main__":
                             """, [id])
             result = cursor.fetchall()
             print(key, id[0], result)
-            r.hset(key, id[0], result)
+            r.hset(key, int(id[0]), result)
             print("r.hget(key, id)", r.hget(key, id[0]))
 
         key = redisNamespace+"node_latency_daily"
@@ -305,7 +305,7 @@ if __name__ == "__main__":
                             """, [id])
             result = cursor.fetchall()
             print(key, id[0], result)
-            r.hset(key, id[0], result)
+            r.hset(key, int(id[0]), result)
             print("r.hget(key, id)", r.hget(key, id[0]))
 
         key = redisNamespace+"node_latency_weekly"
@@ -374,7 +374,7 @@ if __name__ == "__main__":
             result = cursor.fetchall()
             print(key, id[0], result)
             print(result)
-            r.hset(key, id[0], result)
+            r.hset(key, int(id[0]), result)
             print("r.hget(key, id)", r.hget(key, id[0]))
 
         time.sleep(60*60*24)
