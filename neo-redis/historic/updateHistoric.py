@@ -58,7 +58,8 @@ if __name__ == "__main__":
                                 ),
                                 connection_id) oh
                             group by timeday) networksize
-                            on dl.timeday = networksize.timeday""")
+                            on dl.timeday = networksize.timeday
+                            order by dl.timeday""")
 
         results = cursor.fetchall()
 
@@ -121,7 +122,8 @@ if __name__ == "__main__":
                         group by year,
                                 week) networksize_weekly on
                             networksize_weekly.year = ws.year
-                            and networksize_weekly.week = ws.week""")
+                            and networksize_weekly.week = ws.week
+                            order by ws.year, ws.week""")
 
         results = cursor.fetchall()
 
@@ -169,7 +171,8 @@ if __name__ == "__main__":
                                     )
                                 ) st 
                                 on st.timeday = dl.timeday
-                            """, [id])
+                                order by dl.timeday
+                            """, [id[0]])
             result = cursor.fetchall()
             print(key, id[0],result)
             r.hset(key, int(id[0]), result)
@@ -222,7 +225,7 @@ if __name__ == "__main__":
                                     from
                                         public.online_history
                                     where
-                                        connection_id = %s
+                                        connection_id = 1
                                     group by
                                         year,
                                         week
@@ -232,7 +235,8 @@ if __name__ == "__main__":
                                 ) ohw on
                                 ohw.year = ws.year
                                 and ohw.week = ws.week
-                            """, [id])
+                                order by ws.year, ws.week
+                            """, [id[0]])
             result = cursor.fetchall()
             print(key, id[0], result)
             r.hset(key, int(id[0]), result)
@@ -279,7 +283,8 @@ if __name__ == "__main__":
                                     )
                             ) lt on
                             lt.timeday = dl.timeday
-                            """, [id])
+                            order by dl.timeday
+                            """, [id[0]])
             result = cursor.fetchall()
             print(key, id[0], result)
             r.hset(key, int(id[0]), result)
@@ -343,7 +348,8 @@ if __name__ == "__main__":
                                 week) lt on
                                 lt.year = ws.year
                                 and lt.week = ws.week
-                            """, [id])
+                                order by ws.year, ws.week
+                            """, [id[0]])
             result = cursor.fetchall()
             print(key, id[0], result)
             print(result)
