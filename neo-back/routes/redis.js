@@ -221,4 +221,13 @@ router.get('/historic/node/latency/weekly/:node_id', function (req, res, next) {
     });
 });
 
+router.get('/historic/node/blockheightlag/:node_id', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.hget(namespace.concat("blockheight_lag"), req.params.node_id.toString(), function (err, reply) {
+        console.log(reply)
+        res.json({reply});
+    });
+});
+
 module.exports = router;

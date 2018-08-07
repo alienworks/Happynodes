@@ -356,6 +356,71 @@ if __name__ == "__main__":
             r.hset(key, int(id[0]), result)
             print("r.hget(key, id)", r.hget(key, id[0]))
 
+
+        key = redisNamespace+"blockheight_lag"
+
+        for id in endpoints:
+            cursor.execute("""select
+                                blocklist.blockheight,
+                                min_ts,
+                                max_ts,
+                                bh.blockheight as node_blockheight,
+                                (
+                                    blocklist.blockheight - bh.blockheight
+                                ) as block_lag
+                            from
+                                (
+                                    select
+                                        generate_series(
+                                            2537572,
+                                            max( blockheight )
+                                        ) as blockheight
+                                    from
+                                        public.blockheight_history
+                                ) blocklist
+                            left join (
+                                    select
+                                        blockheight,
+                                        min(ts) as min_ts
+                                    from
+                                        public.blockheight_history
+                                    group by
+                                        blockheight
+                                ) min_ts_t on
+                                min_ts_t.blockheight = blocklist.blockheight
+                            left join (
+                                    select
+                                        blockheight,
+                                        min(ts) as max_ts
+                                    from
+                                        public.blockheight_history
+                                    group by
+                                        blockheight
+                                ) max_ts_t on
+                                max_ts_t.blockheight = blocklist.blockheight + 1
+                            inner join (
+                                    select
+                                        blockheight,
+                                        connection_id,
+                                        max( ts ) as ts
+                                    from
+                                        public.blockheight_history
+                                    where
+                                        connection_id = %s
+                                    group by
+                                        blockheight,
+                                        connection_id
+                                ) bh on
+                                bh.ts between min_ts_t.min_ts and max_ts_t.max_ts
+                            order by
+                                blocklist.blockheight desc
+                            """, [id[0]])
+            result = cursor.fetchall()
+            print(key, id[0], result)
+            print(result)
+            r.hset(key, int(id[0]), result)
+            print("r.hget(key, id)", r.hget(key, id[0]))
+
         time.sleep(60*60*24)
 
 
