@@ -41,7 +41,7 @@ if __name__ == "__main__":
 
         results = cursor.fetchall()
 
-        key = "{}endpoints".format(redisNamespace)
+        key = "{}end".format(redisNamespace)
 
         for (id, protocol, url, address, port, locale, location) in results:
             jsonObject = {
@@ -56,7 +56,8 @@ if __name__ == "__main__":
             print(key)
             print(str(id))
             print(jsonObject)
-            r.hset(key, id, json.dumps(jsonObject))
+
+            r.hset(key, str(id) , json.dumps(jsonObject))
 
         cursor.execute("""select  dl.timeday, coalesce(totalonline, 0) as totalonline, coalesce(total, 0) as total
                             from
