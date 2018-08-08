@@ -234,7 +234,7 @@ router.get('/historic/node/blockheightlag/:node_id', function (req, res, next) {
 router.get('/endpoints', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
-    client.hgetall(namespace.concat("endpoints"), function (err, reply) {
+    client.hgetall(namespace.concat("end"), function (err, reply) {
         console.log(reply);
         var results = reply
 
