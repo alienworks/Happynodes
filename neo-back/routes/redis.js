@@ -235,7 +235,8 @@ router.get('/endpoints', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
     client.get(namespace.concat("endpoints"), function (err, reply) {
-        var data = reply.reply
+        console.log(reply)
+        var data = reply["reply"]
 
         var sites = []
 
