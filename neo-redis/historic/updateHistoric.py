@@ -4,27 +4,60 @@ import time
 import json
 import os
 
-host = str(os.environ['PGHOST'])
-databasename = str(os.environ['PGDATABASE'])
-user = str(os.environ['PGUSER'])
-password = str(os.environ['PGPASSWORD'])
+# host = str(os.environ['PGHOST'])
+# databasename = str(os.environ['PGDATABASE'])
+# user = str(os.environ['PGUSER'])
+# password = str(os.environ['PGPASSWORD'])
+
+# connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password)
+
+# redisHost = str(os.environ['REDIS_HOST'])
+# redisPort = str(os.environ['REDIS_PORT'])
+# redisDb = str(os.environ['REDIS_DB'])
+# redisNamespace = str(os.environ['REDIS_NAMESPACE'])
+
+host = "35.226.118.249"
+databasename = "postgres"
+user = "postgres"
+password = "postgres"
 
 connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password)
 
-redisHost = str(os.environ['REDIS_HOST'])
-redisPort = str(os.environ['REDIS_PORT'])
-redisDb = str(os.environ['REDIS_DB'])
-redisNamespace = str(os.environ['REDIS_NAMESPACE'])
+redisHost = "redis-18920.c1.us-east1-2.gce.cloud.redislabs.com"
+redisPort = 18920
+redisPassword = "CrxsRPXDdMwBHZzqdh50XNx1OATVCMuS"
+redisNamespace = "TEST"
 
 
 if __name__ == "__main__":
     while True:
+        # r = redis.StrictRedis(
+        #     host=redisHost, port=redisPort, db=redisDb)
+
         r = redis.StrictRedis(
-            host=redisHost, port=redisPort, db=redisDb)
+            host=redisHost, port=redisPort, password=redisPassword)
 
         conn = psycopg2.connect(connection_str)
 
         cursor = conn.cursor()
+
+        cursor.execute("""select ce.protocol, n.hostname as url, n.ip as address,  ce.port, loc.locale, loca.location
+								from connection_endpoints ce
+								inner join
+								nodes n
+								on n.id=ce.node_id
+								inner join
+								locale loc
+								on ce.id=loc.connection_id
+								inner join
+								location loca
+								on ce.id=loca.connection_id""")
+
+        results = cursor.fetchall()
+
+        key = redisNamespace+"endpoints"
+
+        r.set(key, results)
 
         cursor.execute("""select  dl.timeday, coalesce(totalonline, 0) as totalonline,   coalesce(total, 0) as total
                             from
