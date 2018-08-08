@@ -243,8 +243,8 @@ router.get('/endpoints', function (req, res, next) {
 
         var i;
 		for (i = 0; i < results.length; i++) {
-            data = results[i]
-            console.logs(data)
+            var data = results[i]
+            console.log(data)
             let protocol = data[0]
             let url = data[1]
             let address = data[2]
