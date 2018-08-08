@@ -20,7 +20,7 @@ redisNamespace = str(os.environ['REDIS_NAMESPACE'])
 
 if __name__ == "__main__":
     while True:
-         r = redis.StrictRedis(
+        r = redis.StrictRedis(
             host=redisHost, port=redisPort, db=redisDb)
 
         conn = psycopg2.connect(connection_str)
