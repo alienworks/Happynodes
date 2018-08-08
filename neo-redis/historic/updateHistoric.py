@@ -42,8 +42,6 @@ if __name__ == "__main__":
 
         key = redisNamespace+"endpoints"
 
-        r.set(key, results)
-
         for (id, protocol, url, address, port, locale, location) in results:
             jsonObject = {
                 "protocol": protocol,
@@ -54,7 +52,7 @@ if __name__ == "__main__":
                 "port": port,
                 "type": "RPC"
             }
-            r.hset(key,id,json.dumps(jsonObject))
+            r.hset(key, id,json.dumps(jsonObject))
 
         cursor.execute("""select  dl.timeday, coalesce(totalonline, 0) as totalonline, coalesce(total, 0) as total
                             from
