@@ -236,8 +236,6 @@ router.get('/endpoints', function (req, res, next) {
     const namespace = process.env.REDIS_NAMESPACE
     client.hgetall(namespace.concat("dynamic_connection_endpoints"), function (err, reply) {
 
-        console.log(reply);
-
         var sites = []
 
         for (var key in reply) {
@@ -245,28 +243,6 @@ router.get('/endpoints', function (req, res, next) {
             sites.push(data);
         }
 
-        // var i;
-		// for (i = 0; i < results.length; i++) {
-        //     var data = results[i]
-        //     console.log(data)
-        //     let protocol = data[0]
-        //     let url = data[1]
-        //     let address = data[2]
-        //     let port = data[3]
-        //     let locale = data[4]
-        //     let location = data[5]
-
-        //     site = {
-        //         "protocol": protocol,
-        //         "url": url,
-        //         "location": location,
-        //         "address": address,
-        //         "locale": locale,
-        //         "port": port,
-        //         "type": "RPC"
-        //     }
-        //     sites.push(site)
-        // }
         res.json({ "name": "MainNet", "pollTime": "5000", "sites": sites});
     });
 });

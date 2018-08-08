@@ -25,36 +25,69 @@ if __name__ == "__main__":
 
         cursor = conn.cursor()
 
-        cursor.execute("""select ce.id, ce.protocol, n.hostname as url, n.ip as address,  ce.port, loc.locale, loca.location
-								from connection_endpoints ce
-								inner join
-								nodes n
-								on n.id=ce.node_id
-								inner join
-								locale loc
-								on ce.id=loc.connection_id
-								inner join
-								location loca
-								on ce.id=loca.connection_id""")
+        cursor.execute("""select
+                            ce.id,
+                            ce.protocol,
+                            n.hostname as url,
+                            n.ip as address,
+                            ce.port,
+                            loc.locale,
+                            loca.location,
+                            pings.stability_thousand_pings
+                        from
+                            connection_endpoints ce
+                        inner join nodes n on
+                            n.id = ce.node_id
+                        inner join locale loc on
+                            ce.id = loc.connection_id
+                        inner join location loca on
+                            ce.id = loca.connection_id
+                        inner join
+                        (select
+                            z.connection_id,
+                            sum( case when online = true then 1 else 0 end ) as stability_thousand_pings
+                        from
+                            (
+                                select
+                                    *,
+                                    row_number() over (
+                                        partition by connection_id
+                                    order by
+                                        id desc
+                                    )
+                                from
+                                    (
+                                        select
+                                            *
+                                        from
+                                            online_history
+                                        order by
+                                            id desc limit 100000
+                                    ) online_history
+                            ) z
+                        where
+                            z.row_number <= 1000
+                        group by
+                            z.connection_id) pings
+                            on pings.connection_id=ce.id""")
 
         results = cursor.fetchall()
 
         key = redisNamespace+"dynamic_connection_endpoints"
 
-        for (id, protocol, url, address, port, locale, location) in results:
-            jsonObject = {
-                "protocol": protocol,
-                "url": url,
-                "location": location,
-                "address": address,
-                "locale": locale,
-                "port": port,
-                "type": "RPC"
-            }
-            print(key)
-            print(str(id))
-            print(jsonObject)
-            r.hset(key, str(id) , json.dumps(jsonObject))
+        for (id, protocol, url, address, port, locale, location, pings_score) in results:
+            if pings_score != 0:
+                jsonObject = {
+                    "protocol": protocol,
+                    "url": url,
+                    "location": location,
+                    "address": address,
+                    "locale": locale,
+                    "port": port,
+                    "type": "RPC"
+                }
+
+                r.hset(key, str(id) , json.dumps(jsonObject))
 
         cursor.execute("""select  dl.timeday, coalesce(totalonline, 0) as totalonline, coalesce(total, 0) as total
                             from
