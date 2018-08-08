@@ -237,11 +237,14 @@ router.get('/endpoints', function (req, res, next) {
     client.get(namespace.concat("endpoints"), function (err, reply) {
         var results = reply
 
+        console.log(typeof results)
+
         var sites = []
 
         var i;
 		for (i = 0; i < results.length; i++) {
             data = results[i]
+            console.logs(data)
             let protocol = data[0]
             let url = data[1]
             let address = data[2]
