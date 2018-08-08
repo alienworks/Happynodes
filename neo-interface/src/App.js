@@ -52,7 +52,7 @@ class App extends Component {
         <footer className="App-footer">
         <hr/>
         <div className="footer-credits">
-          <img alt="NEO official logo" src="https://neo.org/images/neo_logo.svg"/>
+          <img alt="NEO official logo" src="https://neo-cdn.azureedge.net/images/neo_logo.svg"/>
         </div>
         <a href="https://github.com/F27Ventures" rel="noopener noreferrer" target="_blank"><img src={f27logo} className="Footer-app-logo" alt="logo" /></a>
             </footer>
