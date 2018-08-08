@@ -234,35 +234,34 @@ router.get('/historic/node/blockheightlag/:node_id', function (req, res, next) {
 router.get('/endpoints', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
-    client.get(namespace.concat("endpoints"), function (err, reply) {
+    client.hgetall(namespace.concat("endpoints"), function (err, reply) {
+        console.log(reply);
         var results = reply
-
-        console.log(typeof results)
 
         var sites = []
 
-        var i;
-		for (i = 0; i < results.length; i++) {
-            var data = results[i]
-            console.log(data)
-            let protocol = data[0]
-            let url = data[1]
-            let address = data[2]
-            let port = data[3]
-            let locale = data[4]
-            let location = data[5]
+        // var i;
+		// for (i = 0; i < results.length; i++) {
+        //     var data = results[i]
+        //     console.log(data)
+        //     let protocol = data[0]
+        //     let url = data[1]
+        //     let address = data[2]
+        //     let port = data[3]
+        //     let locale = data[4]
+        //     let location = data[5]
 
-            site = {
-                "protocol": protocol,
-                "url": url,
-                "location": location,
-                "address": address,
-                "locale": locale,
-                "port": port,
-                "type": "RPC"
-            }
-            sites.push(site)
-        }
+        //     site = {
+        //         "protocol": protocol,
+        //         "url": url,
+        //         "location": location,
+        //         "address": address,
+        //         "locale": locale,
+        //         "port": port,
+        //         "type": "RPC"
+        //     }
+        //     sites.push(site)
+        // }
         res.json({ "name": "MainNet", "pollTime": "5000", "sites": sites});
     });
 });

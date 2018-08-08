@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
         cursor = conn.cursor()
 
-        cursor.execute("""select ce.protocol, n.hostname as url, n.ip as address,  ce.port, loc.locale, loca.location
+        cursor.execute("""select ce.id, ce.protocol, n.hostname as url, n.ip as address,  ce.port, loc.locale, loca.location
 								from connection_endpoints ce
 								inner join
 								nodes n
@@ -44,7 +44,19 @@ if __name__ == "__main__":
 
         r.set(key, results)
 
-        cursor.execute("""select  dl.timeday, coalesce(totalonline, 0) as totalonline,   coalesce(total, 0) as total
+        for (id, protocol, url, address, port, locale, location) in results:
+            jsonObject = {
+                "protocol": protocol,
+                "url": url,
+                "location": location,
+                "address": address,
+                "locale": locale,
+                "port": port,
+                "type": "RPC"
+            }
+            r.hset(key,id,json.dumps(jsonObject))
+
+        cursor.execute("""select  dl.timeday, coalesce(totalonline, 0) as totalonline, coalesce(total, 0) as total
                             from
                             (select to_char(
                                     generate_series(min(ts),
