@@ -54,9 +54,9 @@ if __name__ == "__main__":
                 "type": "RPC"
             }
             print(key)
+            print(str(id))
             print(jsonObject)
-            print(jsonObject)
-            r.hset(key, str(id), json.dumps(jsonObject))
+            r.hset(key, id, json.dumps(jsonObject))
 
         cursor.execute("""select  dl.timeday, coalesce(totalonline, 0) as totalonline, coalesce(total, 0) as total
                             from
