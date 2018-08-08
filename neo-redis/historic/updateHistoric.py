@@ -4,37 +4,22 @@ import time
 import json
 import os
 
-# host = str(os.environ['PGHOST'])
-# databasename = str(os.environ['PGDATABASE'])
-# user = str(os.environ['PGUSER'])
-# password = str(os.environ['PGPASSWORD'])
-
-# connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password)
-
-# redisHost = str(os.environ['REDIS_HOST'])
-# redisPort = str(os.environ['REDIS_PORT'])
-# redisDb = str(os.environ['REDIS_DB'])
-# redisNamespace = str(os.environ['REDIS_NAMESPACE'])
-
-
-host = "35.226.118.249"
-databasename = "postgres"
-user = "postgres"
-password = "postgres"
+host = str(os.environ['PGHOST'])
+databasename = str(os.environ['PGDATABASE'])
+user = str(os.environ['PGUSER'])
+password = str(os.environ['PGPASSWORD'])
 
 connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password)
 
-redisHost = "redis-18920.c1.us-east1-2.gce.cloud.redislabs.com"
-redisPort = 18920
-redisPassword = "CrxsRPXDdMwBHZzqdh50XNx1OATVCMuS"
-redisNamespace = "TEST"
+redisHost = str(os.environ['REDIS_HOST'])
+redisPort = str(os.environ['REDIS_PORT'])
+redisDb = str(os.environ['REDIS_DB'])
+redisNamespace = str(os.environ['REDIS_NAMESPACE'])
+
 
 
 if __name__ == "__main__":
     while True:
-        # r = redis.StrictRedis(
-        #     host=redisHost, port=redisPort, db=redisDb)
-
         r = redis.StrictRedis(
             host=redisHost, port=redisPort, password=redisPassword)
 
