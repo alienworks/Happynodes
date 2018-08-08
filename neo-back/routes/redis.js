@@ -237,10 +237,13 @@ router.get('/endpoints', function (req, res, next) {
     client.hgetall(namespace.concat("dynamic_connection_endpoints"), function (err, reply) {
 
         console.log(reply);
-        
-        var results = reply
 
         var sites = []
+
+        for (var key in reply) {
+            var data = JSON.parse(reply[key]);
+            sites.push(data);
+        }
 
         // var i;
 		// for (i = 0; i < results.length; i++) {
