@@ -16,8 +16,6 @@ redisPort = str(os.environ['REDIS_PORT'])
 redisDb = str(os.environ['REDIS_DB'])
 redisNamespace = str(os.environ['REDIS_NAMESPACE'])
 
-
-
 if __name__ == "__main__":
     while True:
         r = redis.StrictRedis(
@@ -41,7 +39,7 @@ if __name__ == "__main__":
 
         results = cursor.fetchall()
 
-        key = "{}end".format(redisNamespace)
+        key = redisNamespace+"dynamic_connection_endpoints"
 
         for (id, protocol, url, address, port, locale, location) in results:
             jsonObject = {
@@ -56,7 +54,6 @@ if __name__ == "__main__":
             print(key)
             print(str(id))
             print(jsonObject)
-
             r.hset(key, str(id) , json.dumps(jsonObject))
 
         cursor.execute("""select  dl.timeday, coalesce(totalonline, 0) as totalonline, coalesce(total, 0) as total
