@@ -398,7 +398,7 @@ if __name__ == "__main__":
                                         blockheight
                                 ) max_ts_t on
                                 max_ts_t.blockheight = blocklist.blockheight + 1
-                            inner join (
+                            left join (
                                     select
                                         blockheight,
                                         connection_id,
@@ -411,7 +411,7 @@ if __name__ == "__main__":
                                         blockheight,
                                         connection_id
                                 ) bh on
-                                bh.ts between min_ts_t.min_ts and max_ts_t.max_ts
+                                bh.ts between min_ts_t.min_ts and max_ts_t.max_ts::timestamp - interval '1 seconds'
                             order by
                                 blocklist.blockheight desc
                             """, [id[0]])
