@@ -236,7 +236,7 @@ router.get('/endpoints', function (req, res, next) {
     const namespace = process.env.REDIS_NAMESPACE
     client.get(namespace.concat("endpoints"), function (err, reply) {
         var data = JSON.parse(reply);
-        console.log(data)
+        // console.log(data)
         res.json({reply});
     });
 });
