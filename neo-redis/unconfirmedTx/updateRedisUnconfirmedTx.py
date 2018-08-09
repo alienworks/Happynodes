@@ -28,6 +28,7 @@ if __name__ == "__main__":
         cursor.execute("""SELECT count(connection_id) as node_count, tx, max(last_blockheight) 
             FROM public.unconfirmed_tx  
             where last_blockheight = (select max(blockheight) from blockheight_history)  
+            having count(connection_id) > 1
             group by tx  
             order by node_count desc""")
         
