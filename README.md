@@ -11,7 +11,7 @@
 
 Happynodes is a blockchain network monitor and visualisation tool designed for the NEO Smart Economy Blockchain. It is live on https://happynodes.f27.ventures. It is developed and run by F27 with support from NGD. There is also an API under development that powers the front-end but will have useful metrics for the NEO community that are currently not available anywhere else (primarily historic information).
 
-Current Release: [1.1.0](https://github.com/neo-ngd/Happynodes/releases/tag/v1.1.0). You can see our [Milestones](https://github.com/neo-ngd/Happynodes/milestones) for more information on what is in each major release, as well as our [Releases](https://github.com/neo-ngd/Happynodes/releases/latest) log.
+Current Release: [1.2.0](https://github.com/neo-ngd/Happynodes/releases/tag/v1.2.0). You can see our [Milestones](https://github.com/neo-ngd/Happynodes/milestones) for more information on what is in each major release, as well as our [Releases](https://github.com/neo-ngd/Happynodes/releases/latest) log.
 
 <details>
  <summary><strong>Table of Contents</strong> (click to expand)</summary>

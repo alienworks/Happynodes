@@ -159,4 +159,92 @@ router.get('/nodeslist', function (req, res, next) {
     });
 });
 
+router.get('/historic/network/size/daily', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.hgetall(namespace.concat("nodes_online_daily"), function (err, reply) {
+        var data_list = []
+        for (var key in reply) {
+            var data = JSON.parse(reply[key]);
+            data_list.push({date:key, totalonline:data.totalonline, total:data.total})
+        }
+        res.json({data:data_list});
+    });
+});
+
+router.get('/historic/network/size/weekly', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.hgetall(namespace.concat("nodes_online_weekly"), function (err, reply) {
+        var data_list = []
+        for (var key in reply) {
+            var data = JSON.parse(reply[key]);
+            data_list.push({date:key, totalonline:data.totalonline, total:data.total})
+        }
+        res.json({data:data_list});
+    });
+});
+
+router.get('/historic/node/stability/daily/:node_id', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.hget(namespace.concat("node_stability_daily"), req.params.node_id.toString(), function (err, reply) {
+        console.log(reply)
+        res.json({reply});
+    });
+});
+
+router.get('/historic/node/stability/weekly/:node_id', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.hget(namespace.concat("node_stability_weekly"), req.params.node_id.toString(), function (err, reply) {
+        console.log(reply)
+        res.json({reply});
+    });
+});
+
+router.get('/historic/node/latency/daily/:node_id', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.hget(namespace.concat("node_latency_daily"), req.params.node_id.toString(), function (err, reply) {
+        console.log(reply)
+        res.json({reply});
+    });
+});
+
+router.get('/historic/node/latency/weekly/:node_id', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.hget(namespace.concat("node_latency_weekly"), req.params.node_id.toString(), function (err, reply) {
+        console.log(reply)
+        res.json({reply});
+    });
+});
+
+router.get('/historic/node/blockheightlag/:node_id', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.hget(namespace.concat("blockheight_lag"), req.params.node_id.toString(), function (err, reply) {
+        console.log(reply)
+        res.json({reply});
+    });
+});
+
+
+router.get('/endpoints', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.hgetall(namespace.concat("dynamic_connection_endpoints"), function (err, reply) {
+
+        var sites = []
+
+        for (var key in reply) {
+            var data = JSON.parse(reply[key]);
+            sites.push(data);
+        }
+
+        res.json({ "name": "MainNet", "pollTime": "5000", "sites": sites});
+    });
+});
+
 module.exports = router;
