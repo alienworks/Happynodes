@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var apicache = require('apicache');
+var axios = require('axios');
+
 const { Pool } = require('pg')
 
 var types = require('pg').types
@@ -13,6 +15,10 @@ types.setTypeParser(1700, 'text', parseFloat);
 let cache = apicache.middleware
 
 const pool = new Pool({
+	user: process.env.PGUSER,
+	host: process.env.PGHOST,
+	database: process.env.PGDATABASE,
+	password: process.env.PGPASSWORD,
 	max: 200,
 	idleTimeoutMillis: 3000,
 	connectionTimeoutMillis: 3000
@@ -78,19 +84,86 @@ router.get('/unconfirmed', cache('2 seconds'), function (req, res, next) {
 			console.log("pool.totalCount", pool.totalCount)
 			console.log("pool.idleCount", pool.idleCount)
 			console.log("pool.waitingCount", pool.waitingCount)
-			return client.query(`SELECT count(connection_id) as node_count, tx, max(last_blockheight) 
-								FROM public.unconfirmed_tx 
-								where last_blockheight = (select max(blockheight) from blockheight_history) 
-								group by tx 
-								order by node_count desc`)
+			return client.query(`select
+								ce.id as connection_id,
+								ce.protocol,
+								n.hostname,
+								ce.port,
+								unconfirm_tx_table.node_count,
+								unconfirm_tx_table.tx,
+								unconfirm_tx_table.last_blockheight
+							from
+								(
+									select
+										max( connection_id ) as connection_id,
+										count( connection_id ) as node_count,
+										tx,
+										max( last_blockheight ) as last_blockheight
+									from
+										public.unconfirmed_tx
+									where
+										last_blockheight = (
+											select
+												max( blockheight )
+											from
+												blockheight_history
+										)
+									group by
+										tx
+									order by
+										node_count desc
+								) unconfirm_tx_table
+							inner join connection_endpoints ce on
+								ce.id = unconfirm_tx_table.connection_id
+							inner join nodes n on
+								n.id = ce.node_id`)
 				.catch((error) => {
 					client.release();
 					console.log(error)
 				})
 				.then(breakdown => {
 					client.release()
-					console.log('/unconfirmed length', breakdown.rows.length);
 					res.json({ txs: breakdown.rows });
+				})
+		})
+});
+
+router.post('/unconfirmed/tx', cache('2 seconds'), function (req, res, next) {
+	let tx = req.body.tx;
+	let connection_id = req.body.connection_id;
+
+	pool.connect()
+		.then(client => {
+			return client.query(`select
+					concat( ce.protocol, '://', n.hostname, ':', ce.port ) as url
+				from
+					connection_endpoints ce
+				inner join nodes n on
+					ce.node_id = n.id
+				where
+					ce.id = $1`, [connection_id])
+				.catch((error) => {
+					client.release();
+					console.log(error)
+				})
+				.then(breakdown => {
+					client.release()
+					console.log(breakdown.rows)
+					let url = breakdown.rows[0].url
+					axios.post(url, {
+							"jsonrpc": "2.0",
+							"method": "getrawtransaction",
+							"params": [tx, 1],
+							"id": 1
+						})
+						.then(function (response) {
+							console.log(response);
+							res.json({ data: response.data });
+						})
+						.catch(function (error) {
+							console.log(error);
+							res.json({ error });
+						});
 				})
 		})
 });

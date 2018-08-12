@@ -100,7 +100,7 @@ if __name__ == "__main__":
                                     ) in (
                                         select
                                             connection_id,
-                                            max( ts )
+                                            max(ts)
                                         from
                                             validated_peers_history
                                         group by
