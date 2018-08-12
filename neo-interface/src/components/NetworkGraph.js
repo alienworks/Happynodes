@@ -51,10 +51,22 @@ class NetworkGraph extends Component {
                     hierarchical: false
                 },
                 edges: {
-                    color: "#000000"
+                    arrows: {
+                        to:     {enabled: false, scaleFactor:1, type:'arrow'},
+                        middle: {enabled: false, scaleFactor:1, type:'arrow'},
+                        from:   {enabled: false, scaleFactor:1, type:'arrow'}
+                      },
+                    "arrowStrikethrough": false,
+                    "color": {
+                        "inherit": false
+                      }
                 },
                 nodes: {
-                    shape: "hexagon"
+                    shape: 'hexagon',
+                    color: '#58bf00',
+                    "shadow": {
+                        "enabled": true
+                    }
                 },
                 physics:{
                     stabilization: false,

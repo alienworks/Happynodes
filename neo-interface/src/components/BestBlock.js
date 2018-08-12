@@ -14,11 +14,10 @@ class bestblock extends Component {
             );
         }
 
-        console.log("bestblock", bestblock.value)
         if (bestblock.value === null || bestblock.value === 'undefined'){
             return (
                 <div className="top-block blue">
-                <h2></h2>
+                <h2>42</h2>
                 <p>BEST BLOCK</p></div>
             );
         }

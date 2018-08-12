@@ -13,7 +13,6 @@ class BlockTime extends Component {
             );
         }
         
-        console.log("blocktime", blocktime.value)
         if (blocktime.value === null || blocktime.value === 'undefined'){
             return (
                 <div className="top-block yellow">

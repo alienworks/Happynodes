@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-refetch'
-import axios from 'axios';
 import config from './config'
 
 class UnconfirmedTxInfo extends Component {
@@ -14,63 +13,47 @@ class UnconfirmedTxInfo extends Component {
     render() {
         const { unconfirmTxInfo } = this.props
 
-        const assettable = {"0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b":"NEO",
-                           "0X602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7":"GAS"}
 
         if (unconfirmTxInfo.pending) {
             return (
                 <br />
             );
         }
-        let vins = unconfirmTxInfo.value.data.result.vin
-
-
-        if (!this.state.ajaxdone) {
-            let i
-            for (i in vins) {
-                console.log("vin", vins[i])
-                let vin = vins[i]
-                let txid = vin.txid.substring(2)
-                let voutidx = vin.vout
-                console.log("txid", txid)
-                axios.get(`https://neoscan.io/api/main_net/v1/get_transaction/` + txid)
-                    .then(res => {
-                        console.log(res.data.vouts[voutidx]);
-                        let addr = res.data.vouts[voutidx].address_hash
-                        let value = res.data.vouts[voutidx].value
-                        let asset = res.data.vouts[voutidx].asset
-
-                        unconfirmTxInfo.value.data.result.vin[i].addr = addr
-                        unconfirmTxInfo.value.data.result.vin[i].value = value
-                        unconfirmTxInfo.value.data.result.vin[i].asset = asset
-                        if (i == vins.length - 1) {
-                            this.setState({ ajaxdone: true })
-                        }
-                    })
-            }
-        }
-
-
-        console.log("vin", unconfirmTxInfo.value.data.result.vout)
+        
+        if (unconfirmTxInfo.fulfilled) {
+            let vins = unconfirmTxInfo.value.data.result.vin
+            let vin_txs = vins.map((v,i,arr) => {
+                return v.txid.substring(2);
+            })
+            console.log(vin_txs);
+            let y = JSON.stringify(unconfirmTxInfo.value,null, 4, 50)
+            //let pretty_json = y.replace(/\"txid\": \"0x(\w+)\"/g,"\"txid\":\"&lt;a href=\"../$1\"&gt;$1&lt;/a&gt;")
 
         return (
-            <div className="top-block pink">
-                <p>blockhash: {unconfirmTxInfo.value.data.result.blockhash}</p>
-                <p>blocktime: {unconfirmTxInfo.value.data.result.blocktime}</p>
-                <p>type: {unconfirmTxInfo.value.data.result.type}</p>
-                {unconfirmTxInfo.value.data.result.vin.map(v => <p key={v.txid} >  vin: {v.addr} {v.value} {v.asset} </p>)}
-                {unconfirmTxInfo.value.data.result.vout.map(v => <p key={v.txid} >  vout: {v.address} {v.value} {assettable[v.asset]} </p>)}
+            <div className="jumbotron">
+               <h2>Transaction Info for {unconfirmTxInfo.value.data.result.txid}</h2>
+<hr style={{
+    'borderColor': '#78cadd', 'borderWidth': '3px'
+}} />
+                <table className="table">
+                <thead>
+                                <tr><th className="tx_td">VINs Transaction List (i.e. Preceding linked Transactions)</th></tr></thead>
+                                <tbody>
+                {vin_txs.map((item, i) =>
+                    <tr key={i}>
+                        <td className="tx_td" style={{'padding':'1rem'}}><a href={'./' + item}>0x{item}</a></td>
+                    </tr>
+                )}
+                </tbody>
+                </table>
 
-                <p>txid: {unconfirmTxInfo.value.data.result.txid}</p>
-                <p>size: {unconfirmTxInfo.value.data.result.size} bytes </p>
-                <p>gas: {unconfirmTxInfo.value.data.result.gas}</p>
-                <p>net_fee: {unconfirmTxInfo.value.data.result.net_fee}</p>
-                <p>sys_fee: {unconfirmTxInfo.value.data.result.sys_fee}</p>
-                {/* <p>script: {unconfirmTxInfo.value.data.result.script}</p> */}
+               <pre>{y}</pre>
+                
 
             </div>
         );
     }
+}
 }
 
 export default connect((props) => ({
