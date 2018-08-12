@@ -26,39 +26,39 @@ if __name__ == "__main__":
         cursor = conn.cursor()
 
         cursor.execute("""select
-                    ce.id as connection_id,
-                    ce.protocol,
-                    n.hostname,
-                    ce.port,
-                    unconfirm_tx_table.node_count,
-                    unconfirm_tx_table.tx,
-                    unconfirm_tx_table.last_blockheight
-                from
-                    (
-                        select
-                            max( connection_id ) as connection_id,
-                            count( connection_id ) as node_count,
-                            tx,
-                            max( last_blockheight ) as last_blockheight
+                            ce.id as connection_id,
+                            ce.protocol,
+                            n.hostname,
+                            ce.port,
+                            unconfirm_tx_table.node_count,
+                            unconfirm_tx_table.tx,
+                            unconfirm_tx_table.last_blockheight
                         from
-                            public.unconfirmed_tx
-                        where
-                            last_blockheight = (
+                            (
                                 select
-                                    max( blockheight )
+                                    max(connection_id) as connection_id,
+                                    count(connection_id) as node_count,
+                                    tx,
+                                    max(last_blockheight) as last_blockheight
                                 from
-                                    blockheight_history
-                            )
-                        group by
-                            tx
-                        order by
-                            node_count desc
-                    ) unconfirm_tx_table
-                inner join connection_endpoints ce on
-                    ce.id = unconfirm_tx_table.connection_id
-                inner join nodes n on
-                    n.id = ce.node_id
-                """)
+                                    public.unconfirmed_tx
+                                where
+                                    last_blockheight = (
+                                        select
+                                            max(blockheight)
+                                        from
+                                            blockheight_history
+                                    )
+                                group by
+                                    tx
+                                order by
+                                    node_count desc
+                            ) unconfirm_tx_table
+                        inner join connection_endpoints ce on
+                            ce.id = unconfirm_tx_table.connection_id
+                        inner join nodes n on
+                            n.id = ce.node_id
+                        where node_count>1""")
         
         result = cursor.fetchall()
         print(result)
