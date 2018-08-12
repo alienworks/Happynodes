@@ -28,7 +28,59 @@ html {
     }
 }
 
+text.recharts-text.recharts-cartesian-axis-tick-value {
+  font-size: 1rem;
+}
 
+.bm-burger-button {
+  position: absolute;
+  width: 36px;
+  height: 30px;
+  left: 36px;
+  top: 36px;
+}
+.right .bm-burger-button {
+  left: initial;
+  right: 36px;
+}
+.bm-burger-bars {
+  background: #373a47;
+}
+.bm-morph-shape {
+  fill: #373a47;
+}
+
+.bm-menu a {
+  color: #b8b7ad;
+}
+.bm-menu a:hover,
+.bm-menu a:focus {
+  color: #b6e70c;
+}
+.bm-item-list a {
+  padding: 0.8em;
+}
+.bm-item-list a span {
+  margin-left: 10px;
+  font-weight: 700;
+}
+
+.bm-cross-button {
+  height: 24px;
+  width: 24px;
+}
+
+/* Color/shape of close button cross */
+.bm-cross {
+  background: #bdc3c7;
+}
+ 
+/* General sidebar styles */
+.bm-menu {
+  background: #373a47;
+  padding: 2.5em 1.5em 0;
+  font-size: 1.15em;
+}
 
 .top-block.yellow p {
     background-color: #f5e860;
@@ -63,6 +115,10 @@ html body {
   box-shadow: 0 0 5px 0px #b7b4b4;
 }
 
+.jumbotron pre {
+  font-size: 1.5rem;
+}
+
 .jumbotron.nodes {
     padding: 2rem 2rem 5rem 2rem !important;
 }
@@ -79,6 +135,15 @@ html body {
   word-wrap: break-word;
 }
 
+.bm-item {
+  font-size: 2rem;
+  display: inline-block;
+}
+
+/* Styling of overlay */
+.bm-overlay {
+  background: rgba(0, 0, 0, 0.3);
+}
 
 .App-logo {
 
@@ -89,7 +154,7 @@ html body {
   margin-right: auto;
   width: 15rem;
   float: left;
-  margin-left: 3rem;
+  margin-left: 8rem;
 }
 
 footer.App-footer p {
@@ -113,6 +178,7 @@ footer.App-footer p {
 
 h2, h3, h4 {
   font-weight: 600 !important;
+  overflow-wrap: break-word;
 }
 
 .Footer-app-logo {
