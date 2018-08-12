@@ -28,15 +28,27 @@ Given a version number MAJOR.MINOR.PATCH, increment the:
 > Summary: Lightning speed front-end and API performance. Re-architect back-end API so it no longer talks directly to database but instead has a Redis in-memory data store in the middle.
 This protects the database from being hit with too many requests at one time.
 
-## 1.1.0 Codename TRENDSETTER
+## 1.1.0 Codename FLASHLIGHT
+
+> Summary: Improve node discovery, using an initial bootstrap list. Provide an endpoint to generate a much larger, complete node list for other people to use.
+
+## 1.2.0 Codename TRENDSETTER
 
 > Summary: Provide api for historic information on network state allowing users to track the evolution of the NEO network over time (since we start recording data).
 
-## 1.2.0 Codename HAPPYCONSENSUS
+## 1.3.0 Codename TREND
+
+> Summary: Update UI for TRENDSETTER API work as well as add an explorer for Unconfirmed Transactions.
+
+## 1.4.0 Codename BULLETPROOF
+
+> Summary: Add comprehensive testing, CI and monitoring.
+
+## 1.5.0 Codename HAPPYCONSENSUS
 
 > Summary: Provide Consensus monitoring in the API and in front-end as NGD/CoZ roll-out decentralisation of the consensus book-keeping nodes
 
-## 1.3.0 Codename ROSETTASTONE
+## 1.6.0 Codename ROSETTASTONE
 
 > Summary: Continue NEO's global mission by translating the front-end as well as the documentation. 
 We will support major languages which will further support the development of the global NEO Community.
