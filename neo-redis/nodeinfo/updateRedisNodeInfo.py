@@ -706,10 +706,14 @@ health_score desc""")
         for node_info in result:
             nodeid = node_info[0]
             redis_node = r.hget(redisNamespace + 'node', nodeid)
-            if(redis_node==None):
-                continue
-            stability_1000 = node_info[25]
-            redis_node = json.loads(redis_node)
+            stability_1000= node_info[25]
+
+            blockheight = None
+            if(redis_node == None):
+                blockheight = node_info[19]
+            else:
+                redis_node = json.loads(redis_node)
+                blockheight = redis_node["blockheight"]
 
             if stability_1000 != 0:
                 node = {"id": node_info[0],
@@ -731,7 +735,7 @@ health_score desc""")
                         "mempool_size": node_info[16],
                         "connection_counts": node_info[17],
                         "online": node_info[18],
-                        "blockheight": redis_node["blockheight"],
+                        "blockheight": blockheight,
                         "lat": node_info[20],
                         "long": node_info[21],
                         "locale": node_info[22],

@@ -26,17 +26,39 @@ if __name__ == "__main__":
         cursor = conn.cursor()
 
         cursor.execute("""select
-                            count( connection_id ) as node_count,
-                            tx,
-                            max( last_blockheight )
+                            ce.id as connection_id,
+                            ce.protocol,
+                            n.hostname,
+                            ce.port,
+                            unconfirm_tx_table.node_count,
+                            unconfirm_tx_table.tx,
+                            unconfirm_tx_table.last_blockheight
                         from
-                            public.unconfirmed_tx
-                        where last_blockheight = (select max(blockheight) from blockheight_history)  
-                        group by
-                            tx
-                        HAVING count( connection_id )>1  
-                        order by
-                            node_count desc""")
+                            (
+                                select
+                                    max(connection_id) as connection_id,
+                                    count(connection_id) as node_count,
+                                    tx,
+                                    max(last_blockheight) as last_blockheight
+                                from
+                                    public.unconfirmed_tx
+                                where
+                                    last_blockheight = (
+                                        select
+                                            max(blockheight)
+                                        from
+                                            blockheight_history
+                                    )
+                                group by
+                                    tx
+                                order by
+                                    node_count desc
+                            ) unconfirm_tx_table
+                        inner join connection_endpoints ce on
+                            ce.id = unconfirm_tx_table.connection_id
+                        inner join nodes n on
+                            n.id = ce.node_id
+                        where node_count>1""")
         
         result = cursor.fetchall()
         print(result)
@@ -44,9 +66,13 @@ if __name__ == "__main__":
         txs = []
 
         for unconfirmed_tx in result:
-            tx = {"node_count": unconfirmed_tx[0],
-                "tx": unconfirmed_tx[1],
-                "max": unconfirmed_tx[2]
+            tx = {"connection_id": unconfirmed_tx[0],
+                "protocol": unconfirmed_tx[1],
+                "hostname": unconfirmed_tx[2],
+                "port": unconfirmed_tx[3],
+                "node_count": unconfirmed_tx[4],
+                "tx": unconfirmed_tx[5],
+                "last_blockheight": unconfirmed_tx[6]
                 }
             txs.append(tx)
         unconfirmed_txs = {"txs": txs}
