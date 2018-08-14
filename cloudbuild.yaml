@@ -3,5 +3,14 @@ steps:
   args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/f27/integration/redis-network-summary:v65', './neo-redis/networksummary' ]
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/f27/integration/redis-historic:v65', './neo-redis/historic' ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/f27/integration/redis-nodes-info:v65', './neo-redis/nodeinfo' ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/f27/integration/redis-peers-info:v65', './neo-redis/peerinfo' ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/f27/integration/redis-unconfirmedtx-info:v65', './neo-redis/unconfirmedTx' ]
 images: ['gcr.io/$PROJECT_ID/f27/integration/redis-network-summary:v65', 
+'gcr.io/$PROJECT_ID/f27/integration/redis-historic:v65',
+'gcr.io/$PROJECT_ID/f27/integration/redis-nodes-info:v65',
+'gcr.io/$PROJECT_ID/f27/integration/redis-peers-info:v65',
 'gcr.io/$PROJECT_ID/f27/integration/redis-historic:v65']
