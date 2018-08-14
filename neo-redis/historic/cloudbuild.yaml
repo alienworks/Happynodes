@@ -1,5 +1,5 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/quickstart-image', '.' ]
+  args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/f27/integration/redis-network-summary:v65', '.' ]
 images:
-- 'gcr.io/$PROJECT_ID/quickstart-image'
+- 'gcr.io/$PROJECT_ID/f27/integration/redis-network-summary:v65'
