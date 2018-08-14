@@ -1,5 +1,9 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/f27/integration/neonode-p2p-tcp:v65', './neo-node/p2p_tcp']
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/f27/integration/neonode-p2p-ws:v65', './neo-node/p2p_ws']
+- name: 'gcr.io/cloud-builders/docker'
   args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/f27/integration/neodiscover:v65', './neo-collector/discover']
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/f27/integration/neocreate:v65', './neo-collector/create']
