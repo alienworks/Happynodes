@@ -1,5 +1,5 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: [ 'build', '-t', 'gcr.io/happynodes-integration-test/f27/integration/redis-network-summary:v65', './neo-redis/networksummary' ]
+  args: [ 'build', '-t', 'gcr.io/uplifted-valor-213311/f27/integration/redis-network-summary:v65', './neo-redis/networksummary' ]
 images:
-- 'gcr.io/happynodes-integration-test/f27/integration/redis-network-summary:v65'
+- 'gcr.io/uplifted-valor-213311/f27/integration/redis-network-summary:v65'
