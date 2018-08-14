@@ -21,12 +21,14 @@ steps:
   args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/f27/integration/redis-peers-info:v65', './neo-redis/peerinfo' ]
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/f27/integration/redis-unconfirmedtx-info:v65', './neo-redis/unconfirmedTx' ]
-images: ['gcr.io/$PROJECT_ID/f27/integration/neodiscover:v65',
-  'gcr.io/$PROJECT_ID/f27/integration/neocreate:v65',
-  'gcr.io/$PROJECT_ID/f27/integration/neoinsert:v65',
-  'gcr.io/$PROJECT_ID/f27/integration/neodelete:v65',
-'gcr.io/$PROJECT_ID/f27/integration/redis-network-summary:v65', 
-'gcr.io/$PROJECT_ID/f27/integration/redis-historic:v65',
-'gcr.io/$PROJECT_ID/f27/integration/redis-nodes-info:v65',
-'gcr.io/$PROJECT_ID/f27/integration/redis-peers-info:v65',
-'gcr.io/$PROJECT_ID/f27/integration/redis-historic:v65']
+images: ['gcr.io/$PROJECT_ID/f27/integration/neonode-p2p-tcp:v65',
+          'gcr.io/$PROJECT_ID/f27/integration/neonode-p2p-ws:v65',
+          'gcr.io/$PROJECT_ID/f27/integration/neodiscover:v65',
+          'gcr.io/$PROJECT_ID/f27/integration/neocreate:v65',
+          'gcr.io/$PROJECT_ID/f27/integration/neoinsert:v65',
+          'gcr.io/$PROJECT_ID/f27/integration/neodelete:v65',
+          'gcr.io/$PROJECT_ID/f27/integration/redis-network-summary:v65', 
+          'gcr.io/$PROJECT_ID/f27/integration/redis-historic:v65',
+          'gcr.io/$PROJECT_ID/f27/integration/redis-nodes-info:v65',
+          'gcr.io/$PROJECT_ID/f27/integration/redis-peers-info:v65',
+          'gcr.io/$PROJECT_ID/f27/integration/redis-historic:v65']
