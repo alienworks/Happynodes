@@ -4,4 +4,4 @@ node_js:
 install:
   - cd neo-interface && npm install
 script:
-  - npm test
+  - npm test -- --coverage
