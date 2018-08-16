@@ -2,9 +2,9 @@ language: node_js
 node_js:
   - "iojs"
   - "7"
-before_script:
-  - cd neo-interface
 install:
+  - cd neo-interface
   - npm install
 script:
+  - cd neo-interface
   - npm test
