@@ -29,22 +29,16 @@ class NetworkGraph extends Component {
             const d_edges = edges_data.map((item, i) => { return { "from": item.source_address_id, "to": item.validated_peers_address_id } });
             let edgeCount = {}
 
-            for (let i = 0; i < edges_data.length; i++){               
-               edgeCount[edges_data[i]['source_address_id']] = edges_data[i]['source_address_id'] in edgeCount ? 1+edgeCount[edges_data[i]['source_address_id']] : 1
+            for (let i = 0; i < edges_data.length; i++) {
+                edgeCount[edges_data[i]['source_address_id']] = edges_data[i]['source_address_id'] in edgeCount ? 1 + edgeCount[edges_data[i]['source_address_id']] : 1
             }
 
-
-
-            const d_nodes = nodeslist_data.map((item, i) => { return { "id": item.id, label: item.address,  size: 1+(edgeCount[item.id])} });
+            const d_nodes = nodeslist_data.map((item, i) => { return { "id": item.id, label: item.address, size: 1 + (edgeCount[item.id]) } });
 
             const data = {
                 nodes: d_nodes,
                 edges: d_edges
             };
-
-
-
-           
 
             var options = {
                 layout: {
@@ -52,14 +46,14 @@ class NetworkGraph extends Component {
                 },
                 edges: {
                     arrows: {
-                        to:     {enabled: false, scaleFactor:1, type:'arrow'},
-                        middle: {enabled: false, scaleFactor:1, type:'arrow'},
-                        from:   {enabled: false, scaleFactor:1, type:'arrow'}
-                      },
+                        to: { enabled: false, scaleFactor: 1, type: 'arrow' },
+                        middle: { enabled: false, scaleFactor: 1, type: 'arrow' },
+                        from: { enabled: false, scaleFactor: 1, type: 'arrow' }
+                    },
                     "arrowStrikethrough": false,
                     "color": {
                         "inherit": false
-                      }
+                    }
                 },
                 nodes: {
                     shape: 'hexagon',
@@ -68,28 +62,28 @@ class NetworkGraph extends Component {
                         "enabled": true
                     }
                 },
-                physics:{
+                physics: {
                     stabilization: false,
                     maxVelocity: 30,
                     solver: 'forceAtlas2Based',
-                  }
+                }
             };
-             
+
             var events = {
-                select: function(event) {
+                select: function (event) {
                     var { nodes, edges } = event;
                     console.log(nodes, edges);
-                    if (nodes.length === 1){
+                    if (nodes.length === 1) {
                         window.location = "./" + nodes[0];
                     }
-                    
+
                 }
             }
 
 
             return (
 
-                <div className="jumbotron nodes padgraph" style={{'width': '100%', 'height':'900px'}}>
+                <div className="jumbotron nodes padgraph" style={{ 'width': '100%', 'height': '900px' }}>
 
 
                     <h2>Direct Peers</h2>
@@ -100,8 +94,8 @@ class NetworkGraph extends Component {
                     <Graph graph={data} options={options} events={events} />
 
 
-      
-                      </div>
+
+                </div>
             )
         }
     }
