@@ -6,6 +6,5 @@ install:
   - npm install coveralls --save
 script:
   - echo REACT_APP_API_URL="https://api.happynodes.f27.ventures/redis" > .env
-  - npm test -- --coverage 
-after_script: # Upload coverage reports 
-  - COVERALLS_REPO_TOKEN=$coveralls_repo_token npm run coveralls
+  - npm test -- --coverage  && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
+
