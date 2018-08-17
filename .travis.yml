@@ -3,6 +3,7 @@ node_js:
   - "10.4.1"
 install:
   - cd neo-interface && npm install
+  - npm install coveralls --save
 script:
   - echo REACT_APP_API_URL="https://api.happynodes.f27.ventures/redis" > .env
   - npm test -- --coverage 
