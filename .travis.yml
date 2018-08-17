@@ -6,3 +6,6 @@ install:
 script:
   - echo REACT_APP_API_URL="https://api.happynodes.f27.ventures/redis" > .env
   - npm test -- --coverage
+
+after_success:
+    coveralls
