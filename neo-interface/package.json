@@ -38,10 +38,11 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test --env=jsdom --coverage",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "coveralls": "^3.0.2",
     "dotenv": "^6.0.0",
     "react-test-renderer": "^16.4.2"
   }

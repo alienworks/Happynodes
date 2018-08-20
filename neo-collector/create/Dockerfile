@@ -11,7 +11,7 @@ RUN apk update && \
 RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 
-COPY createOrUpdatePrimaryTables.py .
+COPY createUpdatePrimarySQL.py .
 
 # start app
-CMD ["python3", "createOrUpdatePrimaryTables.py"]
+CMD ["python3", "createUpdatePrimarySQL.py"]

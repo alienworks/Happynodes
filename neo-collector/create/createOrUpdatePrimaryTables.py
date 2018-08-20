@@ -10,7 +10,8 @@ import requests
 import time
 
 resolver = dns.resolver.Resolver(configure=False)
-resolver.nameservers = ["208.67.222.222", "208.67.220.220", '8.8.8.8', '2001:4860:4860::8888',
+resolver.nameservers = ["208.67.222.222", "208.67.220.220", 
+                        '8.8.8.8', '2001:4860:4860::8888',
                         '8.8.4.4', '2001:4860:4860::8844']
 
 host = str(os.environ['PGHOST'])
@@ -20,8 +21,6 @@ password = str(os.environ['PGPASSWORD'])
 
 connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(
     databasename, user, host, password)
-# connection_str = "dbname='{}' user='{}' host='localhost' password='{}'".format(
-#         databasename, user, host, password)
 
 print(connection_str)
 
@@ -43,20 +42,7 @@ def get_existing_nodes(cursor):
 
     return nodes_dict
 
-def get_existing_connections(cursor):
-    connections_dict = {}
-    cursor.execute("select id, hostname, node_id, protocol, port from connection_endpoints")
-
-    results = cursor.fetchall()
-
-    for id, hostname, node_id, protocol, port in results:
-        connections_dict[hostname] = (id, hostname, node_id, protocol, port)
-
-    return connections_dict
-
-
 def create_or_update_nodes_rows(cursor, data):
-    key = 0
     for endpoint in data["sites"]:
         if endpoint["type"] == "RPC":
             hostname = endpoint["url"].split("//")[-1].split(":")[0]
@@ -96,7 +82,7 @@ def create_connectionendpoints_rows(cursor, data):
 
             nodes_dict = get_existing_nodes(cursor)
 
-            (node_id, hostnameFromDatabase, ipFromDatabase) = nodes_dict[hostname]
+            (node_id,  hostnameFromDatabase, ipFromDatabase) = nodes_dict[hostname]
 
             protocol = endpoint["protocol"]
             port = endpoint["port"] if "port" in endpoint else 10332
@@ -146,7 +132,6 @@ if __name__ == "__main__":
             conn.close()
         else:
             raise ValueError("mainnet.json file is not in the right format")
-
 
         # sleep for a day
         time.sleep(60*60*24)
