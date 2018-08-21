@@ -170,7 +170,7 @@ async def main():
     #     update("https://pyrpc4.narrative.org:443", 39),
     #     update("https://pyrpc2.narrative.org:443", 37)
     # ])
-    await asyncio.wait(list_of_coroutines[:10])
+    await asyncio.wait(list_of_coroutines[:100])
     t1 = time.time()
     print('Took %.2f ms' % (1000*(t1-t0)))
 
