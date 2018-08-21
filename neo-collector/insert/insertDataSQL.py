@@ -58,7 +58,7 @@ async def getLatency(url):
     start = time.time()
     async with aiohttp.ClientSession() as session:
         try:
-            async with session.post(url, json={'jsonrpc': '2.0', 'method': 'getblockcount', 'params': [], 'id': 1}, timeout=5) as response:
+            async with session.post(url, json={'jsonrpc': '2.0', 'method': 'getblockcount', 'params': [], 'id': 1}) as response:
                 result = await response.text()
                 end = time.time()
                 return (end-start)
