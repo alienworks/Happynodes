@@ -54,7 +54,7 @@ async def callEndpoint(url, method):
 async def testPort(url, port):
     url = url.split(":")[0]
     url = url + ":" + str(port)
-    timeout = aiohttp.ClientTimeout(total=3)
+    timeout = aiohttp.ClientTimeout(total=2)
     async with aiohttp.ClientSession() as session:
         try:
             async with session.post(url, json={'jsonrpc': '2.0', 'method': 'getblockcount', 'params': [], 'id': 1}
@@ -90,8 +90,8 @@ async def update(url, connectionId):
         blockcountResult = await callEndpoint(url, 'getblockcount')
         versionResult = await callEndpoint(url, 'getversion')
         connectioncountResult = await callEndpoint(url, 'getconnectioncount')
-        # rawmempoolResult = await callEndpoint(url, 'getrawmempool')
-        # peersResult = await callEndpoint(url, 'getpeers')
+        rawmempoolResult = await callEndpoint(url, 'getrawmempool')
+        peersResult = await callEndpoint(url, 'getpeers')
         # rpc_https_service = await testPort(url,JSON_RPC_HTTPS_PORT)
         # rpc_http_service = await testPort(url,JSON_RPC_HTTP_PORT)
 
