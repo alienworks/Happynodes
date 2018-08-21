@@ -55,15 +55,16 @@ async def testPort(url, port):
 
 
 async def getLatency(url):
-    start = time.time()
-    async with aiohttp.ClientSession() as session:
-        try:
-            async with session.post(url, json={'jsonrpc': '2.0', 'method': 'getblockcount', 'params': [], 'id': 1}) as response:
-                result = await response.text()
-                end = time.time()
-                return (end-start)
-        except (aiohttp.InvalidURL, aiohttp.ClientConnectorError) as e:
-            return None
+    timeout = aiohttp.ClientTimeout(total=60)
+    with aiohttp.Timeout(5):
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.post(url, json={'jsonrpc': '2.0', 'method': 'getblockcount', 'params': [], 'id': 1}) as response:
+                    result = await response.text()
+                    end = time.time()
+                    return (end-start)
+            except (aiohttp.InvalidURL, aiohttp.ClientConnectorError) as e:
+                return None
 
 async def update(url, connectionId):
     conn = None
