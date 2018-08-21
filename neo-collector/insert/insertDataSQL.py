@@ -175,7 +175,7 @@ async def main():
 
 
     t0 = time.time()
-    await asyncio.wait([ update(url, id) for id, url in results[:100] ])
+    await asyncio.wait([ update(url, id) for id, url in results[:10] ])
 
     t1 = time.time()
     print('Took %.2f ms' % (1000*(t1-t0)))
