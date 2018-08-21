@@ -87,18 +87,18 @@ async def update(url, connectionId):
         blockcountResult = await callEndpoint(url, 'getblockcount')
         versionResult = await callEndpoint(url, 'getversion')
         connectioncountResult = await callEndpoint(url, 'getconnectioncount')
-        # rawmempoolResult = await callEndpoint(url, 'getrawmempool')
-        # peersResult = await callEndpoint(url, 'getpeers')
-        # rpc_https_service = await testPort(url,JSON_RPC_HTTPS_PORT)
-        # rpc_http_service = await testPort(url,JSON_RPC_HTTP_PORT)
+        rawmempoolResult = await callEndpoint(url, 'getrawmempool')
+        peersResult = await callEndpoint(url, 'getpeers')
+        rpc_https_service = await testPort(url,JSON_RPC_HTTPS_PORT)
+        rpc_http_service = await testPort(url,JSON_RPC_HTTP_PORT)
 
         print(url, "done")
 
-        return latencyResult, blockcountResult, versionResult, connectioncountResult
-                # rawmempoolResult, peersResult, rpc_https_service, rpc_http_service
+        return connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,
+                rawmempoolResult, peersResult, rpc_https_service, rpc_http_service
     else:
         print(url, "done")
-        return latencyResult, None, None, None
+        return connectionId, latencyResult, None, None, None, None, None, None, None
 
 def insertRpcHttpsServiceInfo(cursor, connectionId, rpc_https_service): 
     cursor.execute("INSERT INTO rpc_https_status_history (ts, connection_id, rpc_https_status) VALUES (%s, %s, %s)"
@@ -156,11 +156,52 @@ async def main():
 
     t1 = time.time()
     print('Took %.2f ms' % (1000*(t1-t0)))
-    print(list(done))
-
+    return done
 
 loop = asyncio.get_event_loop()
-results = loop.run_until_complete(main())
+done = loop.run_until_complete(main())
 loop.close()
 
-print(results)
+latency_data = []
+blockheight_data = []
+mempoolsize_data = []
+connectionscount_data = []
+online_data = []
+version_data = []
+
+ts = getSqlDateTime(time.time()
+for task in done:
+    connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,
+                rawmempoolResult, peersResult, rpc_https_service, rpc_http_service = task.result()
+
+    if versionResult!=None:
+        version_data.append( (ts, connectionId, versionResult["result"]['useragent']))
+    
+    if blockcountResult!=None:
+        blockheight_data.append( (ts, connectionId, blockcountResult["result"]))
+    
+    if connectioncountResult!=None:
+        connectionscount_data.append( (ts, connectionId, connectioncountResult["result"]))
+
+    if latencyResult!=None:
+        latency_data.append( (ts, connectionId, connectioncountResult["result"]))
+        online_data.append( (ts, connectionId, True))
+    else:
+        latency_data.append( (ts, connectionId, 2000))
+        online_data.append( (ts, connectionId, False))
+
+    if rawmempoolResult!=None:
+        mempoolsize_data.append( (ts, connectionId, len(rawmempoolResult["result"])))
+    else:
+        mempoolsize_data.append( (ts, connectionId, 0) )
+
+conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
+cursor = conn.cursor()
+psycopg2.extras.execute_values(cursor, 
+    "INSERT INTO blockheight_history (ts, connection_id, blockheight) VALUES (%s, %s, %s)", 
+    blockheight_data
+    )
+
+    
+    
+    
