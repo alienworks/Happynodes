@@ -103,6 +103,7 @@ async def update(url, connectionId):
         cursor = conn.cursor()
         insertOnlineInfo(cursor, connectionId, False)
         insertLatencyInfo(cursor, connectionId, 2000)
+        t1 = time.time()
         print('SQL Took %.2f ms' % (1000*(t1-t0)))
     
     conn.commit()
