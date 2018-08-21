@@ -171,8 +171,7 @@ async def main():
                     INNER JOIN nodes n  
                     ON n.id=endpoint.node_id""")
     results = cursor.fetchall()
-    list_of_coroutines = []
-
+    print("size of endpoints list ", len(results))
 
     t0 = time.time()
     await asyncio.wait([ update(url, id) for id, url in results ])
