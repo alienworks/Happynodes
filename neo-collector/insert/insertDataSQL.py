@@ -42,7 +42,6 @@ async def callEndpoint(url, method):
                 try:
                     result = json.loads(result)
                 except json.decoder.JSONDecodeError as e:
-                    print(result)
                     return None
                 return result
         except (aiohttp.InvalidURL, aiohttp.ClientConnectorError) as e:
@@ -82,12 +81,12 @@ async def update(url, connectionId):
     latencyResult = await getLatency(url)
     if latencyResult != None:
         blockcountResult = await callEndpoint(url, 'getblockcount')
-        versionResult = await callEndpoint(url, 'getversion')
-        connectioncountResult = await callEndpoint(url, 'getconnectioncount')
-        rawmempoolResult = await callEndpoint(url, 'getrawmempool')
-        peersResult = await callEndpoint(url, 'getpeers')
-        rpc_https_service = await testPort(url,JSON_RPC_HTTPS_PORT)
-        rpc_http_service = await testPort(url,JSON_RPC_HTTP_PORT)
+        # versionResult = await callEndpoint(url, 'getversion')
+        # connectioncountResult = await callEndpoint(url, 'getconnectioncount')
+        # rawmempoolResult = await callEndpoint(url, 'getrawmempool')
+        # peersResult = await callEndpoint(url, 'getpeers')
+        # rpc_https_service = await testPort(url,JSON_RPC_HTTPS_PORT)
+        # rpc_http_service = await testPort(url,JSON_RPC_HTTP_PORT)
 
     #     conn = tcp.getconn()
     #     cursor = conn.cursor()
@@ -114,6 +113,7 @@ async def update(url, connectionId):
     
     # conn.commit()
     # tcp.putconn(conn)
+    print(url, "done")
 
 def insertRpcHttpsServiceInfo(cursor, connectionId, rpc_https_service): 
     cursor.execute("INSERT INTO rpc_https_status_history (ts, connection_id, rpc_https_status) VALUES (%s, %s, %s)"
