@@ -162,14 +162,14 @@ async def main():
     for id, url in results:
         list_of_coroutines.append(update(url, id))
     t0 = time.time()
-    await asyncio.wait([
-        update("http://node2.sgp1.bridgeprotocol.io:10332", 24),
-        update("https://pyrpc3.narrative.org:443", 38),
-        update("https://pyrpc1.narrative.org:443", 36),
-        update("https://pyrpc4.narrative.org:443", 39),
-        update("https://pyrpc2.narrative.org:443", 37)
-    ])
-    # await asyncio.wait(list_of_coroutines)
+    # await asyncio.wait([
+    #     update("http://node2.sgp1.bridgeprotocol.io:10332", 24),
+    #     update("https://pyrpc3.narrative.org:443", 38),
+    #     update("https://pyrpc1.narrative.org:443", 36),
+    #     update("https://pyrpc4.narrative.org:443", 39),
+    #     update("https://pyrpc2.narrative.org:443", 37)
+    # ])
+    await asyncio.wait(list_of_coroutines)
     t1 = time.time()
     print('Took %.2f ms' % (1000*(t1-t0)))
 
