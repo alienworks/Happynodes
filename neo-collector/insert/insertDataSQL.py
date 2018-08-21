@@ -39,6 +39,11 @@ async def callEndpoint(url, method):
             async with session.post(url, json={'jsonrpc': '2.0', 'method': method, 'params': [], 'id': 1}) as response:
                 result = await response.text()
                 # print(url, result)
+                try:
+                    result = json.loads(result)
+                except json.decoder.JSONDecodeError as e:
+                    print(result)
+                    return None
                 return json.loads(result)
         except (aiohttp.InvalidURL, aiohttp.ClientConnectorError) as e:
             return None
