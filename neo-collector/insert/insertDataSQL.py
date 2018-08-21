@@ -94,7 +94,7 @@ async def update(url, connectionId):
 
         print(url, "done")
 
-        return latencyResult, blockcountResult, versionResult, connectioncountResult, /
+        return latencyResult, blockcountResult, versionResult, connectioncountResult, \
                 rawmempoolResult, peersResult, rpc_https_service, rpc_http_service
     else:
         print(url, "done")
