@@ -37,9 +37,9 @@ async def callEndpoint(url, method):
     timeout = aiohttp.ClientTimeout(total=3)
     async with aiohttp.ClientSession() as session:
         try:
-            async with session.post(url, json={'jsonrpc': '2.0', 'method': method, 'params': [], 'id': 1}, timeout=timeout) as response:
+            async with session.post(url, json={'jsonrpc': '2.0', 'method': method, 'params': [], 'id': 1}
+                , timeout=timeout) as response:
                 result = await response.text()
-                # print(url, result)
                 try:
                     result = json.loads(result)
                 except json.decoder.JSONDecodeError as e:
@@ -54,9 +54,11 @@ async def callEndpoint(url, method):
 async def testPort(url, port):
     url = url.split(":")[0]
     url = url + ":" + str(port)
+    timeout = aiohttp.ClientTimeout(total=3)
     async with aiohttp.ClientSession() as session:
         try:
-            async with session.post(url, json={'jsonrpc': '2.0', 'method': 'getblockcount', 'params': [], 'id': 1}) as response:
+            async with session.post(url, json={'jsonrpc': '2.0', 'method': 'getblockcount', 'params': [], 'id': 1}
+                , timeout=timeout) as response:
                 return await response.status_code >=200 or response.status_code<300
         except (aiohttp.InvalidURL, aiohttp.ClientConnectorError) as e:
             return False
@@ -67,7 +69,8 @@ async def getLatency(url):
     timeout = aiohttp.ClientTimeout(total=3)
     async with aiohttp.ClientSession() as session:
         try:
-            async with session.post(url, json={'jsonrpc': '2.0', 'method': 'getblockcount', 'params': [], 'id': 1}, timeout=timeout) as response:
+            async with session.post(url, json={'jsonrpc': '2.0', 'method': 'getblockcount', 'params': [], 'id': 1}
+                , timeout=timeout) as response:
                 result = await response.text()
                 end = time.time()
                 return (end-start)
