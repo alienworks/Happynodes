@@ -82,9 +82,6 @@ async def getLatency(url):
             return None
 
 async def update(url, connectionId):
-    conn = None
-    cursor = None
-
     latencyResult = await getLatency(url)
     if latencyResult != None:
         blockcountResult = await callEndpoint(url, 'getblockcount')
@@ -95,32 +92,13 @@ async def update(url, connectionId):
         rpc_https_service = await testPort(url,JSON_RPC_HTTPS_PORT)
         rpc_http_service = await testPort(url,JSON_RPC_HTTP_PORT)
 
-    #     conn = tcp.getconn()
-    #     cursor = conn.cursor()
+        print(url, "done")
 
-    #     t0 = time.time()
-    #     insertOnlineInfo(cursor, connectionId, True)
-    #     insertLatencyInfo(cursor, connectionId, latencyResult)
-    #     insertBlockInfo(cursor, connectionId, blockcountResult)
-    #     insertVersionInfo(cursor, connectionId, versionResult)
-    #     insertConnectionCount(cursor, connectionId, connectioncountResult)
-    #     insertMempoolSizeInfo(cursor, connectionId, rawmempoolResult, blockcountResult)
-    #     insertRpcHttpsServiceInfo(cursor, connectionId, rpc_https_service)
-    #     insertRpcHttpServiceInfo(cursor, connectionId, rpc_http_service)
-    #     t1 = time.time()
-    #     print('SQL Took %.2f ms' % (1000*(t1-t0)))
-    # else:
-    #     t0 = time.time()
-    #     conn = tcp.getconn()
-    #     cursor = conn.cursor()
-    #     insertOnlineInfo(cursor, connectionId, False)
-    #     insertLatencyInfo(cursor, connectionId, 2000)
-    #     t1 = time.time()
-    #     print('SQL Took %.2f ms' % (1000*(t1-t0)))
-    
-    # conn.commit()
-    # tcp.putconn(conn)
-    print(url, "done")
+        return latencyResult, blockcountResult, versionResult, connectioncountResult, /
+                rawmempoolResult, peersResult, rpc_https_service, rpc_http_service
+    else:
+        print(url, "done")
+        return latencyResult, None, None, None, None, None, None, None
 
 def insertRpcHttpsServiceInfo(cursor, connectionId, rpc_https_service): 
     cursor.execute("INSERT INTO rpc_https_status_history (ts, connection_id, rpc_https_status) VALUES (%s, %s, %s)"
