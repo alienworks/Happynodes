@@ -34,9 +34,10 @@ def getSqlDateTime(ts):
     return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
 async def callEndpoint(url, method):
+    timeout = aiohttp.ClientTimeout(total=3)
     async with aiohttp.ClientSession() as session:
         try:
-            async with session.post(url, json={'jsonrpc': '2.0', 'method': method, 'params': [], 'id': 1}) as response:
+            async with session.post(url, json={'jsonrpc': '2.0', 'method': method, 'params': [], 'id': 1}, timeout=timeout) as response:
                 result = await response.text()
                 # print(url, result)
                 try:
@@ -45,6 +46,9 @@ async def callEndpoint(url, method):
                     return None
                 return result
         except (aiohttp.InvalidURL, aiohttp.ClientConnectorError) as e:
+            return None
+        except (asyncio.TimeoutError) as e:
+            print(url, method, "Timeout")
             return None
 
 async def testPort(url, port):
@@ -71,7 +75,7 @@ async def getLatency(url):
             print(url, "Bad URL or Bad connection")
             return None
         except (asyncio.TimeoutError) as e:
-            print(url, "Timeout")
+            print(url, "latency","Timeout")
             return None
 
 async def update(url, connectionId):
