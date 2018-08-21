@@ -61,7 +61,7 @@ async def testPort(url, port):
 
 async def getLatency(url):
     start = time.time()
-    timeout = aiohttp.ClientTimeout(total=5)
+    timeout = aiohttp.ClientTimeout(total=3)
     async with aiohttp.ClientSession() as session:
         try:
             async with session.post(url, json={'jsonrpc': '2.0', 'method': 'getblockcount', 'params': [], 'id': 1}, timeout=timeout) as response:
@@ -112,8 +112,8 @@ async def update(url, connectionId):
     #     t1 = time.time()
     #     print('SQL Took %.2f ms' % (1000*(t1-t0)))
     
-    conn.commit()
-    tcp.putconn(conn)
+    # conn.commit()
+    # tcp.putconn(conn)
 
 def insertRpcHttpsServiceInfo(cursor, connectionId, rpc_https_service): 
     cursor.execute("INSERT INTO rpc_https_status_history (ts, connection_id, rpc_https_status) VALUES (%s, %s, %s)"
