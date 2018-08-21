@@ -122,16 +122,16 @@ def insertMempoolSizeInfo(cursor, connectionId, mempool, blockcountResult):
 
 def insertVersionInfo(cursor, connectionId, version):
     cursor.execute("INSERT INTO version_history (ts, connection_id, version) VALUES (%s, %s, %s)"
-        , [getSqlDateTime(time.time()), connectionId, version["result"]['useragent']])
+        ,[getSqlDateTime(time.time()), connectionId, version["result"]['useragent']])
 
 def insertConnectionCount(cursor, connectionId, connectioncountResult):
     # print(connectioncountResult)
     cursor.execute("INSERT INTO connection_counts_history (ts, connection_id, connection_counts) VALUES (%s, %s, %s)"
-        , [getSqlDateTime(time.time()), connectionId, connectioncountResult['result']])
+        ,[getSqlDateTime(time.time()), connectionId, connectioncountResult['result']])
 
 def insertBlockInfo(cursor, connectionId, height):
-    cursor.execute("INSERT INTO blockheight_history (ts, connection_id, blockheight) VALUES (%s, %s, %s)", [
-                   getSqlDateTime(time.time()), connectionId, height["result"]])
+    cursor.execute("INSERT INTO blockheight_history (ts, connection_id, blockheight) VALUES (%s, %s, %s)"
+        , [getSqlDateTime(time.time()), connectionId, height["result"]])
 
 def insertOnlineInfo(cursor, connectionId, isOnline):
     cursor.execute("INSERT INTO online_history (ts, connection_id, online) VALUES (%s, %s, %s)", [
@@ -201,8 +201,26 @@ conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(d
 cursor = conn.cursor()
 psycopg2.extras.execute_values(cursor, 
     "INSERT INTO blockheight_history (ts, connection_id, blockheight) VALUES %s", 
-    blockheight_data
+    blockheight_data 
     )
+
+psycopg2.extras.execute_values(cursor, 
+    "INSERT INTO latency_history (ts, connection_id, latency_history) VALUES %s", 
+    latencyResult 
+    )
+
+psycopg2.extras.execute_values(cursor, 
+    "INSERT INTO online_history (ts, connection_id, online) VALUES %s", 
+    online_data 
+    )
+
+psycopg2.extras.execute_values(cursor, 
+    "INSERT INTO version_history (ts, connection_id, version) VALUES %s", 
+    version_data)
+
+psycopg2.extras.execute_values(cursor, 
+    "INSERT INTO mempool_size_history (ts, connection_id, mempool_size) VALUES %s", 
+    mempoolsize_data)
 
 t1 = time.time()
 print('SQL Took %.2f ms' % (1000*(t1-t0)))
