@@ -11,7 +11,6 @@ import random
 from psycopg2.pool import ThreadedConnectionPool
 import os
 import redis
-
 import dns.resolver
 
 JSON_RPC_HTTPS_PORT=10331
@@ -42,14 +41,14 @@ tcp = ThreadedConnectionPool(MIN_CON, MAX_CON, dsn)
 def getSqlDateTime(ts):
     return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
-
 def getAddress(cursor):
     address_dict = {}
     reverse_address_dict = {}
-    cursor.execute("SELECT endpoint.id, concat(endpoint.protocol, '://', n.hostname,':' , endpoint.port) AS url \
-                    FROM connection_endpoints endpoint  \
-                    INNER JOIN nodes n  \
-                    ON n.id=endpoint.node_id")
+    cursor.execute("""SELECT endpoint.id, 
+                    concat(endpoint.protocol, '://', n.hostname,':' , endpoint.port) AS url 
+                    FROM connection_endpoints endpoint  
+                    INNER JOIN nodes n  
+                    ON n.id=endpoint.node_id""")
     results = cursor.fetchall()
 
     for result in results:
@@ -132,8 +131,6 @@ if __name__ == "__main__":
                     conn = tcp.getconn()
 
                     cursor = conn.cursor()
-
-                    time.sleep(random.uniform(0, 1)*10)
                     
                     address_dict, reverse_address_dict = getAddress(cursor)
 
@@ -143,10 +140,9 @@ if __name__ == "__main__":
 
                     addressId = reverse_address_dict[address]
                     
-                    
                     try:
                         endpoint.setup() 
-                        print("parametere")
+                        print("parameter")
                         print(getSqlDateTime(time.time()))
                         print(addressId)
                         info = cursor.execute("INSERT INTO online_history (ts, connection_id, online) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, True])
