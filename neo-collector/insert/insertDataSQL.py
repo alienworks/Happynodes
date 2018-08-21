@@ -44,7 +44,7 @@ async def callEndpoint(url, method):
                 except json.decoder.JSONDecodeError as e:
                     print(result)
                     return None
-                return json.loads(result)
+                return result
         except (aiohttp.InvalidURL, aiohttp.ClientConnectorError) as e:
             return None
 
