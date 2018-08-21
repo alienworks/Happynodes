@@ -63,7 +63,7 @@ async def getLatency(url):
                     result = await response.text()
                     end = time.time()
                     return (end-start)
-            except (aiohttp.InvalidURL, aiohttp.ClientConnectorError) as e:
+            except (aiohttp.TimeoutError, aiohttp.InvalidURL, aiohttp.ClientConnectorError) as e:
                 return None
 
 async def update(url, connectionId):
