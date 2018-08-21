@@ -92,8 +92,8 @@ async def update(url, connectionId):
         connectioncountResult = await callEndpoint(url, 'getconnectioncount')
         rawmempoolResult = await callEndpoint(url, 'getrawmempool')
         peersResult = await callEndpoint(url, 'getpeers')
-        # rpc_https_service = await testPort(url,JSON_RPC_HTTPS_PORT)
-        # rpc_http_service = await testPort(url,JSON_RPC_HTTP_PORT)
+        rpc_https_service = await testPort(url,JSON_RPC_HTTPS_PORT)
+        rpc_http_service = await testPort(url,JSON_RPC_HTTP_PORT)
 
     #     conn = tcp.getconn()
     #     cursor = conn.cursor()
