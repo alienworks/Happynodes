@@ -14,6 +14,7 @@ import aiohttp
 import asyncio
 import time
 import asyncio
+import psycopg2.extras
 import ssl
 ssl.match_hostname = lambda cert, hostname: True
 
@@ -94,7 +95,7 @@ async def update(url, connectionId):
 
         print(url, "done")
 
-        return connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,
+        return connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
                 rawmempoolResult, peersResult, rpc_https_service, rpc_http_service
     else:
         print(url, "done")
@@ -169,9 +170,9 @@ connectionscount_data = []
 online_data = []
 version_data = []
 
-ts = getSqlDateTime(time.time()
+ts = getSqlDateTime(time.time())
 for task in done:
-    connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,
+    connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
                 rawmempoolResult, peersResult, rpc_https_service, rpc_http_service = task.result()
 
     if versionResult!=None:
@@ -198,7 +199,7 @@ for task in done:
 conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
 cursor = conn.cursor()
 psycopg2.extras.execute_values(cursor, 
-    "INSERT INTO blockheight_history (ts, connection_id, blockheight) VALUES (%s, %s, %s)", 
+    "INSERT INTO blockheight_history (ts, connection_id, blockheight) VALUES %s", 
     blockheight_data
     )
 
