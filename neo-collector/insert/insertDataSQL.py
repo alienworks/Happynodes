@@ -152,7 +152,7 @@ async def main():
     print("size of endpoints list ", len(results))
 
     t0 = time.time()
-    data = await asyncio.wait([update(url, id) for id, url in results ])
+    data = await asyncio.gather([update(url, id) for id, url in results ])
 
     t1 = time.time()
     print('Took %.2f ms' % (1000*(t1-t0)))
