@@ -64,6 +64,7 @@ async def getLatency(url):
                 end = time.time()
                 return (end-start)
         except (aiohttp.InvalidURL, aiohttp.ClientConnectorError) as e:
+            print(url, "Bad URL or Bad connection")
             return None
         except (asyncio.TimeoutError) as e:
             print(url, "Timeout")
