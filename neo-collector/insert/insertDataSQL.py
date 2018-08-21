@@ -186,7 +186,7 @@ for task in done:
         connectionscount_data.append( (ts, connectionId, connectioncountResult["result"]))
 
     if latencyResult!=None:
-        latency_data.append( (ts, connectionId, connectioncountResult["result"]))
+        latency_data.append( (ts, connectionId, latency_data))
         online_data.append( (ts, connectionId, True))
     else:
         latency_data.append( (ts, connectionId, 2000))
