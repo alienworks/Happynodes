@@ -153,7 +153,7 @@ async def main():
     print("size of endpoints list ", len(results))
 
     t0 = time.time()
-    done, pending = await asyncio.wait([update(url, id) for id, url in results[:2] ])
+    done, pending = await asyncio.wait([update(url, id) for id, url in results[:100] ])
 
     t1 = time.time()
     print('Took %.2f ms' % (1000*(t1-t0)))
@@ -170,6 +170,7 @@ connectionscount_data = []
 online_data = []
 version_data = []
 
+t0 = time.time()
 ts = getSqlDateTime(time.time())
 for task in done:
     connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
@@ -203,6 +204,5 @@ psycopg2.extras.execute_values(cursor,
     blockheight_data
     )
 
-    
-    
-    
+t1 = time.time()
+print('SQL Took %.2f ms' % (1000*(t1-t0)))
