@@ -54,7 +54,7 @@ async def callEndpoint(url, method):
 async def testPort(url, port):
     url = url.split(":")[0]
     url = url + ":" + str(port)
-    timeout = aiohttp.ClientTimeout(total=2)
+    timeout = aiohttp.ClientTimeout(total=1)
     async with aiohttp.ClientSession() as session:
         try:
             async with session.post(url, json={'jsonrpc': '2.0', 'method': 'getblockcount', 'params': [], 'id': 1}
@@ -174,7 +174,7 @@ async def main():
     print("size of endpoints list ", len(results))
 
     t0 = time.time()
-    await asyncio.wait([ update(url, id) for id, url in results ])
+    await asyncio.wait([update(url, id) for id, url in results ])
 
     t1 = time.time()
     print('Took %.2f ms' % (1000*(t1-t0)))
