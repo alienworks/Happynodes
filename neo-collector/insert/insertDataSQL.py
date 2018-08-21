@@ -156,7 +156,7 @@ async def main():
 
     t1 = time.time()
     print('Took %.2f ms' % (1000*(t1-t0)))
-    print(done)
+    print(list(done))
 
 
 loop = asyncio.get_event_loop()
