@@ -132,7 +132,7 @@ loop.close()
 latencyData = []
 blockheightData = []
 mempoolsizeData = []
-mempooldata = []
+mempoolData = []
 connectionscountData = []
 onlineData = []
 versionData = []
