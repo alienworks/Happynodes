@@ -163,39 +163,48 @@ loop = asyncio.get_event_loop()
 done = loop.run_until_complete(main())
 loop.close()
 
-latency_data = []
-blockheight_data = []
-mempoolsize_data = []
-connectionscount_data = []
-online_data = []
-version_data = []
+latencyData = []
+blockheightData = []
+mempoolsizeData = []
+connectionscountData = []
+onlineData = []
+versionData = []
+rcpHttpData = []
+rcpHttpsData = []
 
 t0 = time.time()
+
 ts = getSqlDateTime(time.time())
 for task in done:
     connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
-                rawmempoolResult, peersResult, rpc_https_service, rpc_http_service = task.result()
-
-    if versionResult!=None:
-        version_data.append( (ts, connectionId, versionResult["result"]['useragent']))
-    
-    if blockcountResult!=None:
-        blockheight_data.append( (ts, connectionId, blockcountResult["result"]))
-    
-    if connectioncountResult!=None:
-        connectionscount_data.append( (ts, connectionId, connectioncountResult["result"]))
+                rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService = task.result()
 
     if latencyResult!=None:
-        latency_data.append( (ts, connectionId, latency_data))
-        online_data.append( (ts, connectionId, True))
-    else:
-        latency_data.append( (ts, connectionId, 2000))
-        online_data.append( (ts, connectionId, False))
+        latencyData.append( (ts, connectionId, latency_data))
+        onlineData.append( (ts, connectionId, True))
 
-    if rawmempoolResult!=None:
-        mempoolsize_data.append( (ts, connectionId, len(rawmempoolResult["result"])))
+        if versionResult!=None:
+        versionData.append( (ts, connectionId, versionResult["result"]['useragent']))
+    
+        if blockcountResult!=None:
+            blockheightData.append( (ts, connectionId, blockcountResult["result"]))
+        
+        if connectioncountResult!=None:
+            connectionscount_data.append( (ts, connectionId, connectioncountResult["result"]))
+
+        if rawmempoolResult!=None:
+            mempoolsizeData.append( (ts, connectionId, len(rawmempoolResult["result"])))
+        
+        if rpcHttpsService!=None:
+            rcpHttpsData.append((ts, connectionId, rpcHttpsService))
+        
+        if rpcHttpService!=None:
+            rcpHttpData.append((ts, connectionId, rpcHttpService))
     else:
-        mempoolsize_data.append( (ts, connectionId, 0) )
+        latencyData.append( (ts, connectionId, 2000))
+        onlineData.append( (ts, connectionId, False))
+
+    
 
 conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
 cursor = conn.cursor()
