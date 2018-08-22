@@ -204,6 +204,7 @@ for task in done:
         if peersResult!=None:
             ts, peers = peersResult
             peers = [ i['address'] for i in peers["result"]['connected']]
+            validated_peers=0
             for connected_peer in peers:
                 if '::ffff:' in connected_peer:
                     peer_address = connected_peer.split('::ffff:')[1]
