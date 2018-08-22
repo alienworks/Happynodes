@@ -309,12 +309,13 @@ def updateApp():
             latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
             , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData = prepareSqlInsert(done, ipToEndpointMap)
 
-            updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
-                , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData)
+            # updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
+            #     , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData)
             break
         except Exception as e: 
-            print(e)
+            
             logger.error("Exception, closing event loop")
+            logger.error(e)
             break
     loop.close()
 
