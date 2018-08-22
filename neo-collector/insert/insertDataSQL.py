@@ -216,7 +216,7 @@ psycopg2.extras.execute_values(cursor,
     rcpHttpsData)
 
 psycopg2.extras.execute_values(cursor, 
-    "INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) %s", 
+    "INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) VALUES %s", 
     mempoolData)
 
 t1 = time.time()
