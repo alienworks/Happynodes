@@ -13,6 +13,8 @@ import asyncio
 import ssl
 import logging
 import datetime
+import traceback
+import sys
 ssl.match_hostname = lambda cert, hostname: True
 
 logger = logging.getLogger(__name__)
@@ -314,11 +316,10 @@ def updateApp():
 
             updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
                 , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData)
-            break
         except Exception as e: 
-            
             logger.error("Exception, closing event loop")
             logger.error(e)
+            logger.error(traceback.format_exc())
             break
     loop.close()
 
