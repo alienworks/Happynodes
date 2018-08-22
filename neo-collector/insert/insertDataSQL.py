@@ -31,6 +31,9 @@ MIN_CON = 1
 MAX_CON = 800
 tcp = ThreadedConnectionPool(MIN_CON, MAX_CON, dsn)
 
+
+maxBlockHeight = -1
+
 def getSqlDateTime(ts):
     return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
@@ -155,6 +158,9 @@ for task in done:
         if blockcountResult!=None:
             ts, blockcount = blockcountResult
             blockheightData.append( (ts, connectionId, blockcount["result"]))
+
+            if blockcount["result"]> maxBlockHeight:
+                maxBlockHeight=blockcount["result"]
         
         if connectioncountResult!=None:
             ts, connectioncount = connectioncountResult
@@ -167,7 +173,7 @@ for task in done:
         if rawmempoolResult!=None and blockcountResult!=None:
             ts, rawmempool = rawmempoolResult
             _, blockcount = blockcountResult
-            if len(rawmempool["result"]) > 0:
+            if len(rawmempool["result"]) > 0 and abs(maxBlockHeight-blockcount["result"])<5:
                 data = []
                 for tx in rawmempool["result"]:
                     mempoolData.append((blockcount["result"], connectionId, tx))
