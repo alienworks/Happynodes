@@ -297,6 +297,8 @@ def updateApp():
     ipToEndpointMap=getIpToEndpointMap()
     while True:
         try:
+            print("endpointsList", endpointsList)
+            print("ipToEndpointMap", ipToEndpointMap)
             loop = asyncio.get_event_loop()
             done = loop.run_until_complete(main(endpointsList))
 
@@ -309,3 +311,6 @@ def updateApp():
         except:
             logger.error("Exception, closing event loop")
             loop.close()
+
+if __name__ == "__main__":
+    updateApp()
