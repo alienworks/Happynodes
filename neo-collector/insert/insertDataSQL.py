@@ -190,7 +190,8 @@ def prepareSqlInsert(done, ipToEndpointMap):
         connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
                     rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService = task.result()
 
-        if latencyResult!=None:
+        ts, latency = latencyResult
+        if latency!=None:
             ts, latency = latencyResult
             latencyData.append( (ts, connectionId, latency))
             onlineData.append( (ts, connectionId, True))
@@ -256,6 +257,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
             ts = getSqlDateTime(time.time())
             latencyData.append((ts, connectionId, 2))
             onlineData.append((ts, connectionId, False))
+
         logger.info("numTimeout {}".format(numTimeout))
         return latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
             , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData
