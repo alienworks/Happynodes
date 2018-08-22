@@ -54,6 +54,15 @@ GET_ENDPOINTS_IP_SQL = """select n.id,ce.id,ip
                     inner join nodes n 
                     on n.id=ce.node_id"""
 
+INSERT_LATENCY_SQL = "INSERT INTO latency_history (ts, connection_id, latency_history) VALUES %s"
+INSERT_BLOCKHEIGHT_SQL = "INSERT INTO blockheight_history (ts, connection_id, blockheight) VALUES %s"
+INSERT_ONLINE_SQL = "INSERT INTO online_history (ts, connection_id, online) VALUES %s"
+INSERT_VERSION_SQL =  "INSERT INTO version_history (ts, connection_id, version) VALUES %s"
+INSERT_RPC_HTTP_SQL =  "INSERT INTO rpc_http_status_history (ts, connection_id, rpc_http_status) VALUES %s"
+INSERT_RPC_HTTPS_SQL = "INSERT INTO rpc_https_status_history (ts, connection_id, rpc_https_status) VALUES %s"
+INSERT_PEERS_SQL = "INSERT INTO validated_peers_history (ts, connection_id, validated_peers_connection_id) VALUES %s"
+INSERT_PEERS_COUNT_SQL = "INSERT INTO validated_peers_counts_history (ts, connection_id, validated_peers_counts) VALUES %s"
+INSERT_UNCONFIRMED_TX_SQL =  "INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) VALUES %s"
 
 maxBlockHeight = -1
 
@@ -212,7 +221,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
                     data = []
                     for tx in rawmempool["result"]:
                         mempoolData.append((blockcount["result"], connectionId, tx))
-                        
+
             if rpcHttpsService!=None:
                 ts, rpcHttps = rpcHttpsService
                 rcpHttpsData.append((ts, connectionId, rpcHttps))
@@ -251,51 +260,33 @@ def prepareSqlInsert(done, ipToEndpointMap):
         return latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
             , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData
 
+def batchInsert(cursor, sqlScript, datalist):
+    psycopg2.extras.execute_values(cursor, sqlScript,datalist)
+
 def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
             , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData):
     t0 = time.time()
     conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
     cursor = conn.cursor()
 
-    psycopg2.extras.execute_values(cursor, 
-        "INSERT INTO latency_history (ts, connection_id, latency_history) VALUES %s", 
-        latencyData 
-        )
+    batchInsert(cursor, INSERT_LATENCY_SQL, latencyData)
+    
+    batchInsert(cursor, INSERT_BLOCKHEIGHT_SQL, blockheightData)
 
-    psycopg2.extras.execute_values(cursor, 
-        "INSERT INTO blockheight_history (ts, connection_id, blockheight) VALUES %s", 
-        blockheightData 
-        )
+    batchInsert(cursor, INSERT_ONLINE_SQL, onlineData)
 
-    psycopg2.extras.execute_values(cursor, 
-        "INSERT INTO online_history (ts, connection_id, online) VALUES %s", 
-        onlineData 
-        )
+    batchInsert(cursor, INSERT_VERSION_SQL, versionData)
 
-    psycopg2.extras.execute_values(cursor, 
-        "INSERT INTO version_history (ts, connection_id, version) VALUES %s", 
-        versionData)
+    batchInsert(cursor, INSERT_RPC_HTTP_SQL, rcpHttpData)
 
-    psycopg2.extras.execute_values(cursor, 
-        "INSERT INTO rpc_http_status_history (ts, connection_id, rpc_http_status) VALUES %s", 
-        rcpHttpData)
+    batchInsert(cursor, INSERT_RPC_HTTPS_SQL, rcpHttpsData)
 
-    psycopg2.extras.execute_values(cursor, 
-        "INSERT INTO rpc_https_status_history (ts, connection_id, rpc_https_status) VALUES %s", 
-        rcpHttpsData)
+    batchInsert(cursor, INSERT_PEERS_SQL, validatedPeersHistoryData)
 
-    psycopg2.extras.execute_values(cursor, 
-        "INSERT INTO validated_peers_history (ts, connection_id, validated_peers_connection_id) VALUES %s",
-        validatedPeersHistoryData)
-
-    psycopg2.extras.execute_values(cursor, 
-        "INSERT INTO validated_peers_counts_history (ts, connection_id, validated_peers_counts) VALUES %s",
-        validatedPeersCountData)
+    batchInsert(cursor, INSERT_PEERS_COUNT_SQL, validatedPeersCountData)
 
     logger.info("len(mempoolData) {}".format(len(mempoolData)) )
-    psycopg2.extras.execute_values(cursor, 
-        "INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) VALUES %s", 
-        mempoolData)
+    batchInsert(cursor, INSERT_UNCONFIRMED_TX_SQL, mempoolData)
 
     conn.commit()
 
