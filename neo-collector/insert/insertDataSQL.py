@@ -200,7 +200,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
             latencyData.append( (ts, connectionId, latency))
             onlineData.append( (ts, connectionId, True))
 
-            if versionResult==None:
+            if versionResult!=None:
                 ts, version = versionResult
                 versionData.append( (ts, connectionId, version["result"]['useragent']))
         
