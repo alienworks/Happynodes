@@ -154,6 +154,7 @@ cursor.execute("select n.id,ce.id,ip \
             inner join nodes n \
             on n.id=ce.node_id")
 ip_list = cursor.fetchall()
+ip_dict={}
 for ip_id, address_id, ip in ip_list:
     ip_dict[ip] = (ip_id, address_id, ip)
 
