@@ -64,7 +64,7 @@ async def callEndpoint(url, method):
         except (aiohttp.InvalidURL, aiohttp.ClientConnectorError) as e:
             return None
         except (asyncio.TimeoutError) as e:
-            logger.error(url, method, "Timeout")
+            logger.error("{} {} Timeout".format(url, method))
             return None
 
 async def testPort(url, port):
@@ -94,10 +94,10 @@ async def getLatency(url):
                 ts = getSqlDateTime(time.time())
                 return ts, (end-start)
         except (aiohttp.InvalidURL, aiohttp.ClientConnectorError) as e:
-            logger.error(url, "Bad URL or Bad connection")
+            logger.error ("{} Bad URL or Bad connection".format(url))
             return None
         except (asyncio.TimeoutError) as e:
-            logger.error(url, "latency","Timeout")
+            logger.error ("{} latency Timeout".format(url))
             return None
 
 async def updateEndpoint(url, connectionId):
