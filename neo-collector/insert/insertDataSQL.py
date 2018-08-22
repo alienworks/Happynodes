@@ -307,7 +307,8 @@ def updateApp():
             updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
                 , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData)
             
-        except:
+        except Exception as e: 
+            print(e)
             logger.error("Exception, closing event loop")
             loop.close()
             break
