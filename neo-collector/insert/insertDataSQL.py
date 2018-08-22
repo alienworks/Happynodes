@@ -252,6 +252,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
 
                 validatedPeersCountData.append((ts, connectionId, validated_peers))
         else:
+            print("numTimeout", numTimeout)
             numTimeout= numTimeout + 1
             ts = getSqlDateTime(time.time())
             latencyData.append((ts, connectionId, 2))
