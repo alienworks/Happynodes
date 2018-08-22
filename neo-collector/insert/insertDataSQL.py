@@ -81,6 +81,9 @@ async def callEndpoint(url, method):
                 except json.decoder.JSONDecodeError as e:
                     return None
                 ts = getSqlDateTime(time.time())
+
+                if 'error' in result:
+                    return None
                 return ts, result
         except (aiohttp.InvalidURL, aiohttp.ClientConnectorError) as e:
             return None
@@ -197,7 +200,6 @@ def prepareSqlInsert(done, ipToEndpointMap):
 
             if versionResult!=None:
                 ts, version = versionResult
-                print(version)
                 if "result" in version:
                     versionData.append( (ts, connectionId, version["result"]['useragent']))
         
