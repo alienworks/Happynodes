@@ -200,8 +200,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
 
             if versionResult!=None:
                 ts, version = versionResult
-                if "result" in version:
-                    versionData.append( (ts, connectionId, version["result"]['useragent']))
+                versionData.append( (ts, connectionId, version["result"]['useragent']))
         
             if blockcountResult!=None:
                 ts, blockcount = blockcountResult
@@ -306,21 +305,21 @@ def updateApp():
         if d.hour==10:
             endpointsList=getEndpointsList(GET_ENDPOINTS_SQL)
             ipToEndpointMap=getIpToEndpointMap(GET_ENDPOINTS_IP_SQL)
-        # try:
-        loop = asyncio.get_event_loop()
-        done = loop.run_until_complete(main(endpointsList))
+        try:
+            loop = asyncio.get_event_loop()
+            done = loop.run_until_complete(main(endpointsList))
 
-        latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
-        , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData = prepareSqlInsert(done, ipToEndpointMap)
+            latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
+            , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData = prepareSqlInsert(done, ipToEndpointMap)
 
-            # updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
-            #     , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData)
-            # break
-        # except Exception as e: 
+            updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
+                , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData)
+            break
+        except Exception as e: 
             
-        #     logger.error("Exception, closing event loop")
-        #     logger.error(e)
-        #     break
+            logger.error("Exception, closing event loop")
+            logger.error(e)
+            break
     loop.close()
 
 if __name__ == "__main__":
