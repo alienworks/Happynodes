@@ -16,7 +16,5 @@ WORKDIR /usr/src/app
 
 COPY insertDataSQL.py .
 
-RUN pip3 install redis
-
 # start app
 CMD ["python3", "insertDataSQL.py"]
