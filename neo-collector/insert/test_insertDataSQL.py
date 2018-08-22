@@ -63,6 +63,7 @@ async def test_update():
     connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
                 rawmempoolResult, peersResult, rpc_https_service, rpc_http_service = await updateEndpoint(url, 22)
     assert connectionId==22
+    
     if latencyResult!=None:
         ts, result = await getLatency(url)
         assert type(result) is int or type(result) is float 
