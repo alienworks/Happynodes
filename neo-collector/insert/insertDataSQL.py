@@ -190,7 +190,7 @@ for task in done:
             blockheightData.append( (ts, connectionId, blockcountResult["result"]))
         
         if connectioncountResult!=None:
-            connectionscount_data.append( (ts, connectionId, connectioncountResult["result"]))
+            connectionscountData.append( (ts, connectionId, connectioncountResult["result"]))
 
         if rawmempoolResult!=None:
             mempoolsizeData.append( (ts, connectionId, len(rawmempoolResult["result"])))
