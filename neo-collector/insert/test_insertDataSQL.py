@@ -98,9 +98,7 @@ def test_getIpToEndpointMap():
 
 def test_prepareSqlInsert():
     fakeDone = [FakeTask(fake_result_data)]
-    
     result = prepareSqlInsert(fakeDone, fakeipToEndpointMap)
-
     assert snapshot_result == result
 
     
