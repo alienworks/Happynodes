@@ -735,7 +735,8 @@ health_score desc""")
                         "mempool_size": node_info[16],
                         "connection_counts": node_info[17],
                         "online": node_info[18],
-                        "blockheight": blockheight,
+                        # "blockheight": blockheight, will fix this when add redis to neo-collect
+						"blockheight": node_info[19],
                         "lat": node_info[20],
                         "long": node_info[21],
                         "locale": node_info[22],
