@@ -190,8 +190,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
         connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
                     rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService = task.result()
 
-        ts, latency = latencyResult
-        if latency!=None:
+        if latencyResult!=None:
             ts, latency = latencyResult
             latencyData.append( (ts, connectionId, latency))
             onlineData.append( (ts, connectionId, True))
@@ -305,7 +304,7 @@ def updateApp():
             ipToEndpointMap=getIpToEndpointMap(GET_ENDPOINTS_IP_SQL)
         try:
             loop = asyncio.get_event_loop()
-            done = loop.run_until_complete(main(endpointsList))
+            done = loop.run_until_complete(main(endpointsList[-10:]))
 
             latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
             , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData = prepareSqlInsert(done, ipToEndpointMap)
