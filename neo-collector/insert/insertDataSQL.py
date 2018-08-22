@@ -119,176 +119,193 @@ async def updateEndpoint(url, connectionId):
         logger.info(url, "done")
         return connectionId, latencyResult, None, None, None, None, None, None, None
     
-async def main():
-    conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
+
+async def main(endpointslist):
+    logger.info("size of endpoints list ", len(endpointslist))
+    t0 = time.time()
+    done, pending = await asyncio.wait([updateEndpoint(url, id) for id, url in endpointslist])
+
+    t1 = time.time()
+    logger.info('Took %.2f ms' % (1000*(t1-t0)))
+    return done
+
+def getEndpointsList():
+    conn = tcp.getconn()
     cursor = conn.cursor()
     cursor.execute("""SELECT endpoint.id, 
                     concat(endpoint.protocol, '://', n.hostname,':' , endpoint.port) AS url 
                     FROM connection_endpoints endpoint  
                     INNER JOIN nodes n  
                     ON n.id=endpoint.node_id""")
-    results = cursor.fetchall()
-    logger.info("size of endpoints list ", len(results))
+    tcp.putconn(conn)
+    return cursor.fetchall()
 
+def getIpToEndpointMap():
+    conn = tcp.getconn()
+    cursor = conn.cursor()
+    cursor.execute("""select n.id,ce.id,ip 
+                    from connection_endpoints ce 
+                    inner join nodes n 
+                    on n.id=ce.node_id""")
+    ip_list = cursor.fetchall()
+    tcp.putconn(conn)
+    ipToEndpointMap={}
+    for ip_id, address_id, ip in ip_list:
+        ipToEndpointMap[ip] = (ip_id, address_id, ip)
+    return IpToEndpointMap
+
+def prepareSqlInsert(done, ipToEndpointMap):
+    latencyData = []
+    blockheightData = []
+    mempoolsizeData = []
+    mempoolData = []
+    connectionscountData = []
+    onlineData = []
+    versionData = []
+    rcpHttpData = []
+    rcpHttpsData = []
+
+    validatedPeersHistoryData = []
+    validatedPeersCountData = []
+
+    numTimeout=0
+
+    for task in done:
+        connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
+                    rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService = task.result()
+
+        if latencyResult!=None:
+            ts, latency = latencyResult
+            latencyData.append( (ts, connectionId, latency))
+            onlineData.append( (ts, connectionId, True))
+
+            if versionResult!=None:
+                ts, version = versionResult
+                versionData.append( (ts, connectionId, version["result"]['useragent']))
+        
+            if blockcountResult!=None:
+                ts, blockcount = blockcountResult
+                blockheightData.append( (ts, connectionId, blockcount["result"]))
+
+                if blockcount["result"]> maxBlockHeight:
+                    maxBlockHeight=blockcount["result"]
+            
+            if connectioncountResult!=None:
+                ts, connectioncount = connectioncountResult
+                connectionscountData.append( (ts, connectionId, connectioncount["result"]))
+
+            if rawmempoolResult!=None:
+                ts, rawmempool = rawmempoolResult
+                mempoolsizeData.append( (ts, connectionId, len(rawmempool["result"])))
+
+            if rawmempoolResult!=None and blockcountResult!=None:
+                ts, rawmempool = rawmempoolResult
+                _, blockcount = blockcountResult
+                if len(rawmempool["result"]) > 0 and abs(maxBlockHeight-blockcount["result"])<5:
+                    data = []
+                    for tx in rawmempool["result"]:
+                        mempoolData.append((blockcount["result"], connectionId, tx))
+            if rpcHttpsService!=None:
+                ts, rpcHttps = rpcHttpsService
+                rcpHttpsData.append((ts, connectionId, rpcHttps))
+            
+            if rpcHttpService!=None:
+                ts, rpcHttp = rpcHttpService
+                rcpHttpData.append((ts, connectionId, rpcHttp))
+
+            if peersResult!=None:
+                ts, peers = peersResult
+                peers = [ i['address'] for i in peers["result"]['connected']]
+                validated_peers=0
+                for connected_peer in peers:
+                    if '::ffff:' in connected_peer:
+                        peer_address = connected_peer.split('::ffff:')[1]
+                    else:
+                        peer_address = connected_peer
+                    
+                    if peer_address.split('.')[0]=="10":
+                        continue  
+                                        
+                    if peer_address not in ipToEndpointMap:
+                        continue
+                    
+                    _, validatedPeerAddressId, _ = ipToEndpointMap[peer_address]   
+                    validatedPeersHistoryData.append((ts, connectionId, validatedPeerAddressId))
+                    validated_peers+=1 
+
+                validatedPeersCountData.append((ts, connectionId, validated_peers))
+        else:
+            numTimeout+=1
+            ts = getSqlDateTime(time.time())
+            latencyData.append((ts, connectionId, 2000))
+            onlineData.append((ts, connectionId, False))
+        logger.info("numTimeout ", numTimeout)
+        return latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
+            , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData
+
+def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
+            , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData):
     t0 = time.time()
-    done, pending = await asyncio.wait([updateEndpoint(url, id) for id, url in results])
-
-    t1 = time.time()
-    logger.info('Took %.2f ms' % (1000*(t1-t0)))
-    return done
-
-def updateApp():
     conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
     cursor = conn.cursor()
-    cursor.execute("select n.id,ce.id,ip \
-                from connection_endpoints ce \
-                inner join nodes n \
-                on n.id=ce.node_id")
-    ip_list = cursor.fetchall()
-    ip_dict={}
+
+    psycopg2.extras.execute_values(cursor, 
+        "INSERT INTO latency_history (ts, connection_id, latency_history) VALUES %s", 
+        latencyData 
+        )
+
+    psycopg2.extras.execute_values(cursor, 
+        "INSERT INTO blockheight_history (ts, connection_id, blockheight) VALUES %s", 
+        blockheightData 
+        )
+
+    psycopg2.extras.execute_values(cursor, 
+        "INSERT INTO online_history (ts, connection_id, online) VALUES %s", 
+        onlineData 
+        )
+
+    psycopg2.extras.execute_values(cursor, 
+        "INSERT INTO version_history (ts, connection_id, version) VALUES %s", 
+        versionData)
+
+    psycopg2.extras.execute_values(cursor, 
+        "INSERT INTO rpc_http_status_history (ts, connection_id, rpc_http_status) VALUES %s", 
+        rcpHttpData)
+
+    psycopg2.extras.execute_values(cursor, 
+        "INSERT INTO rpc_https_status_history (ts, connection_id, rpc_https_status) VALUES %s", 
+        rcpHttpsData)
+
+    psycopg2.extras.execute_values(cursor, 
+        "INSERT INTO validated_peers_history (ts, connection_id, validated_peers_connection_id) VALUES %s",
+        validatedPeersHistoryData)
+
+    psycopg2.extras.execute_values(cursor, 
+        "INSERT INTO validated_peers_counts_history (ts, connection_id, validated_peers_counts) VALUES %s",
+        validatedPeersCountData)
+
+    logger.info("len(mempoolData)", len(mempoolData))
+    psycopg2.extras.execute_values(cursor, 
+        "INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) VALUES %s", 
+        mempoolData)
+
+    t1 = time.time()
+    logger.info('SQL Took %.2f ms' % (1000*(t1-t0)))
+
+def updateApp():
+    endpointsList=getEndpointsList()
+    ipToEndpointMap=getIpToEndpointMap()
     while True:
         try:
             loop = asyncio.get_event_loop()
-            done = loop.run_until_complete(main())
+            done = loop.run_until_complete(main(endpointsList))
+
+            latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
+            , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData = prepareSqlInsert(done, ipToEndpointMap)
+
+            updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
+                , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData)
             
-
-            latencyData = []
-            blockheightData = []
-            mempoolsizeData = []
-            mempoolData = []
-            connectionscountData = []
-            onlineData = []
-            versionData = []
-            rcpHttpData = []
-            rcpHttpsData = []
-
-            validatedPeersHistoryData = []
-            validatedPeersCountData = []
-
-            numTimeout=0
-
-            
-            for ip_id, address_id, ip in ip_list:
-                ip_dict[ip] = (ip_id, address_id, ip)
-
-            for task in done:
-                connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
-                            rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService = task.result()
-
-                if latencyResult!=None:
-                    ts, latency = latencyResult
-                    latencyData.append( (ts, connectionId, latency))
-                    onlineData.append( (ts, connectionId, True))
-
-                    if versionResult!=None:
-                        ts, version = versionResult
-                        versionData.append( (ts, connectionId, version["result"]['useragent']))
-                
-                    if blockcountResult!=None:
-                        ts, blockcount = blockcountResult
-                        blockheightData.append( (ts, connectionId, blockcount["result"]))
-
-                        if blockcount["result"]> maxBlockHeight:
-                            maxBlockHeight=blockcount["result"]
-                    
-                    if connectioncountResult!=None:
-                        ts, connectioncount = connectioncountResult
-                        connectionscountData.append( (ts, connectionId, connectioncount["result"]))
-
-                    if rawmempoolResult!=None:
-                        ts, rawmempool = rawmempoolResult
-                        mempoolsizeData.append( (ts, connectionId, len(rawmempool["result"])))
-
-                    if rawmempoolResult!=None and blockcountResult!=None:
-                        ts, rawmempool = rawmempoolResult
-                        _, blockcount = blockcountResult
-                        if len(rawmempool["result"]) > 0 and abs(maxBlockHeight-blockcount["result"])<5:
-                            data = []
-                            for tx in rawmempool["result"]:
-                                mempoolData.append((blockcount["result"], connectionId, tx))
-                    if rpcHttpsService!=None:
-                        ts, rpcHttps = rpcHttpsService
-                        rcpHttpsData.append((ts, connectionId, rpcHttps))
-                    
-                    if rpcHttpService!=None:
-                        ts, rpcHttp = rpcHttpService
-                        rcpHttpData.append((ts, connectionId, rpcHttp))
-
-                    if peersResult!=None:
-                        ts, peers = peersResult
-                        peers = [ i['address'] for i in peers["result"]['connected']]
-                        validated_peers=0
-                        for connected_peer in peers:
-                            if '::ffff:' in connected_peer:
-                                peer_address = connected_peer.split('::ffff:')[1]
-                            else:
-                                peer_address = connected_peer
-                            
-                            if peer_address.split('.')[0]=="10":
-                                continue  
-                                                
-                            if peer_address not in ip_dict:
-                                continue
-                            
-                            _, validatedPeerAddressId, _ = ip_dict[peer_address]   
-                            validatedPeersHistoryData.append((ts, connectionId, validatedPeerAddressId))
-                            validated_peers+=1 
-
-                        validatedPeersCountData.append((ts, connectionId, validated_peers))
-                else:
-                    numTimeout+=1
-                    ts = getSqlDateTime(time.time())
-                    latencyData.append( (ts, connectionId, 2000))
-                    onlineData.append( (ts, connectionId, False))
-                
-
-            t0 = time.time()
-            conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
-            cursor = conn.cursor()
-
-            psycopg2.extras.execute_values(cursor, 
-                "INSERT INTO latency_history (ts, connection_id, latency_history) VALUES %s", 
-                latencyData 
-                )
-
-            psycopg2.extras.execute_values(cursor, 
-                "INSERT INTO blockheight_history (ts, connection_id, blockheight) VALUES %s", 
-                blockheightData 
-                )
-
-            psycopg2.extras.execute_values(cursor, 
-                "INSERT INTO online_history (ts, connection_id, online) VALUES %s", 
-                onlineData 
-                )
-
-            psycopg2.extras.execute_values(cursor, 
-                "INSERT INTO version_history (ts, connection_id, version) VALUES %s", 
-                versionData)
-
-            psycopg2.extras.execute_values(cursor, 
-                "INSERT INTO rpc_http_status_history (ts, connection_id, rpc_http_status) VALUES %s", 
-                rcpHttpData)
-
-            psycopg2.extras.execute_values(cursor, 
-                "INSERT INTO rpc_https_status_history (ts, connection_id, rpc_https_status) VALUES %s", 
-                rcpHttpsData)
-
-            psycopg2.extras.execute_values(cursor, 
-                "INSERT INTO validated_peers_history (ts, connection_id, validated_peers_connection_id) VALUES %s",
-                validatedPeersHistoryData)
-
-            psycopg2.extras.execute_values(cursor, 
-                "INSERT INTO validated_peers_counts_history (ts, connection_id, validated_peers_counts) VALUES %s",
-                validatedPeersCountData)
-
-            logger.info("len(mempoolData)", len(mempoolData))
-            psycopg2.extras.execute_values(cursor, 
-                "INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) VALUES %s", 
-                mempoolData)
-
-            t1 = time.time()
-            logger.info("numTimeout ", numTimeout)
-            logger.info('SQL Took %.2f ms' % (1000*(t1-t0)))
         except:
             logger.error("Exception, closing event loop")
             loop.close()
