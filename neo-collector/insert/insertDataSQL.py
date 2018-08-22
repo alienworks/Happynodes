@@ -143,7 +143,7 @@ rcpHttpData = []
 rcpHttpsData = []
 
 
-
+numTimeout=0
 for task in done:
     connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
                 rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService = task.result()
@@ -187,6 +187,7 @@ for task in done:
             ts, rpcHttp = rpcHttpService
             rcpHttpData.append((ts, connectionId, rpcHttp))
     else:
+        numTimeout+=1
         ts = getSqlDateTime(time.time())
         latencyData.append( (ts, connectionId, 2000))
         onlineData.append( (ts, connectionId, False))
@@ -229,4 +230,5 @@ psycopg2.extras.execute_values(cursor,
     mempoolData)
 
 t1 = time.time()
+print("numTimeout ", numTimeout)
 print('SQL Took %.2f ms' % (1000*(t1-t0)))
