@@ -239,7 +239,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
         else:
             numTimeout+=1
             ts = getSqlDateTime(time.time())
-            latencyData.append((ts, connectionId, 2000))
+            latencyData.append((ts, connectionId, 2))
             onlineData.append((ts, connectionId, False))
         logger.info("numTimeout {}".format(numTimeout))
         return latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
