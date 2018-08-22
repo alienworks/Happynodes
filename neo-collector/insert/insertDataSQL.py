@@ -209,8 +209,6 @@ for task in done:
 conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
 cursor = conn.cursor()
 
-print("latencyResult", latencyData)
-
 psycopg2.extras.execute_values(cursor, 
     "INSERT INTO latency_history (ts, connection_id, latency_history) VALUES %s", 
     latencyData 
@@ -233,11 +231,11 @@ psycopg2.extras.execute_values(cursor,
 
 psycopg2.extras.execute_values(cursor, 
     "INSERT INTO rpc_http_status_history (ts, connection_id, rpc_http_status) VALUES %s", 
-    rpcHttpService)
+    rcpHttpData)
 
 psycopg2.extras.execute_values(cursor, 
     "INSERT INTO rpc_https_status_history (ts, connection_id, rpc_https_status) VALUES %s", 
-    rpcHttpsService)
+    rcpHttpsData)
 
 t1 = time.time()
 print('SQL Took %.2f ms' % (1000*(t1-t0)))
