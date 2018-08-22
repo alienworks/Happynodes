@@ -212,6 +212,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
                     data = []
                     for tx in rawmempool["result"]:
                         mempoolData.append((blockcount["result"], connectionId, tx))
+                        
             if rpcHttpsService!=None:
                 ts, rpcHttps = rpcHttpsService
                 rcpHttpsData.append((ts, connectionId, rpcHttps))

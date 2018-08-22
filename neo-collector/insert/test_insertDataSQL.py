@@ -65,6 +65,8 @@ async def test_update():
                 rawmempoolResult, peersResult, rpc_https_service, rpc_http_service = await updateEndpoint(url, 22)
     assert connectionId==22
 
+    print(await updateEndpoint(url, 22))
+    assert False
     if latencyResult!=None:
         ts, result = await getLatency(url)
         assert type(result) is int or type(result) is float 
@@ -76,6 +78,9 @@ def test_getEndpointsList():
 def test_getIpToEndpointMap():
     result = getIpToEndpointMap(GET_ENDPOINTS_IP_SQL + " LIMIT 10")
     assert len(result)!=0
+
+# def test_prepareSqlInsert():
+#     pass
     
 
 
