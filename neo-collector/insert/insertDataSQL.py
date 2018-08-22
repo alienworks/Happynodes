@@ -105,12 +105,7 @@ async def update(url, connectionId):
         print(url, "done")
         return connectionId, latencyResult, None, None, None, None, None, None, None
     
-    # Need to run this seperately
-    # if len(mempool["result"]) > 0:
-    #     data = []
-    #     for tx in mempool["result"]:
-    #         data.append((str(blockcountResult['result']), str(connectionId), str(tx)))
-    #     cursor.executemany("INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) VALUES (%s, %s, %s)", data)
+
 
 async def main():
     conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
@@ -137,6 +132,7 @@ loop.close()
 latencyData = []
 blockheightData = []
 mempoolsizeData = []
+mempooldata = []
 connectionscountData = []
 onlineData = []
 versionData = []
@@ -167,7 +163,14 @@ for task in done:
         if rawmempoolResult!=None:
             ts, rawmempool = rawmempoolResult
             mempoolsizeData.append( (ts, connectionId, len(rawmempool["result"])))
-        
+
+        if rawmempoolResult!=None and blockcountResult!=None:
+            ts, rawmempool = rawmempoolResult
+            _, blockcount = blockcountResult
+            if len(rawmempool["result"]) > 0:
+                data = []
+                for tx in rawmempool["result"]:
+                    mempoolData.append((blockcount["result"], connectionId, tx))
         if rpcHttpsService!=None:
             ts, rpcHttps = rpcHttpsService
             rcpHttpsData.append((ts, connectionId, rpcHttps))
@@ -211,6 +214,10 @@ psycopg2.extras.execute_values(cursor,
 psycopg2.extras.execute_values(cursor, 
     "INSERT INTO rpc_https_status_history (ts, connection_id, rpc_https_status) VALUES %s", 
     rcpHttpsData)
+
+psycopg2.extras.execute_values(cursor, 
+    "INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) %s", 
+    mempoolData)
 
 t1 = time.time()
 print('SQL Took %.2f ms' % (1000*(t1-t0)))
