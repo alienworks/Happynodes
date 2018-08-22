@@ -315,8 +315,8 @@ def updateApp():
         except Exception as e: 
             print(e)
             logger.error("Exception, closing event loop")
-            loop.close()
             break
+    loop.close()
 
 if __name__ == "__main__":
     updateApp()
