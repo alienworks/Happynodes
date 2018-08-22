@@ -169,6 +169,8 @@ def prepareSqlInsert(done, ipToEndpointMap):
     validatedPeersCountData = []
 
     numTimeout=0
+    
+    global maxBlockHeight
 
     for task in done:
         connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
