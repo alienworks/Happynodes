@@ -44,17 +44,18 @@ MIN_CON = 1
 MAX_CON = 800
 tcp = ThreadedConnectionPool(MIN_CON, MAX_CON, dsn)
 
-maxBlockHeight = -1
-
 GET_ENDPOINTS_SQL="""SELECT endpoint.id, 
                     concat(endpoint.protocol, '://', n.hostname,':' , endpoint.port) AS url 
                     FROM connection_endpoints endpoint  
                     INNER JOIN nodes n  
-                    ON n.id=endpoint.node_id"""
+                    ON n.id=endpoint.node_id""" 
 GET_ENDPOINTS_IP_SQL = """select n.id,ce.id,ip 
                     from connection_endpoints ce 
                     inner join nodes n 
                     on n.id=ce.node_id"""
+
+
+maxBlockHeight = -1
 
 def getSqlDateTime(ts):
     return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
@@ -296,7 +297,7 @@ def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connec
         mempoolData)
 
     conn.commit()
-    
+
     t1 = time.time()
     logger.info('SQL Took %.2f ms' % (1000*(t1-t0)))
 
