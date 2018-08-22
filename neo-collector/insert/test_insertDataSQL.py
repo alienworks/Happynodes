@@ -71,13 +71,11 @@ async def test_update():
 
 def test_getEndpointsList():
     result = getEndpointsList(GET_ENDPOINTS_SQL + " LIMIT 10")
-    print(result)
-    assert False
+    assert len(result)!=0
 
 def test_getIpToEndpointMap():
     result = getIpToEndpointMap(GET_ENDPOINTS_IP_SQL + " LIMIT 10")
-    print(result)
-    assert False
+    assert len(result)!=0
     
 
 
