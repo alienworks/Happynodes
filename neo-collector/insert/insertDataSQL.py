@@ -12,6 +12,7 @@ import asyncio
 import asyncio
 import ssl
 import logging
+import datetime
 ssl.match_hostname = lambda cert, hostname: True
 
 logger = logging.getLogger(__name__)
@@ -291,14 +292,18 @@ def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connec
         "INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) VALUES %s", 
         mempoolData)
 
+    conn.commit()
     t1 = time.time()
     logger.info('SQL Took %.2f ms' % (1000*(t1-t0)))
 
 def updateApp():
     endpointsList=getEndpointsList()
     ipToEndpointMap=getIpToEndpointMap()
-
     while True:
+        d = datetime.datetime.utcnow()
+        if d.hour==10:
+            endpointsList=getEndpointsList()
+            ipToEndpointMap=getIpToEndpointMap()
         try:
             loop = asyncio.get_event_loop()
             done = loop.run_until_complete(main(endpointsList))
