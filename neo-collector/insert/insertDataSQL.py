@@ -189,7 +189,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
     for task in done:
         connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
                     rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService = task.result()
-        print("adsfasd")
+
         if latencyResult!=None:
             ts, latency = latencyResult
             latencyData.append( (ts, connectionId, latency))
