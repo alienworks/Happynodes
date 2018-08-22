@@ -209,11 +209,11 @@ for task in done:
 conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
 cursor = conn.cursor()
 
-print("latencyResult", latencyResult)
+print("latencyResult", latencyData)
 
 psycopg2.extras.execute_values(cursor, 
     "INSERT INTO latency_history (ts, connection_id, latency_history) VALUES %s", 
-    latencyResult 
+    latencyData 
     )
 
 
