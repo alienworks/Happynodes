@@ -95,6 +95,7 @@ def test_prepareSqlInsert():
     fakeDone = [FakeTask(fake_result_data)]
     fakeipToEndpointMap = getIpToEndpointMap(GET_ENDPOINTS_IP_SQL + " LIMIT 50")
     print(fakeipToEndpointMap)
+    assert False
 
     
 
