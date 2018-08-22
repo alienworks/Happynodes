@@ -197,6 +197,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
 
             if versionResult!=None:
                 ts, version = versionResult
+                print(version)
                 if "result" not in version:
                     versionData.append( (ts, connectionId, version["result"]['useragent']))
         
