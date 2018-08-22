@@ -197,6 +197,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
 
             if versionResult!=None:
                 ts, version = versionResult
+                print(version)
                 versionData.append( (ts, connectionId, version["result"]['useragent']))
         
             if blockcountResult!=None:
