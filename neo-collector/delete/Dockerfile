@@ -14,4 +14,4 @@ WORKDIR /usr/src/app
 COPY deleteOldTx.py .
 
 # start app
-CMD ["python3", "deleteOldTx.py"]
+CMD ["python3", "deleteTxUpdateSQL.py"]
