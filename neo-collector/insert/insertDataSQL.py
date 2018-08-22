@@ -73,7 +73,7 @@ async def testPort(url, port):
 
 async def getLatency(url):
     start = time.time()
-    timeout = aiohttp.ClientTimeout(total=3)
+    timeout = aiohttp.ClientTimeout(total=4)
     async with aiohttp.ClientSession() as session:
         try:
             async with session.post(url, json={'jsonrpc': '2.0', 'method': 'getblockcount', 'params': [], 'id': 1}
@@ -122,7 +122,7 @@ async def main():
     print("size of endpoints list ", len(results))
 
     t0 = time.time()
-    done, pending = await asyncio.wait([update(url, id) for id, url in results[:100] ])
+    done, pending = await asyncio.wait([update(url, id) for id, url in results])
 
     t1 = time.time()
     print('Took %.2f ms' % (1000*(t1-t0)))
