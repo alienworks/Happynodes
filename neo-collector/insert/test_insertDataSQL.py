@@ -13,7 +13,7 @@ import asyncio
 import ssl
 import logging
 import pytest
-from insertDataSQL import callEndpoint, getLatency
+from insertDataSQL import callEndpoint, getLatency, updateEndpoint
 
 url = "http://node2.sgp1.bridgeprotocol.io:10332"
 wrong_url = "http://karlson.com:10332"
@@ -21,30 +21,30 @@ wrong_url = "http://karlson.com:10332"
 @pytest.mark.asyncio
 async def test_callEndpoint_getblockcount():
     method = 'getblockcount'
-    result = await callEndpoint(url, method)
+    ts, result = await callEndpoint(url, method)
     assert type(result["result"]) is int
 
 @pytest.mark.asyncio
 async def test_callEndpoint_getversion():
     method = 'getversion'
-    result = await callEndpoint(url, method)
+    ts, result = await callEndpoint(url, method)
     assert 'nonce' in result["result"] and 'useragent' in result["result"] 
 
 @pytest.mark.asyncio
 async def test_callEndpoint_getconnectioncount():
     method = 'getconnectioncount'
-    result = await callEndpoint(url, method)
+    ts, result = await callEndpoint(url, method)
     assert type(result["result"]) is int
 
 @pytest.mark.asyncio
 async def test_callEndpoint_getpeers():
     method = 'getpeers'
-    result = await callEndpoint(url, method)
+    ts, result = await callEndpoint(url, method)
     assert 'connected' in result["result"] and 'bad' in result["result"] 
 
 @pytest.mark.asyncio
 async def test_getLatency():
-    result = await getLatency(url)
+    ts, result = await getLatency(url)
     assert type(result) is int or type(result) is float 
 
 @pytest.mark.asyncio
@@ -55,7 +55,7 @@ async def test_callEndpoint_badurl():
 
 @pytest.mark.asyncio
 async def test_getLatency_badurl():
-    result = await getLatency(wrong_url)
+    ts, result = await getLatency(wrong_url)
     assert result==None
 
 @pytest.mark.asyncio
