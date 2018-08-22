@@ -15,7 +15,7 @@ import logging
 ssl.match_hostname = lambda cert, hostname: True
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.ERROR)
+logger.setLevel(logging.INFO)
 
 # create console handler and set level to debug
 ch = logging.StreamHandler()
