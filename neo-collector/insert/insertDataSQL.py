@@ -184,7 +184,7 @@ for task in done:
         onlineData.append( (ts, connectionId, True))
 
         if versionResult!=None:
-        versionData.append( (ts, connectionId, versionResult["result"]['useragent']))
+            versionData.append( (ts, connectionId, versionResult["result"]['useragent']))
     
         if blockcountResult!=None:
             blockheightData.append( (ts, connectionId, blockcountResult["result"]))
