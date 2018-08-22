@@ -257,7 +257,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
             latencyData.append((ts, connectionId, 2))
             onlineData.append((ts, connectionId, False))
 
-        logger.info("numTimeout {}".format(numTimeout))
+    logger.info("numTimeout {}".format(numTimeout))
     return latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
         , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData
 
