@@ -10,30 +10,7 @@ import json
 client = RPCClient()
 
 
-class NodeObject:
-    def __init__(self, node_id, url, ip):
-        self.node_id = node_id
-        self.url = url
-        self.ip = ip
-
-        self.endpointHttp10331 = RPCEndpoint(
-            client, "http://" + url + ":10331")
-        self.endpointHttps10331 = RPCEndpoint(
-            client, "https://" + url + ":10331")
-
-        self.endpointHttp10332 = RPCEndpoint(
-            client, "http://" + url + ":10332")
-        self.endpointHttps10332 = RPCEndpoint(
-            client, "https://" + url + ":10332")
-
-        self.hasEndpointHttp10331 = False
-        self.hasEndpointHttps10331 = False
-        self.hasEndpointHttp10332 = False
-        self.hasEndpointHttps10332 = False
-
-
 while True:
-
     host = str(os.environ['PGHOST'])
     databasename = str(os.environ['PGDATABASE'])
     user = str(os.environ['PGUSER'])
@@ -153,7 +130,7 @@ while True:
     def getRemoteNodes(neighbours):
         remote_nodes = []
         for neighbour in neighbours:
-            # conert from ipv6 to ipv4
+            # convert from ipv6 to ipv4
             ip = neighbour['address'].split("::ffff:")[-1]
             remote_nodes.append(NodeObject(None, ip, ip))
 
