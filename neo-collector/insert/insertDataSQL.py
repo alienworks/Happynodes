@@ -142,8 +142,21 @@ versionData = []
 rcpHttpData = []
 rcpHttpsData = []
 
+validatedPeersHistoryData = []
+validatedPeersCountData = []
 
 numTimeout=0
+
+conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
+cursor = conn.cursor()
+cursor.execute("select n.id,ce.id,ip \
+            from connection_endpoints ce \
+            inner join nodes n \
+            on n.id=ce.node_id")
+ip_list = cursor.fetchall()
+for ip_id, address_id, ip in ip_list:
+    ip_dict[ip] = (ip_id, address_id, ip)
+
 for task in done:
     connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
                 rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService = task.result()
@@ -186,6 +199,27 @@ for task in done:
         if rpcHttpService!=None:
             ts, rpcHttp = rpcHttpService
             rcpHttpData.append((ts, connectionId, rpcHttp))
+
+        if peersResult!=None:
+            ts, peers = peersResult
+            peers = [ i['address'] for i in peers["result"]['connected']]
+            for connected_peer in peers:
+                if '::ffff:' in connected_peer:
+                    peer_address = connected_peer.split('::ffff:')[1]
+                else:
+                    peer_address = connected_peer
+                
+                if peer_address.split('.')[0]=="10":
+                    continue  
+                                    
+                if peer_address not in ip_dict:
+                    continue
+                
+                _, validatedPeerAddressId, _ = ip_dict[peer_address]   
+                validatedPeersHistoryData.append((ts, connectionId, validatedPeerAddressId))
+                validated_peers+=1 
+
+            validatedPeersCountData.append((ts, connectionId, validated_peers))
     else:
         numTimeout+=1
         ts = getSqlDateTime(time.time())
@@ -223,6 +257,14 @@ psycopg2.extras.execute_values(cursor,
 psycopg2.extras.execute_values(cursor, 
     "INSERT INTO rpc_https_status_history (ts, connection_id, rpc_https_status) VALUES %s", 
     rcpHttpsData)
+
+psycopg2.extras.execute_values(cursor, 
+    "INSERT INTO validated_peers_history (ts, connection_id, validated_peers_connection_id) VALUES %s",
+    validatedPeersHistoryData)
+
+psycopg2.extras.execute_values(cursor, 
+    "INSERT INTO validated_peers_counts_history (ts, connection_id, validated_peers_counts) VALUES %s",
+    validatedPeersCountData)
 
 print("len(mempoolData)", len(mempoolData))
 psycopg2.extras.execute_values(cursor, 
