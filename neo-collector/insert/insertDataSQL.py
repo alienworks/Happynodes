@@ -215,9 +215,9 @@ psycopg2.extras.execute_values(cursor,
     "INSERT INTO rpc_https_status_history (ts, connection_id, rpc_https_status) VALUES %s", 
     rcpHttpsData)
 
-psycopg2.extras.execute_values(cursor, 
-    "INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) VALUES %s", 
-    mempoolData)
+# psycopg2.extras.execute_values(cursor, 
+#     "INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) VALUES %s", 
+#     mempoolData)
 
 t1 = time.time()
 print('SQL Took %.2f ms' % (1000*(t1-t0)))
