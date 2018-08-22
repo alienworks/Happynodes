@@ -60,8 +60,12 @@ async def test_getLatency_badurl():
 
 @pytest.mark.asyncio
 async def test_update():
-    result = await updateEndpoint(url, 22)
-    print(result)
-    assert result==None
+    connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
+                rawmempoolResult, peersResult, rpc_https_service, rpc_http_service = await updateEndpoint(url, 22)
+    assert connectionId==22
+    if latencyResult!=None:
+        ts, result = await getLatency(url)
+        assert type(result) is int or type(result) is float 
+    
 
 
