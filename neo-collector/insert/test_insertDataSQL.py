@@ -96,11 +96,65 @@ def test_getIpToEndpointMap():
     result = getIpToEndpointMap(GET_ENDPOINTS_IP_SQL + " LIMIT 10")
     assert len(result)!=0
 
-def test_prepareSqlInsert():
-    fakeDone = [FakeTask(fake_result_data)]
-    result = prepareSqlInsert(fakeDone, fakeipToEndpointMap)
-    assert snapshot_result == result
+# TODO: Finish test on SQL insert scripts
+# def test_prepareSqlInsert():
+#     fakeDone = [FakeTask(fake_result_data)]
+#     result = prepareSqlInsert(fakeDone, fakeipToEndpointMap)
+#     assert snapshot_result == result
 
-    
 
+# def test_insertLatencySQL():
+#     conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
+#     cursor = conn.cursor()
 
+#     cursor.close()
+#     conn.close()
+
+# def test_insertBlockheightSQL():
+#     conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
+#     cursor = conn.cursor()
+
+#     cursor.close()
+#     conn.close()
+
+# def test_insertOnlineSQL():
+#     conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
+#     cursor = conn.cursor()
+
+#     cursor.close()
+#     conn.close()
+
+# def test_insertVersionSQL():
+#     conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
+#     cursor = conn.cursor()
+
+#     cursor.close()
+#     conn.close()
+
+# def test_insertHttpSQL():
+#     conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
+#     cursor = conn.cursor()
+
+#     cursor.close()
+#     conn.close()
+
+def test_insertHttpsSQL():
+    conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
+    cursor = conn.cursor()
+
+    cursor.close()
+    conn.close()
+
+def test_insertPeerSQL():
+    conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
+    cursor = conn.cursor()
+
+    cursor.close()
+    conn.close()
+
+def test_insertPeerCountsSQL():
+    conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
+    cursor = conn.cursor()
+
+    cursor.close()
+    conn.close()

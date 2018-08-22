@@ -272,9 +272,10 @@ def batchInsert(cursor, sqlScript, datalist):
 def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
             , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData):
     t0 = time.time()
-    conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
-    cursor = conn.cursor()
 
+    conn = tcp.getconn()
+    cursor = conn.cursor()
+    
     batchInsert(cursor, INSERT_LATENCY_SQL, latencyData)
     
     batchInsert(cursor, INSERT_BLOCKHEIGHT_SQL, blockheightData)
@@ -295,6 +296,7 @@ def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connec
     batchInsert(cursor, INSERT_UNCONFIRMED_TX_SQL, mempoolData)
 
     conn.commit()
+    tcp.putconn(conn)
 
     t1 = time.time()
     logger.info('SQL Took %.2f ms' % (1000*(t1-t0)))
