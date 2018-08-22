@@ -111,17 +111,17 @@ async def updateEndpoint(url, connectionId):
         rpc_https_service = await testPort(url, JSON_RPC_HTTPS_PORT)
         rpc_http_service = await testPort(url, JSON_RPC_HTTP_PORT)
 
-        logger.info(url, "done")
+        logger.info( "{} done".format(url))
 
         return connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
                 rawmempoolResult, peersResult, rpc_https_service, rpc_http_service
     else:
-        logger.info(url, "done")
+        logger.info( "{} done".format(url))
         return connectionId, latencyResult, None, None, None, None, None, None, None
     
 
 async def main(endpointslist):
-    logger.info("size of endpoints list ", len(endpointslist))
+    logger.info( "size of endpoints list {} done".format(len(endpointslist)))
     t0 = time.time()
     done, pending = await asyncio.wait([updateEndpoint(url, id) for id, url in endpointslist])
 
@@ -239,7 +239,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
             ts = getSqlDateTime(time.time())
             latencyData.append((ts, connectionId, 2000))
             onlineData.append((ts, connectionId, False))
-        logger.info("numTimeout ", numTimeout)
+        logger.info("numTimeout {}".format(numTimeout))
         return latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
             , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData
 
@@ -284,7 +284,7 @@ def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connec
         "INSERT INTO validated_peers_counts_history (ts, connection_id, validated_peers_counts) VALUES %s",
         validatedPeersCountData)
 
-    logger.info("len(mempoolData)", len(mempoolData))
+    logger.info("len(mempoolData) {}".format(len(mempoolData)) )
     psycopg2.extras.execute_values(cursor, 
         "INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) VALUES %s", 
         mempoolData)
