@@ -210,7 +210,7 @@ conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(d
 cursor = conn.cursor()
 psycopg2.extras.execute_values(cursor, 
     "INSERT INTO blockheight_history (ts, connection_id, blockheight) VALUES %s", 
-    blockheight_data 
+    blockheightData 
     )
 
 psycopg2.extras.execute_values(cursor, 
@@ -220,16 +220,20 @@ psycopg2.extras.execute_values(cursor,
 
 psycopg2.extras.execute_values(cursor, 
     "INSERT INTO online_history (ts, connection_id, online) VALUES %s", 
-    online_data 
+    onlineData 
     )
 
 psycopg2.extras.execute_values(cursor, 
     "INSERT INTO version_history (ts, connection_id, version) VALUES %s", 
-    version_data)
+    versionData)
 
 psycopg2.extras.execute_values(cursor, 
-    "INSERT INTO mempool_size_history (ts, connection_id, mempool_size) VALUES %s", 
-    mempoolsize_data)
+    "INSERT INTO rpc_http_status_history (ts, connection_id, rpc_http_status) VALUES %s", 
+    rpcHttpService)
+
+psycopg2.extras.execute_values(cursor, 
+    "INSERT INTO rpc_https_status_history (ts, connection_id, rpc_https_status) VALUES %s", 
+    rpcHttpsService)
 
 t1 = time.time()
 print('SQL Took %.2f ms' % (1000*(t1-t0)))
