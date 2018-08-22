@@ -55,7 +55,7 @@ async def test_callEndpoint_badurl():
 
 @pytest.mark.asyncio
 async def test_getLatency_badurl():
-    ts, result = await getLatency(wrong_url)
+    result = await getLatency(wrong_url)
     assert result==None
 
 # @pytest.mark.asyncio
