@@ -65,7 +65,8 @@ async def testPort(url, port):
                 ts = getSqlDateTime(time.time())
                 return ts, portOkay
         except (aiohttp.InvalidURL, aiohttp.ClientConnectorError) as e:
-            return False
+            ts = getSqlDateTime(time.time())
+            return ts, False
 
 async def getLatency(url):
     start = time.time()
