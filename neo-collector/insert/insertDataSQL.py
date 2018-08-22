@@ -142,6 +142,8 @@ versionData = []
 rcpHttpData = []
 rcpHttpsData = []
 
+
+
 for task in done:
     connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
                 rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService = task.result()
@@ -222,9 +224,9 @@ psycopg2.extras.execute_values(cursor,
     rcpHttpsData)
 
 print("len(mempoolData)", len(mempoolData))
-# psycopg2.extras.execute_values(cursor, 
-#     "INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) VALUES %s", 
-#     mempoolData)
+psycopg2.extras.execute_values(cursor, 
+    "INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) VALUES %s", 
+    mempoolData)
 
 t1 = time.time()
 print('SQL Took %.2f ms' % (1000*(t1-t0)))
