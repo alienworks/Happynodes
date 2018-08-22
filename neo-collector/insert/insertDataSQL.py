@@ -306,8 +306,8 @@ def updateApp():
             loop = asyncio.get_event_loop()
             done = loop.run_until_complete(main(endpointsList))
 
-            latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
-            , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData = prepareSqlInsert(done, ipToEndpointMap)
+            # latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
+            # , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData = prepareSqlInsert(done, ipToEndpointMap)
 
             # updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
             #     , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData)
