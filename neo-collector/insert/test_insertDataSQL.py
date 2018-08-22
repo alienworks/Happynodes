@@ -1,20 +1,17 @@
-from neorpc.Settings import SettingsHolder
-from Client import RPCClient, RPCEndpoint
 import psycopg2
+import psycopg2.extras
+from psycopg2.pool import ThreadedConnectionPool
 import requests
 import json
 import time
 import datetime
-import queue
-import threading
 import random
-from psycopg2.pool import ThreadedConnectionPool
 import os
-import redis
-import dns.resolver
 import aiohttp
 import asyncio
-import time
+import asyncio
+import ssl
+import logging
 import pytest
 from insertDataSQL import callEndpoint, getLatency
 
@@ -59,6 +56,12 @@ async def test_callEndpoint_badurl():
 @pytest.mark.asyncio
 async def test_getLatency_badurl():
     result = await getLatency(wrong_url)
+    assert result==None
+
+@pytest.mark.asyncio
+async def test_update():
+    result = await updateEndpoint(url, 22)
+    print(result)
     assert result==None
 
 

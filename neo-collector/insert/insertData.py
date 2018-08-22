@@ -221,7 +221,8 @@ if __name__ == "__main__":
 
                         if peers == None:
                             print("peers is none")
-                            cursor.execute("INSERT INTO validated_peers_counts_history (ts, connection_id, validated_peers_counts) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, 0])
+                            cursor.execute("INSERT INTO validated_peers_counts_history (ts, connection_id, validated_peers_counts) VALUES (%s, %s, %s)", 
+                                [getSqlDateTime(time.time()), addressId, 0])
                         else:
                             print("peers is not none")
                             validated_peers = 0
@@ -245,10 +246,12 @@ if __name__ == "__main__":
         
                                 _, validated_peer_address_id, _ = ip_dict[peer_address]    
                                 
-                                cursor.execute("INSERT INTO validated_peers_history (ts, connection_id, validated_peers_connection_id) VALUES (%s, %s, %s)", [getSqlDateTime(insert_time), addressId, validated_peer_address_id])
+                                cursor.execute("INSERT INTO validated_peers_history (ts, connection_id, validated_peers_connection_id) VALUES (%s, %s, %s)", 
+                                    [getSqlDateTime(insert_time), addressId, validated_peer_address_id])
                                 
                                 validated_peers+=1 
-                            cursor.execute("INSERT INTO validated_peers_counts_history (ts, connection_id, validated_peers_counts) VALUES (%s, %s, %s)", [getSqlDateTime(time.time()), addressId, validated_peers])
+                            cursor.execute("INSERT INTO validated_peers_counts_history (ts, connection_id, validated_peers_counts) VALUES (%s, %s, %s)", 
+                                [getSqlDateTime(time.time()), addressId, validated_peers])
 
                     except Exception as e:
                         print(e)
