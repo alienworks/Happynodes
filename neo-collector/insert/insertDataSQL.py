@@ -46,6 +46,16 @@ tcp = ThreadedConnectionPool(MIN_CON, MAX_CON, dsn)
 
 maxBlockHeight = -1
 
+GET_ENDPOINTS_SQL="""SELECT endpoint.id, 
+                    concat(endpoint.protocol, '://', n.hostname,':' , endpoint.port) AS url 
+                    FROM connection_endpoints endpoint  
+                    INNER JOIN nodes n  
+                    ON n.id=endpoint.node_id"""
+GET_ENDPOINTS_IP_SQL = """select n.id,ce.id,ip 
+                    from connection_endpoints ce 
+                    inner join nodes n 
+                    on n.id=ce.node_id"""
+
 def getSqlDateTime(ts):
     return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
@@ -130,24 +140,17 @@ async def main(endpointslist):
     logger.info('Took %.2f ms' % (1000*(t1-t0)))
     return done
 
-def getEndpointsList():
+def getEndpointsList(sqlScript):
     conn = tcp.getconn()
     cursor = conn.cursor()
-    cursor.execute("""SELECT endpoint.id, 
-                    concat(endpoint.protocol, '://', n.hostname,':' , endpoint.port) AS url 
-                    FROM connection_endpoints endpoint  
-                    INNER JOIN nodes n  
-                    ON n.id=endpoint.node_id""")
+    cursor.execute(sqlScript)
     tcp.putconn(conn)
     return cursor.fetchall()
 
-def getIpToEndpointMap():
+def getIpToEndpointMap(sqlScript):
     conn = tcp.getconn()
     cursor = conn.cursor()
-    cursor.execute("""select n.id,ce.id,ip 
-                    from connection_endpoints ce 
-                    inner join nodes n 
-                    on n.id=ce.node_id""")
+    cursor.execute(sqlScript)
     ip_list = cursor.fetchall()
     tcp.putconn(conn)
     ipToEndpointMap={}
@@ -293,17 +296,18 @@ def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connec
         mempoolData)
 
     conn.commit()
+    
     t1 = time.time()
     logger.info('SQL Took %.2f ms' % (1000*(t1-t0)))
 
 def updateApp():
-    endpointsList=getEndpointsList()
-    ipToEndpointMap=getIpToEndpointMap()
+    endpointsList=getEndpointsList(GET_ENDPOINTS_SQL)
+    ipToEndpointMap=getIpToEndpointMap(GET_ENDPOINTS_IP_SQL)
     while True:
         d = datetime.datetime.utcnow()
         if d.hour==10:
-            endpointsList=getEndpointsList()
-            ipToEndpointMap=getIpToEndpointMap()
+            endpointsList=getEndpointsList(GET_ENDPOINTS_SQL)
+            ipToEndpointMap=getIpToEndpointMap(GET_ENDPOINTS_IP_SQL)
         try:
             loop = asyncio.get_event_loop()
             done = loop.run_until_complete(main(endpointsList))

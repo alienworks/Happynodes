@@ -13,7 +13,8 @@ import asyncio
 import ssl
 import logging
 import pytest
-from insertDataSQL import callEndpoint, getLatency, updateEndpoint
+from insertDataSQL import callEndpoint, getLatency, updateEndpoint, getEndpointsList, getIpToEndpointMap
+from insertDataSQL import GET_ENDPOINTS_SQL, GET_ENDPOINTS_IP_SQL
 
 url = "http://node2.sgp1.bridgeprotocol.io:10332"
 wrong_url = "http://karlson.com:10332"
@@ -63,10 +64,20 @@ async def test_update():
     connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
                 rawmempoolResult, peersResult, rpc_https_service, rpc_http_service = await updateEndpoint(url, 22)
     assert connectionId==22
-    
+
     if latencyResult!=None:
         ts, result = await getLatency(url)
         assert type(result) is int or type(result) is float 
+
+def test_getEndpointsList():
+    result = getEndpointsList(GET_ENDPOINTS_SQL + " LIMIT 10")
+    print(result)
+    assert False
+
+def test_getIpToEndpointMap():
+    result = getIpToEndpointMap(GET_ENDPOINTS_IP_SQL + " LIMIT 10")
+    print(result)
+    assert False
     
 
 
