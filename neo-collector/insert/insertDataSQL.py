@@ -152,7 +152,7 @@ def getIpToEndpointMap():
     ipToEndpointMap={}
     for ip_id, address_id, ip in ip_list:
         ipToEndpointMap[ip] = (ip_id, address_id, ip)
-    return IpToEndpointMap
+    return ipToEndpointMap
 
 def prepareSqlInsert(done, ipToEndpointMap):
     latencyData = []
@@ -295,10 +295,10 @@ def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connec
 def updateApp():
     endpointsList=getEndpointsList()
     ipToEndpointMap=getIpToEndpointMap()
+    print("endpointsList", endpointsList)
+    print("ipToEndpointMap", ipToEndpointMap)
     while True:
         try:
-            print("endpointsList", endpointsList)
-            print("ipToEndpointMap", ipToEndpointMap)
             loop = asyncio.get_event_loop()
             done = loop.run_until_complete(main(endpointsList))
 
