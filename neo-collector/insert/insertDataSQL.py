@@ -186,12 +186,10 @@ def prepareSqlInsert(done, ipToEndpointMap):
     
     global maxBlockHeight
 
-    print(done)
-    print(len(done))
     for task in done:
         connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
                     rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService = task.result()
-        
+        print("hello")
         if latencyResult!=None:
             ts, latency = latencyResult
             latencyData.append( (ts, connectionId, latency))
