@@ -180,7 +180,7 @@ for task in done:
                 rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService = task.result()
 
     if latencyResult!=None:
-        latencyData.append( (ts, connectionId, latency_data))
+        latencyData.append( (ts, connectionId, latencyResult))
         onlineData.append( (ts, connectionId, True))
 
         if versionResult!=None:
