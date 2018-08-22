@@ -295,12 +295,11 @@ def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connec
 def updateApp():
     endpointsList=getEndpointsList()
     ipToEndpointMap=getIpToEndpointMap()
-    print("endpointsList", endpointsList)
-    print("ipToEndpointMap", ipToEndpointMap)
+
     while True:
         try:
             loop = asyncio.get_event_loop()
-            done = loop.run_until_complete(main(endpointsList))
+            done = loop.run_until_complete(main(endpointsList[:1]))
 
             latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
             , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData = prepareSqlInsert(done, ipToEndpointMap)
@@ -311,6 +310,7 @@ def updateApp():
         except:
             logger.error("Exception, closing event loop")
             loop.close()
+            break
 
 if __name__ == "__main__":
     updateApp()
