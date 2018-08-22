@@ -189,7 +189,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
     for task in done:
         connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
                     rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService = task.result()
-        print("hello")
+        print("adsfasd")
         if latencyResult!=None:
             ts, latency = latencyResult
             latencyData.append( (ts, connectionId, latency))
@@ -258,8 +258,8 @@ def prepareSqlInsert(done, ipToEndpointMap):
             onlineData.append((ts, connectionId, False))
 
         logger.info("numTimeout {}".format(numTimeout))
-        return latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
-            , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData
+    return latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
+        , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData
 
 def batchInsert(cursor, sqlScript, datalist):
     psycopg2.extras.execute_values(cursor, sqlScript,datalist)
