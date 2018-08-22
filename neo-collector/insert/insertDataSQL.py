@@ -215,6 +215,7 @@ psycopg2.extras.execute_values(cursor,
     "INSERT INTO rpc_https_status_history (ts, connection_id, rpc_https_status) VALUES %s", 
     rcpHttpsData)
 
+print("len(mempoolData)", len(mempoolData))
 # psycopg2.extras.execute_values(cursor, 
 #     "INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) VALUES %s", 
 #     mempoolData)
