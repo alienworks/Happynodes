@@ -208,14 +208,18 @@ for task in done:
 
 conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
 cursor = conn.cursor()
-psycopg2.extras.execute_values(cursor, 
-    "INSERT INTO blockheight_history (ts, connection_id, blockheight) VALUES %s", 
-    blockheightData 
-    )
+
+print(latencyResult)
 
 psycopg2.extras.execute_values(cursor, 
     "INSERT INTO latency_history (ts, connection_id, latency_history) VALUES %s", 
     latencyResult 
+    )
+
+
+psycopg2.extras.execute_values(cursor, 
+    "INSERT INTO blockheight_history (ts, connection_id, blockheight) VALUES %s", 
+    blockheightData 
     )
 
 psycopg2.extras.execute_values(cursor, 
