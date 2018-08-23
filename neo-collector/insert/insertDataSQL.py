@@ -237,7 +237,8 @@ def prepareSqlInsert(done, ipToEndpointMap):
 
             if peersResult!=None:
                 ts, peers = peersResult
-                peers = [ i['address'] for i in set(peers["result"]['connected'])]
+                peers = [ i['address'] for i in (peers["result"]['connected'])]
+                peers = list(set(peers))
                 validated_peers=0
                 for connected_peer in peers:
                     if '::ffff:' in connected_peer:
