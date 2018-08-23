@@ -233,11 +233,11 @@ if __name__ == "__main__":
     print([(n.node_id, n.url, n.ip, n.endpointHttp10331, n.endpointHttps10331, 
         n.endpointHttp10332, n.endpointHttps10332) for n in exploredNodes])
 
-    # insertNewNodes(cursor, exploredNodes)
-    # conn.commit()
+    insertNewNodes(cursor, exploredNodes)
+    conn.commit()
 
-    # insertNewEndpoints(cursor, exploredNodes)
-    # conn.commit()
+    insertNewEndpoints(cursor, exploredNodes)
+    conn.commit()
 
     # insertNewEndpointsInfo(cursor, exploredNodes)
     # conn.commit()
