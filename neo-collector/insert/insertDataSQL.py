@@ -14,6 +14,7 @@ import ssl
 import logging
 import datetime
 import traceback
+import redis
 import sys
 ssl.match_hostname = lambda cert, hostname: True
 
