@@ -339,15 +339,14 @@ def updateApp():
 
             updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
                 , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData)
-        except Exception as e: 
-            logger.error("Exception, closing event loop")
+        except Exception as e:
             logger.error(e)
             logger.error(traceback.format_exc())
-            break
 
         t1 = time.time()
         logger.info('Total Took %.2f ms' % (1000*(t1-t0)))
 
+    logger.error("Exception, closing event loop")
     loop.close()
 
 if __name__ == "__main__":
