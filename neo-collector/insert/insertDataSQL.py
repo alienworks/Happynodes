@@ -158,7 +158,7 @@ async def main(endpointslist):
     done, pending = await asyncio.wait([updateEndpoint(url, id) for id, url in endpointslist])
 
     t1 = time.time()
-    logger.info('Took %.2f ms' % (1000*(t1-t0)))
+    logger.info('Asyncio Took %.2f ms' % (1000*(t1-t0)))
     return done
 
 def getEndpointsList(sqlScript):
@@ -277,6 +277,7 @@ def batchInsert(cursor, sqlScript, datalist):
     psycopg2.extras.execute_values(cursor, sqlScript,datalist)
 
 def insertRedisBlockheight(blockheightData):
+    t0 = time.time()
     r = redis.StrictRedis(host=redisHost, port=redisPort, db=redisDb)
     for (ts, connectionId, blockcount) in blockheightData:
         result = r.hget(redisNamespace + 'node', connectionId)
@@ -284,6 +285,8 @@ def insertRedisBlockheight(blockheightData):
             node_info=json.loads(result)
             node_info["blockheight"] = blockcount
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
+    t1 = time.time()
+    logger.info('Redis Took %.2f ms' % (1000*(t1-t0)))
 
 def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
             , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData):
@@ -322,6 +325,7 @@ def updateApp():
     endpointsList=getEndpointsList(GET_ENDPOINTS_SQL)
     ipToEndpointMap=getIpToEndpointMap(GET_ENDPOINTS_IP_SQL)
     while True:
+        t0 = time.time()
         d = datetime.datetime.utcnow()
         if d.hour==10:
             endpointsList=getEndpointsList(GET_ENDPOINTS_SQL)
@@ -340,6 +344,10 @@ def updateApp():
             logger.error(e)
             logger.error(traceback.format_exc())
             break
+
+        t1 = time.time()
+        logger.info('Total Took %.2f ms' % (1000*(t1-t0)))
+
     loop.close()
 
 if __name__ == "__main__":
