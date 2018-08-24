@@ -737,8 +737,7 @@ if __name__ == "__main__":
                         "mempool_size": node_info[16],
                         "connection_counts": node_info[17],
                         "online": node_info[18],
-                        # "blockheight": blockheight, will fix this when add redis to neo-collect
-						"blockheight": node_info[19],
+                        "blockheight": blockheight, 
                         "lat": node_info[20],
                         "long": node_info[21],
                         "locale": node_info[22],
