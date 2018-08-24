@@ -6,22 +6,7 @@ import socket
 import requests
 import json
 import logging
-
-# pip install schedule
-# This is modified from their sample program:
-
-# import schedule
-# import time
-
-# def job(t):
-#     print "I'm working...", t
-#     return
-
-# schedule.every().day.at("01:00").do(job,'It is 01:00')
-
-# while True:
-#     schedule.run_pending()
-#     time.sleep(60) # wait one minute
+import schedule
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -235,8 +220,8 @@ def insertNewEndpointsInfo(cursor, exploredNodes):
 
         if explored.endpointHttps10332[1]:
             insertEndpointLocation(cursor, nodeId, "https", 10332, lat, long, locale, location)
-
-if __name__ == "__main__":
+def job():
+    logger.info("I'm working... {}".format(t))
     conn = psycopg2.connect(connection_str)
     cursor = conn.cursor()
     listOfNodes = getNodeList(cursor)
@@ -256,7 +241,13 @@ if __name__ == "__main__":
     insertNewEndpoints(cursor, exploredNodes)
     conn.commit()
 
-    # insertNewEndpointsInfo(cursor, exploredNodes)
-    # conn.commit()
-    # conn.close()
-    # time.sleep(60*60*24)
+    insertNewEndpointsInfo(cursor, exploredNodes)
+    conn.commit()
+    conn.close()
+    return
+
+if __name__ == "__main__":
+    schedule.every().day.at("01:00").do(job)
+    while True:
+        schedule.run_pending()
+        time.sleep(60)
