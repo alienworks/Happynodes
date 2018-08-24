@@ -36,6 +36,11 @@ logger.addHandler(ch)
 JSON_RPC_HTTPS_PORT=10331
 JSON_RPC_HTTP_PORT=10332
 
+redisHost = str(os.environ['REDIS_HOST'])
+redisPort = str(os.environ['REDIS_PORT'])
+redisDb = str(os.environ['REDIS_DB'])
+redisNamespace = str(os.environ['REDIS_NAMESPACE'])
+
 host = str(os.environ['PGHOST'])
 databasename = str(os.environ['PGDATABASE'])
 user = str(os.environ['PGUSER'])
@@ -270,6 +275,15 @@ def prepareSqlInsert(done, ipToEndpointMap):
 def batchInsert(cursor, sqlScript, datalist):
     psycopg2.extras.execute_values(cursor, sqlScript,datalist)
 
+def insertRedisBlockheight(blockheightData):
+    r = redis.StrictRedis(host=redisHost, port=redisPort, db=redisDb)
+    for (ts, connectionId, blockcount) in blockheightData:
+        result = r.hget(redisNamespace + 'node', connectionId)
+        if result!=None:
+            node_info=json.loads(result)
+            node_info["blockheight"] = blockcount
+            r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
+
 def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
             , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData):
     t0 = time.time()
@@ -280,6 +294,7 @@ def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connec
     batchInsert(cursor, INSERT_LATENCY_SQL, latencyData)
     
     batchInsert(cursor, INSERT_BLOCKHEIGHT_SQL, blockheightData)
+    insertRedisBlockheight(blockheightData)
 
     batchInsert(cursor, INSERT_ONLINE_SQL, onlineData)
 
