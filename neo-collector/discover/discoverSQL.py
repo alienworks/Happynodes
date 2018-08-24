@@ -7,6 +7,22 @@ import requests
 import json
 import logging
 
+# pip install schedule
+# This is modified from their sample program:
+
+# import schedule
+# import time
+
+# def job(t):
+#     print "I'm working...", t
+#     return
+
+# schedule.every().day.at("01:00").do(job,'It is 01:00')
+
+# while True:
+#     schedule.run_pending()
+#     time.sleep(60) # wait one minute
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -30,7 +46,6 @@ password = str(os.environ['PGPASSWORD'])
 
 connection_str = "dbname='{}' user='{}' host='{}' password='{}'".format(
                 databasename, user, host, password)
-
 
 class NodeObject:
     def __init__(self, node_id, url, ip):
@@ -179,7 +194,8 @@ def insertNewEndpoints(cursor, exploredNodes):
 def insertEndpointLocation(cursor, nodeId, protocol, port, lat, long, locale, location):
     cursor.execute("""SELECT id, node_id, protocol, port
                                 FROM public.connection_endpoints
-                                where node_id=%s and protocol=%s and port=%s """, [nodeId, protocol, port])
+                                where node_id=%s and protocol=%s and port=%s """, 
+                                [nodeId, protocol, port])
             
     endpointId = cursor.fetchone()[0]
 
@@ -195,7 +211,8 @@ def insertNewEndpointsInfo(cursor, exploredNodes):
         cursor.execute(
                 """SELECT id, hostname, ip
                         FROM nodes n
-                        WHERE n.ip=%s """, [explored.ip])
+                        WHERE n.ip=%s """, 
+                        [explored.ip])
         nodeId = cursor.fetchone()[0]
 
         response = requests.get("https://geoip.nekudo.com/api/" + explored.ip)

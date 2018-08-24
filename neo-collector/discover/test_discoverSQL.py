@@ -82,7 +82,7 @@ def test_insertNewNodes():
     conn.commit()
     conn.close()
 
-def test_insertEndpointLocation():
+def test_insertEndpoint():
     conn = psycopg2.connect(connection_str)
     cursor = conn.cursor()
 
@@ -151,3 +151,87 @@ def test_insertEndpointLocation():
                     [fake2.ip])
     conn.commit()
     conn.close()
+
+
+def test_insertNewEndpointsInfo():
+    conn = psycopg2.connect(connection_str)
+    cursor = conn.cursor()
+
+    fake1 = NodeObject(None, "google.com", "google.com")
+    fake1.endpointHttp10331 = (fake1.endpointHttp10331[0], True)
+
+    fakeEndpoints = [fake1]
+
+    insertNewNodes(cursor, fakeEndpoints)
+    conn.commit()
+
+    cursor.execute("""select *
+                    FROM public.nodes 
+                    where hostname = %s""", 
+                    [fake1.ip])
+    
+    nodeResult = cursor.fetchall()
+    assert nodeResult[0][1]==fake1.ip and len(nodeResult)!=0
+
+    insertNewEndpoints(cursor, fakeEndpoints)
+    conn.commit()
+
+    cursor.execute("""select id, node_id, protocol, port
+                    FROM public.connection_endpoints 
+                    where node_id = %s""", 
+                    [nodeResult[0][0]])
+    
+    connectionEndpoint = cursor.fetchall()
+    assert connectionEndpoint[0][2]=="http" and connectionEndpoint[0][3]==10331 
+
+    insertNewEndpointsInfo(cursor, fakeEndpoints)
+    conn.commit()
+
+    cursor.execute("""SELECT id, connection_id, locale
+                    FROM public.locale
+                    where connection_id = %s""", 
+                    [connectionEndpoint[0][0]])
+    locale = cursor.fetchall()
+    assert len(locale)!=0
+    
+    cursor.execute("""SELECT id, connection_id, location
+                    FROM public.location
+                    where connection_id = %s""", 
+                    [connectionEndpoint[0][0]])
+    location = cursor.fetchall()
+    assert len(location)!=0
+
+    cursor.execute("""SELECT id, connection_id, lat, long
+                    FROM public.coordinates
+                    where connection_id = %s""", 
+                    [connectionEndpoint[0][0]])
+    coordinates = cursor.fetchall()
+    assert len(coordinates)!=0
+
+    cursor.execute("""delete
+                    FROM public.locale
+                    where connection_id = %s""", 
+                    [connectionEndpoint[0][0]])
+    
+    cursor.execute("""delete
+                    FROM public.location
+                    where connection_id = %s""", 
+                    [connectionEndpoint[0][0]])
+    
+    cursor.execute("""delete
+                    FROM public.coordinates
+                    where connection_id = %s""", 
+                    [connectionEndpoint[0][0]])
+
+    cursor.execute("""delete
+                    FROM public.connection_endpoints 
+                    where node_id = %s""", 
+                    [nodeResult[0][0]])
+
+    cursor.execute("""delete
+                    from public.nodes 
+                    where hostname = %s""", 
+                    [fake1.ip])
+    conn.commit()
+    conn.close()
+
