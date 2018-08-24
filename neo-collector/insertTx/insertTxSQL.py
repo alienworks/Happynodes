@@ -264,7 +264,6 @@ def updateApp():
             logger.error("Exception, closing event loop")
             logger.error(e)
             logger.error(traceback.format_exc())
-            break
 
         t1 = time.time()
         logger.info('Total Took %.2f ms' % (1000*(t1-t0)))

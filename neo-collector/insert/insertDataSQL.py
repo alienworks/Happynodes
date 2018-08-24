@@ -312,9 +312,6 @@ def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connec
 
     batchInsert(cursor, INSERT_PEERS_COUNT_SQL, validatedPeersCountData)
 
-    # logger.info("len(mempoolData) {}".format(len(mempoolData)) )
-    # batchInsert(cursor, INSERT_UNCONFIRMED_TX_SQL, mempoolData)
-
     conn.commit()
     tcp.putconn(conn)
 
