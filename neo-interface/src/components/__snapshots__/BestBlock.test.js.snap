@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test against valid snapshot redner as expected 1`] = `
+<div
+  className="top-block blue"
+>
+  <h2>
+    1,234
+  </h2>
+  <p>
+    BEST BLOCK
+  </p>
+</div>
+`;

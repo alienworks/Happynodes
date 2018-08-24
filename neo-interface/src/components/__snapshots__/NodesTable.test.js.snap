@@ -1,0 +1,76 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test against valid snapshot redner as expected 1`] = `
+<div
+  class="container"
+>
+  <table
+    class="table"
+  >
+    <thead>
+      <tr>
+        <th>
+          Endpoint
+        </th>
+        <th>
+          Type
+        </th>
+        <th>
+          Blockheight
+        </th>
+        <th>
+          Mempool Size
+        </th>
+        <th>
+          Latency (ms)
+        </th>
+        <th>
+          Block Height
+        </th>
+        <th>
+          Peers
+        </th>
+        <th>
+          Stability
+        </th>
+        <th>
+          Version
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          https://pyrpc2.narrative.org:443
+        </td>
+        <td>
+          RPC
+        </td>
+        <td>
+          2624393
+        </td>
+        <td>
+          15
+        </td>
+        <td>
+          257.346630096436
+        </td>
+        <td>
+          Online
+        </td>
+        <td />
+        <td />
+        <td>
+          116
+        </td>
+        <td>
+           pct
+        </td>
+        <td>
+          /NEO-PYTHON:0.7.6/
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+`;

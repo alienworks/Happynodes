@@ -1,0 +1,260 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test against valid snapshot redner as expected 1`] = `
+<div
+  className="jumbotron nodes"
+  style={
+    Object {
+      "display": "inline-block",
+      "width": "100%",
+    }
+  }
+>
+  <div
+    className="node-box"
+    style={
+      Object {
+        "backgroundColor": "hsl(80.1463745924143,100%,50%)",
+        "float": "left",
+        "margin": "4px 2rem 2rem 0px",
+        "padding": "2rem",
+      }
+    }
+  >
+    <p>
+      80
+    </p>
+  </div>
+  <h2
+    style={
+      Object {
+        "float": "left",
+        "overflowWrap": "break-word",
+        "width": "80%",
+      }
+    }
+  >
+    http://seed3.aphelion-neo.com:10332
+  </h2>
+  <hr
+    style={
+      Object {
+        "borderColor": "#78cadd",
+        "borderWidth": "3px",
+        "clear": "left",
+      }
+    }
+  />
+  <h3>
+    Node Status Information
+  </h3>
+  <hr />
+  <div
+    className="infoblock"
+  >
+    <h4>
+      RPC
+    </h4>
+    <h5>
+      Type
+    </h5>
+  </div>
+  <div
+    className="infoblock"
+  >
+    <h4>
+      2,622,828
+       
+      (-1)
+    </h4>
+    <h5>
+      Current Block
+    </h5>
+  </div>
+  <div
+    className="infoblock"
+  >
+    <h4>
+      244
+    </h4>
+    <h5>
+      Peer Nodes
+    </h5>
+  </div>
+  <div
+    className="infoblock"
+  >
+    <h4>
+      241
+    </h4>
+    <h5>
+      Server Side Latency (ms)
+    </h5>
+  </div>
+  <div
+    className="infoblock"
+  >
+    <h4>
+      0
+    </h4>
+    <h5>
+      Live Client Side Latency (ms)
+    </h5>
+  </div>
+  <div
+    className="infoblock"
+  >
+    <h4>
+      /NEO:2.7.4/
+    </h4>
+    <h5>
+      Version
+    </h5>
+  </div>
+  <div
+    className="infoblock"
+  >
+    <h4>
+      online
+    </h4>
+    <h5>
+      P2P TCP Status
+    </h5>
+  </div>
+  <div
+    className="infoblock"
+  >
+    <h4>
+      online
+    </h4>
+    <h5>
+      P2P WS Status
+    </h5>
+  </div>
+  <div
+    className="infoblock"
+    style={
+      Object {
+        "clear": "left",
+      }
+    }
+  >
+    <h4>
+      74
+    </h4>
+    <h5>
+      Unconfirmed Transactions
+    </h5>
+  </div>
+  <div
+    className="infoblock"
+  >
+    <h4>
+      100
+      %
+    </h4>
+    <h5>
+      Stability (Last 100 pings)
+    </h5>
+  </div>
+  <div
+    className="infoblock"
+  >
+    <h4>
+      18
+    </h4>
+    <h5>
+      Validated Peers
+    </h5>
+  </div>
+  <div
+    className="infoblock"
+  >
+    <h4>
+      South Korea
+       (
+      🇰🇷
+      )
+    </h4>
+    <h5>
+      Country
+    </h5>
+  </div>
+  <h3
+    style={
+      Object {
+        "clear": "left",
+        "paddingTop": "4rem",
+      }
+    }
+  >
+    Happynodes Score
+  </h3>
+  <h5>
+    Score is calculated by taking the average of four metrics
+  </h5>
+  <hr />
+  <div
+    className="infoblock"
+  >
+    <h4>
+      80
+      %
+    </h4>
+    <h5>
+      Health Score
+    </h5>
+  </div>
+  <div
+    className="infoblock"
+  >
+    <h4>
+      :
+    </h4>
+  </div>
+  <div
+    className="infoblock"
+  >
+    <h4>
+      98
+      %
+    </h4>
+    <h5>
+      Blockheight Lag
+    </h5>
+  </div>
+  <div
+    className="infoblock"
+  >
+    <h4>
+      35
+      %
+    </h4>
+    <h5>
+      Validated Peers
+    </h5>
+  </div>
+  <div
+    className="infoblock"
+  >
+    <h4>
+      100
+      %
+    </h4>
+    <h5>
+      Stability (100 pings)
+    </h5>
+  </div>
+  <div
+    className="infoblock"
+  >
+    <h4>
+      88
+      %
+    </h4>
+    <h5>
+      Latency
+    </h5>
+  </div>
+</div>
+`;

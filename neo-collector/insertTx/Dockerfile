@@ -1,4 +1,4 @@
-FROM python:3-alpine
+FROM python:3.6-alpine
 
 RUN apk update && \
  apk add postgresql-libs && \
@@ -6,12 +6,15 @@ RUN apk update && \
  python3 -m pip install psycopg2 --no-cache-dir && \
  python3 -m pip install requests --no-cache-dir && \
  python3 -m pip install dnspython --no-cache-dir && \
+ python3 -m pip install aiohttp --no-cache-dir && \
+ python3 -m pip install redis --no-cache-dir && \
  apk --purge del .build-deps
 
 RUN mkdir /usr/src/app
+
 WORKDIR /usr/src/app
 
-COPY createUpdatePrimarySQL.py .
+COPY insertTxSQL.py .
 
 # start app
-CMD ["python3", "createUpdatePrimarySQL.py"]
+CMD ["python3", "insertTxSQL.py"]

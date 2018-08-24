@@ -11,7 +11,7 @@ RUN apk update && \
 RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 
-COPY deleteOldTx.py .
+COPY deleteTxUpdateSQL.py .
 
 # start app
-CMD ["python3", "deleteOldTx.py"]
+CMD ["python3", "deleteTxUpdateSQL.py"]

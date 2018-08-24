@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test against valid snapshot redner as expected 1`] = `
+<div
+  className="top-block yellow"
+>
+  <h2>
+    1234
+    s
+  </h2>
+  <p>
+    AVG BLOCK TIME
+  </p>
+</div>
+`;

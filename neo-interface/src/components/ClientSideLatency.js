@@ -7,7 +7,6 @@ class ClientSideLatency extends Component {
         this.state = {
             latency: 0
         }
-
         this.getLatency = this.getLatency.bind(this);
     }
 
@@ -15,10 +14,10 @@ class ClientSideLatency extends Component {
         var p = new Ping();
         const url = this.props.url;
 
-        var t0 = performance.now();
+        var t0 = Date.now();
 
         p.ping(url, (err, data) => {
-            var t1 = performance.now();
+            var t1 = Date.now();
             this.setState({ latency: (t1 - t0) });
         });
     }
