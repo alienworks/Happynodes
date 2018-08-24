@@ -20,12 +20,7 @@ redisPort = str(os.environ['REDIS_PORT'])
 redisDb = str(os.environ['REDIS_DB'])
 redisNamespace = str(os.environ['REDIS_NAMESPACE'])
 
-if __name__ == "__main__":
-    while True:
-        r = redis.StrictRedis(host=redisHost, port=redisPort, db=redisDb)
-        conn = psycopg2.connect(connection_str)
-        cursor = conn.cursor()
-        cursor.execute("""select
+GET_NODES_INFO_SQL = """select
 				endpoints.id,
 				n.hostname,
 				endpoints.protocol,
@@ -700,7 +695,14 @@ if __name__ == "__main__":
 						blockheight is not null
 				) max_blockheight
 				order by
-				health_score desc""")
+				health_score desc"""
+
+if __name__ == "__main__":
+    while True:
+        r = redis.StrictRedis(host=redisHost, port=redisPort, db=redisDb)
+        conn = psycopg2.connect(connection_str)
+        cursor = conn.cursor()
+        cursor.execute(GET_NODES_INFO_SQL)
 
         result = cursor.fetchall()
         for node_info in result:
@@ -745,5 +747,4 @@ if __name__ == "__main__":
                 r.hset(redisNamespace + 'node', nodeid, json.dumps(node))
             else:
                 r.hdel(redisNamespace + 'node', nodeid)
-
     time.sleep(1)

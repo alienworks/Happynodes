@@ -28,7 +28,7 @@ def getSqlDateTime(ts):
 
 def getIpAddressMap(cursor):
     ip_dict = {}
-    cursor.execute("""select ce.id, n.id, n.hostname, n.ip 
+    cursor.execute("""select ce.id, n.id, n.hostname, n.ip
                     from connection_endpoints ce
                     inner join nodes n
                     on n.id=ce.node_id""")
@@ -62,7 +62,8 @@ def custom_background_code(connection_str, ip_dict):
                 if peer.host in ip_dict:
                     address_list = ip_dict[peer.host]
                     for address_id in address_list:
-                        cursor.execute("INSERT INTO p2p_tcp_status_history (ts, connection_id, p2p_tcp_status) VALUES (%s, %s, %s)", [getSqlDateTime(insert_time), address_id, True])
+                        cursor.execute("INSERT INTO p2p_tcp_status_history (ts, connection_id, p2p_tcp_status) VALUES (%s, %s, %s)"
+                            , [getSqlDateTime(insert_time), address_id, True])
                 else:
                     print("ip not in database")
         conn.commit()
@@ -97,7 +98,6 @@ def main():
     # Run all the things (blocking call)
     reactor.run()
     logger.info("Shutting down.")
-
 
 if __name__ == "__main__":
     main()

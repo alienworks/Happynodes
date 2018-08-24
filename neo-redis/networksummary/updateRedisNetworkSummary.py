@@ -16,6 +16,38 @@ redisPort = str(os.environ['REDIS_PORT'])
 redisDb = str(os.environ['REDIS_DB'])
 redisNamespace = str(os.environ['REDIS_NAMESPACE'])
 
+GET_MAX_BLOCKHEIGHT_SQL = """SELECT max(blockheight)  
+                        FROM  blockheight_history  
+                        WHERE blockheight IS NOT NULL"""
+
+GET_LASTBLOCK_TIME_SQL = """SELECT EXTRACT(EPOCH FROM Min(ts) AT TIME ZONE 'UTC') as min_ts  
+                            FROM  blockheight_history 
+                            WHERE blockheight IN ( SELECT MAX(blockheight) 
+                            FROM blockheight_history )"""
+
+GET_AVG_BLOCK_TIME_SQL = """SELECT avg(e.diff)  
+                            FROM   
+                            (SELECT (C.ts - D.ts) AS diff  
+                            FROM   
+                            (SELECT blockheight, ts   
+                            FROM   
+                            (SELECT blockheight, min(ts) AS ts  
+                            FROM blockheight_history  
+                            WHERE blockheight IS NOT NULL  
+                            GROUP BY blockheight  
+                            ORDER BY ts desc) c  
+                            ORDER BY c.blockheight DESC) C  
+                            INNER JOIN  
+                            (SELECT blockheight, ts   
+                            FROM   
+                            (SELECT blockheight, min(ts) AS ts  
+                            FROM blockheight_history  
+                            WHERE blockheight IS NOT NULL  
+                            GROUP BY blockheight  
+                            ORDER BY ts desc) c  
+                            ORDER BY c.blockheight DESC) D  
+                            ON C.BLOCKHEIGHT = D.BLOCKHEIGHT+1  
+                            LIMIT 40) e"""
 
 if __name__ == "__main__":
     while True:
@@ -26,18 +58,13 @@ if __name__ == "__main__":
 
         cursor = conn.cursor()
 
-        cursor.execute("""SELECT max(blockheight)  
-                        FROM  blockheight_history  
-                        WHERE blockheight IS NOT NULL""")
+        cursor.execute(GET_MAX_BLOCKHEIGHT_SQL)
 
         result = cursor.fetchall()
 
         r.set(redisNamespace+'bestblock', result[0][0])
 
-        cursor.execute("""SELECT EXTRACT(EPOCH FROM Min(ts) AT TIME ZONE 'UTC') as min_ts  
-                            FROM  blockheight_history 
-                            WHERE blockheight IN ( SELECT MAX(blockheight) 
-                            FROM blockheight_history )""")
+        cursor.execute(GET_LASTBLOCK_TIME_SQL)
 
         result = cursor.fetchall()
 
@@ -45,29 +72,7 @@ if __name__ == "__main__":
 
         print(float(r.get(redisNamespace+'lastblock')))
 
-        cursor.execute("""SELECT avg(e.diff)  
-            FROM   
-            (SELECT (C.ts - D.ts) AS diff  
-            FROM   
-            (SELECT blockheight, ts   
-            FROM   
-            (SELECT blockheight, min(ts) AS ts  
-            FROM blockheight_history  
-            WHERE blockheight IS NOT NULL  
-            GROUP BY blockheight  
-            ORDER BY ts desc) c  
-            ORDER BY c.blockheight DESC) C  
-            INNER JOIN  
-            (SELECT blockheight, ts   
-            FROM   
-            (SELECT blockheight, min(ts) AS ts  
-            FROM blockheight_history  
-            WHERE blockheight IS NOT NULL  
-            GROUP BY blockheight  
-            ORDER BY ts desc) c  
-            ORDER BY c.blockheight DESC) D  
-            ON C.BLOCKHEIGHT = D.BLOCKHEIGHT+1  
-            LIMIT 40) e""")
+        cursor.execute(GET_AVG_BLOCK_TIME_SQL)
 
         result = cursor.fetchall()
         print(result[0][0].total_seconds())
