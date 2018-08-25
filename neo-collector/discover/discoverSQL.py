@@ -249,5 +249,7 @@ def job():
 if __name__ == "__main__":
     schedule.every().day.at("01:00").do(job)
     while True:
-        schedule.run_pending()
-        time.sleep(60)
+        # schedule.run_pending()
+        # time.sleep(60)
+        job()
+        time.sleep(60*60*24)
