@@ -6,14 +6,11 @@ import config from './config'
 class bestblock extends Component {
     render() {
         const {bestblock} = this.props
-        
-
         if (bestblock.pending) {
             return (
                <p></p>
             );
         }
-
         if (bestblock.value === null || bestblock.value === 'undefined'){
             return (
                 <div className="top-block blue">

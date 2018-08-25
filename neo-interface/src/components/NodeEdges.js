@@ -49,28 +49,28 @@ class NodeEdges extends Component {
                 nodes: {
                     shape: "hexagon"
                 },
-                physics:{
+                physics: {
                     stabilization: false,
                     maxVelocity: 30,
                     solver: 'forceAtlas2Based',
-                  }
+                }
             };
-             
+
             var events = {
-                select: function(event) {
+                select: function (event) {
                     var { nodes, edges } = event;
                     console.log(nodes, edges);
-                    if (nodes.length === 1){
+                    if (nodes.length === 1) {
                         window.location = "./" + node_lookup[nodes[0]];
                     }
-                    
+
                 }
             }
 
 
             return (
 
-                <div className="jumbotron nodes padgraph" style={{'width': '100%', 'height':'900px'}}>
+                <div className="jumbotron nodes padgraph" style={{ 'width': '100%', 'height': '900px' }}>
 
 
                     <h2>Direct Peers</h2>
@@ -79,10 +79,7 @@ class NodeEdges extends Component {
                     }} />
 
                     <Graph graph={data} options={options} events={events} />
-
-
-      
-                      </div>
+                </div>
             )
         }
     }

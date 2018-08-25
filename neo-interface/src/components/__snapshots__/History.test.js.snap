@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test against valid snapshot redner as expected 1`] = `
+<div
+  className="col col-lg-12 col-md-12 col-sm-12 col-xs-12"
+>
+  <div
+    className="jumbotron nodes"
+  >
+    <h2>
+      Historic View: Online and Total Nodes Daily
+    </h2>
+    <hr
+      style={
+        Object {
+          "borderColor": "#78cadd",
+          "borderWidth": "3px",
+        }
+      }
+    />
+    <h3>
+      We released V1.1.0 (Node Discovery) at the start of August which is why the number of nodes we know about increased significantly after that.
+    </h3>
+    <div
+      style={
+        Object {
+          "display": "none",
+          "height": 0,
+          "position": "absolute",
+          "visibility": "hidden",
+          "width": 0,
+        }
+      }
+    />
+  </div>
+</div>
+`;

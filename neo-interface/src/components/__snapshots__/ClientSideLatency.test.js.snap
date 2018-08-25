@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test against valid snapshot redner as expected 1`] = `
+<div
+  className="infoblock"
+>
+  <h4>
+    0
+  </h4>
+  <h5>
+    Live Client Side Latency (ms)
+  </h5>
+</div>
+`;

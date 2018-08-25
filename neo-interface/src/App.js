@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Router, Route, IndexRoute, BrowserRouter, browserHistory} from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import './App.css';
 import BestBlock from './components/BestBlock'
@@ -18,7 +18,7 @@ import UnconfirmedTxInfo from './components/UnconfirmedTxInfo'
 import MainMenu from './components/menu'
 import ReactGA from 'react-ga';
 
-ReactGA.initialize(process.env.REACT_APP_GA_KEY);
+ReactGA.initialize(process.env.REACT_APP_GA_KEY, { testMode: process.env.NODE_ENV === 'test' });
 class App extends Component {
 
   componentDidMount  = () => ReactGA.pageview(window.location.pathname + window.location.search);
@@ -26,13 +26,13 @@ class App extends Component {
 
   render() {
     return (
-      
+      <BrowserRouter>
       <div className="App" id="outer-container">
       <MainMenu/>
         <main id="page-wrap">
         <header className="App-header">
-        <Link to='/'><img src={logo} className="App-logo" alt="logo" /></Link>
-          
+        
+          <Link to='/'><img src={logo} className="App-logo" alt="logo" /></Link>
            <BestBlock/>
             <LastBlock/>
             <BlockTime/>
@@ -49,11 +49,10 @@ class App extends Component {
             <Route path="/:id(\d+)" render={({match})=><NodeEdges node_id={match.params.id}/>} />
             <Route path="/unconfirmedtxinfo/:connection_id/:tx" render={({match})=><UnconfirmedTxInfo  connection_id={match.params.connection_id} tx={match.params.tx}/>} />
             <Route exact path="/" render={({match})=><NetworkGraph/>} />
-            
           </div>
           <Route exact path="/table" render={({match})=><NetworkTable/>} />
           <Route exact path="/history" render={({match})=><HistoryTest/>} />
-          
+
           </div>
         </div>
         <footer className="App-footer">
@@ -64,6 +63,7 @@ class App extends Component {
         <a href="https://github.com/F27Ventures" rel="noopener noreferrer" target="_blank"><img src={f27logo} className="Footer-app-logo" alt="logo" /></a>
             </footer>
       </main></div>
+      </BrowserRouter>
     );
   }
 }
