@@ -6,7 +6,7 @@ import filterFactory, { textFilter, selectFilter } from 'react-bootstrap-table2-
 
 class NetworkTable extends Component {
   render() {
-    const { networktable } = this.props;
+    const { networktable, addr_filter, version_filter } = this.props;
 
     if (networktable.pending) {
       return (
@@ -52,7 +52,9 @@ class NetworkTable extends Component {
         dataField: 'address',
         text: 'Address',
         sort: true,
-        filter: textFilter()
+        filter: textFilter({
+                defaultValue: addr_filter
+              })
       }, {
         dataField: 'online',
         text: 'Online',
@@ -88,7 +90,9 @@ class NetworkTable extends Component {
         dataField: 'version',
         text: 'Version',
         sort: true,
-        filter: textFilter()
+        filter: textFilter({
+                defaultValue: version_filter
+              })
       }, {
         dataField: 'latency',
         text: 'Latency',
