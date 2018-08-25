@@ -116,9 +116,6 @@ def bfs(nodesList):
                 queue.append(n)
 
             logger.info("Found {} explored".format(len(explored)))
-
-            if len(explored)>20:
-                break
     return explored
 
 def getNodeList(cursor):
@@ -229,19 +226,25 @@ def job():
 
     logger.info("BFS done")
 
-    logger.info("Explored Nodes {}".format(exploredNodes))
+    logger.info("Explored Nodes")
 
-    print([(n.node_id, n.url, n.ip, n.endpointHttp10331, n.endpointHttps10331, 
+    logger.info([(n.node_id, n.url, n.ip, n.endpointHttp10331, n.endpointHttps10331, 
         n.endpointHttp10332, n.endpointHttps10332) for n in exploredNodes])
 
-    insertNewNodes(cursor, exploredNodes)
+    nodesToBeInserted = insertNewNodes(cursor, exploredNodes)
     conn.commit()
 
-    insertNewEndpoints(cursor, exploredNodes)
+    logger.info("nodesToBeInserted Nodes")
+
+    logger.info([(n.node_id, n.url, n.ip, n.endpointHttp10331, n.endpointHttps10331, 
+        n.endpointHttp10332, n.endpointHttps10332) for n in nodesToBeInserted])
+
+    insertNewEndpoints(cursor, nodesToBeInserted)
     conn.commit()
 
-    insertNewEndpointsInfo(cursor, exploredNodes)
+    insertNewEndpointsInfo(cursor, nodesToBeInserted)
     conn.commit()
+
     conn.close()
     return
 
