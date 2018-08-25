@@ -221,7 +221,6 @@ def insertNewEndpointsInfo(cursor, exploredNodes):
         if explored.endpointHttps10332[1]:
             insertEndpointLocation(cursor, nodeId, "https", 10332, lat, long, locale, location)
 def job():
-    logger.info("I'm working... {}".format(t))
     conn = psycopg2.connect(connection_str)
     cursor = conn.cursor()
     listOfNodes = getNodeList(cursor)
