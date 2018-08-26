@@ -51,6 +51,9 @@ class App extends Component {
             <Route exact path="/" render={({match})=><NetworkGraph/>} />
           </div>
           <Route exact path="/table" render={({match})=><NetworkTable/>} />
+          <Route path="/table/filterbyaddress/:addr" render={({match})=><NetworkTable addr_filter={match.params.addr}/>} />
+          <Route path="/table/filterbyversion/:v" render={({match})=><NetworkTable version_filter={match.params.v}/>} />
+          
           <Route exact path="/history" render={({match})=><HistoryTest/>} />
 
           </div>
