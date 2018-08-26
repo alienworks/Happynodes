@@ -23,7 +23,7 @@ class UnconfirmedTxInfo extends Component {
         if (unconfirmTxInfo.fulfilled) {
             let vins = unconfirmTxInfo.value.data.result.vin
             let vin_txs = vins.map((v, i, arr) => {
-                return v.txid.substring(2);
+                return v.txid.length == 66 ? v.txid.substring(2) : v.txid;
             })
             console.log(vin_txs);
             let y = JSON.stringify(unconfirmTxInfo.value, null, 4, 50)
