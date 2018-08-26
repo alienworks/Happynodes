@@ -36,7 +36,7 @@ if __name__ == "__main__":
                         from
                             (
                                 select
-                                    max(connection_id) as connection_id,
+                                    min(connection_id) as connection_id,
                                     count(connection_id) as node_count,
                                     tx,
                                     max(last_blockheight) as last_blockheight
