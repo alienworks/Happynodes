@@ -9,8 +9,8 @@ script:
   - npm test -- --coverage --collectCoverageFrom=src/**/*js --collectCoverageFrom=!src/bootstrap/js/*js  --coverageReporters=text-lcov | coveralls
 
 
-language: python
-install: pip install psycopg2 requests dnspython aiohttp redis neo-python schedule
-script: 'if [ "$PGHOST" = "false" ]; then pytest; fi'
-python:
-- '3.6'
+# language: python
+# install: pip install psycopg2 requests dnspython aiohttp redis neo-python schedule
+# script: 'if [ "$PGHOST" = "false" ]; then pytest; fi'
+# python:
+# - '3.6'
