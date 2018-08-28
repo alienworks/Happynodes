@@ -33,10 +33,6 @@ def test_get_existing_nodes():
     # This nodes should definitely exist
     assert 'seed2.cityofzion.io' in existing_nodes
 
-    information = existing_nodes['seed2.cityofzion.io']
-    # This also assert that the column information make sense
-    assert (16, 'seed2.cityofzion.io', '104.25.3.11') == information
-
 
 def test_create_or_update_nodes_rows():
     createUpdatePrimarySQL = CreateUpdatePrimarySQL(CONNECTION_STR, SLEEP_TIME)
