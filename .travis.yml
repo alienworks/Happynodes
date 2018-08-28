@@ -8,3 +8,10 @@ script:
   - echo REACT_APP_API_URL="https://api.happynodes.f27.ventures/redis" > .env
   - npm test -- --coverage --collectCoverageFrom=src/**/*js --collectCoverageFrom=!src/bootstrap/js/*js  --coverageReporters=text-lcov | coveralls
 
+
+language: python
+python:
+ - "3.6"
+install: pip install psycopg2 requests dnspython aiohttp redis neo-python
+script: pytest
+
