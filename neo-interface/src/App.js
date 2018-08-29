@@ -52,7 +52,7 @@ class App extends Component {
           </div>
           <Route exact path="/table" render={({match})=><NetworkTable/>} />
           <Route path="/table/filterbyaddress/:addr" render={({match})=><NetworkTable addr_filter={match.params.addr}/>} />
-          <Route path="/table/filterbyblockehight/:bh" render={({match})=><NetworkTable blockheight_filter={match.params.bh}/>} />
+          <Route path="/table/filterbyblockheight/:bh" render={({match})=><NetworkTable blockheight_filter={match.params.bh}/>} />
           <Route path="/table/filterbyversion/:v" render={({match})=><NetworkTable version_filter={match.params.v}/>} />
           
           <Route exact path="/history" render={({match})=><HistoryTest/>} />
