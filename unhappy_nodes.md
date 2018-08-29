@@ -16,6 +16,7 @@ Known Issues
 
 - Since the dead fork incident in August, quite a lot of RPC nodes are stuck on the dead block or the one after it.
 A full resync is advised to make sure there are no artifiacts or issues. You can see this on https://happynodes.f27.ventures/table
+https://github.com/neo-project/neo-cli/issues/219
 
 ========================================================================
 
