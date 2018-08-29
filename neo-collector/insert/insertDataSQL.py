@@ -59,6 +59,7 @@ GET_ENDPOINTS_SQL="""SELECT endpoint.id,
                     FROM connection_endpoints endpoint  
                     INNER JOIN nodes n  
                     ON n.id=endpoint.node_id""" 
+
 GET_ENDPOINTS_IP_SQL = """select n.id,ce.id,ip 
                     from connection_endpoints ce 
                     inner join nodes n 
@@ -74,7 +75,7 @@ INSERT_PEERS_SQL = "INSERT INTO validated_peers_history (ts, connection_id, vali
 INSERT_PEERS_COUNT_SQL = "INSERT INTO validated_peers_counts_history (ts, connection_id, validated_peers_counts) VALUES %s"
 INSERT_UNCONFIRMED_TX_SQL =  "INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) VALUES %s"
 INSERT_MEMPOOL_SIZE_SQL =  "INSERT INTO mempool_size_history (ts, connection_id, mempool_size) VALUES %s"
-
+INSERT_CONNECTIONS_COUNT_SIZE_SQL = "INSERT INTO connection_counts_history (ts, connection_id, connection_counts) VALUES %s"
 maxBlockHeight = -1
 
 def getSqlDateTime(ts):
@@ -345,6 +346,8 @@ def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connec
     batchInsert(cursor, INSERT_PEERS_SQL, validatedPeersHistoryData)
 
     batchInsert(cursor, INSERT_PEERS_COUNT_SQL, validatedPeersCountData)
+
+    batchInsert(cursor, INSERT_CONNECTIONS_COUNT_SIZE_SQL, connectionscountData)
 
     conn.commit()
     tcp.putconn(conn)

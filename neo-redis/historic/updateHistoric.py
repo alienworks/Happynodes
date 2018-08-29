@@ -454,7 +454,7 @@ if __name__ == "__main__":
 
         bestblock = int(r.get(redisNamespace+'bestblock'))
         
-        for (id, protocol, url, address, port, locale, location, pings_score, node_blockheight) in results:
+        for (id, protocol, url, address, port, locale, location, pings_score, node_blockheight) in results:          
             diffBlocks = abs(node_blockheight-bestblock)
             if pings_score != 0 and diffBlocks<20:
                 jsonObject = {
@@ -468,7 +468,11 @@ if __name__ == "__main__":
                 }
                 logger.info(key)
                 logger.info("jsonObject: {}".format(jsonObject))
+                logger.info("Set node id {}".format(str(id)))
                 r.hset(key, str(id) , json.dumps(jsonObject))
+            else:
+                logger.info("Deleted node id {}".format(str(id)))
+                r.hdel(key, str(id))
         t1 = time.time()
         logger.info('{} Took {} ms'.format(key, (1000*(t1-t0))))
 
