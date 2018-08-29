@@ -116,7 +116,7 @@ class NetworkTable extends Component {
 
 
       const defaultSorted = [{
-        dataField: 'health_score',
+        dataField: 'blockheight',
         order: 'desc'
       }];
 

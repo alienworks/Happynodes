@@ -18,7 +18,7 @@ Known Issues
 A full resync is advised to make sure there are no artifiacts or issues. You can see this on https://happynodes.f27.ventures/table
 https://github.com/neo-project/neo-cli/issues/219
 - A smaller dead fork issue happened for blockheight 2670510 leading to some nodes stuck on 2670511.
-These are: http://52.224.162.48:10332, http://seed7.ngd.network:10332, http://seed3.aphelion-neo.com:10332, http://seed5.ngd.network:10332, https://seed1.cityofzion.io:443
+Currently only one node remains affected: http://seed3.aphelion-neo.com:10332
 
 ========================================================================
 
