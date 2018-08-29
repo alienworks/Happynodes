@@ -3,6 +3,7 @@ import psycopg2
 import time
 import os
 import json
+import logging
 
 host = str(os.environ['PGHOST'])
 databasename = str(os.environ['PGDATABASE'])
@@ -15,17 +16,26 @@ redisHost = str(os.environ['REDIS_HOST'])
 redisPort = str(os.environ['REDIS_PORT'])
 redisDb = str(os.environ['REDIS_DB'])
 redisNamespace = str(os.environ['REDIS_NAMESPACE'])
+if "REDIS_PASS" in os.environ:
+    redisPass = str(os.environ['REDIS_PASS'])
 
-if __name__ == "__main__":
-    while True:
-        r = redis.StrictRedis(
-            host=redisHost, port=redisPort, db=redisDb)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
-        conn = psycopg2.connect(connection_str)
+# create console handler and set level to debug
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
 
-        cursor = conn.cursor()
+# create formatter
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-        cursor.execute("""select
+# add formatter to ch
+ch.setFormatter(formatter)
+
+# add ch to logger
+logger.addHandler(ch)
+
+UNCONFIRMED_TX_SQL = """select
                             ce.id as connection_id,
                             ce.protocol,
                             n.hostname,
@@ -58,10 +68,31 @@ if __name__ == "__main__":
                             ce.id = unconfirm_tx_table.connection_id
                         inner join nodes n on
                             n.id = ce.node_id
-                        where node_count>1""")
+                        where node_count>1"""
+
+if __name__ == "__main__":
+    while True:
+        r=None
+        if "REDIS_PASS" in os.environ:
+            # Testing locally
+            r = redis.StrictRedis(
+                host=redisHost, port=redisPort, db=redisDb, 
+                password=redisPass)
+        else:
+            r = redis.StrictRedis(
+                host=redisHost, port=redisPort, db=redisDb)
+
+        conn = psycopg2.connect(connection_str)
+
+        cursor = conn.cursor()
+
+        t0 = time.time()
+        cursor.execute(UNCONFIRMED_TX_SQL)
         
         result = cursor.fetchall()
-        print(result)
+        t1 = time.time()
+        logger.info('{} Took {} ms'.format('SQL ', (1000*(t1-t0))))
+        logger.info("len(result) {}".format(len(result)))
 
         txs = []
 
