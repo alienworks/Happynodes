@@ -40,8 +40,9 @@ JSON_RPC_HTTP_PORT=10332
 redisHost = str(os.environ['REDIS_HOST'])
 redisPort = str(os.environ['REDIS_PORT'])
 redisDb = str(os.environ['REDIS_DB'])
-# redisPass = str(os.environ['REDIS_PASS'])
 redisNamespace = str(os.environ['REDIS_NAMESPACE'])
+if "REDIS_PASS" in os.environ:
+    redisPass = str(os.environ['REDIS_PASS'])
 
 host = str(os.environ['PGHOST'])
 databasename = str(os.environ['PGDATABASE'])
@@ -212,8 +213,15 @@ def batchInsert(cursor, sqlScript, datalist):
 
 def insertRedisBlockheight(blockheightData):
     t0 = time.time()
-    r = redis.StrictRedis(host=redisHost, port=redisPort, db=redisDb)
-    # , password=redisPass) for testing
+    if "REDIS_PASS" in os.environ:
+        # Testing locally
+        r = redis.StrictRedis(
+            host=redisHost, port=redisPort, db=redisDb, 
+            password=redisPass)
+    else:
+        r = redis.StrictRedis(
+            host=redisHost, port=redisPort, db=redisDb)
+
     for (ts, connectionId, blockcount) in blockheightData:
         result = r.hget(redisNamespace + 'node', connectionId)
         if result!=None:
@@ -221,7 +229,8 @@ def insertRedisBlockheight(blockheightData):
             node_info["blockheight"] = blockcount
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
     t1 = time.time()
-    logger.info('Redis Took %.2f ms' % (1000*(t1-t0)))
+    logger.info('insertRedisBlockheight Redis Took %.2f ms' % (1000*(t1-t0)))
+
 
 def updateSql(latencyData, blockheightData, mempoolData):
     t0 = time.time()
