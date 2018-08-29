@@ -756,7 +756,7 @@ if __name__ == "__main__":
 
             diffBlockheight = abs(blockheight-bestblock)
 
-            if stability_1000 != 0 and diffBlockheight>10:
+            if stability_1000 != 0 and diffBlockheight<20:
                 node = {"id": node_info[0],
                         "hostname": node_info[1],
                         "protocol": node_info[2],
