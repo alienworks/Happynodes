@@ -33,10 +33,17 @@ class NetworkTable extends Component {
         false: "false"
       };
 
+      function hyperlinkFormatter(cell, row){
+        return (
+          <a href={"/" + cell}>{cell}</a>
+        )
+      }
+
       const columns = [{
         dataField: 'id',
         text: 'ID',
-        sort: true
+        sort: true,
+        formatter: hyperlinkFormatter
       }, {
         dataField: 'health_score',
         text: 'Health Score',
