@@ -128,7 +128,7 @@ router.get('/unconfirmed', cache('2 seconds'), function (req, res, next) {
 		})
 });
 
-router.post('/unconfirmed/tx', cache('2 seconds'), function (req, res, next) {
+router.post('/unconfirmed/tx', cache('5 minutes'), function (req, res, next) {
 	let tx = req.body.tx;
 	let connection_id = req.body.connection_id;
 

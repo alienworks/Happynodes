@@ -41,6 +41,8 @@ redisHost = str(os.environ['REDIS_HOST'])
 redisPort = str(os.environ['REDIS_PORT'])
 redisDb = str(os.environ['REDIS_DB'])
 redisNamespace = str(os.environ['REDIS_NAMESPACE'])
+if "REDIS_PASS" in os.environ:
+    redisPass = str(os.environ['REDIS_PASS'])
 
 host = str(os.environ['PGHOST'])
 databasename = str(os.environ['PGDATABASE'])
@@ -71,6 +73,7 @@ INSERT_RPC_HTTPS_SQL = "INSERT INTO rpc_https_status_history (ts, connection_id,
 INSERT_PEERS_SQL = "INSERT INTO validated_peers_history (ts, connection_id, validated_peers_connection_id) VALUES %s"
 INSERT_PEERS_COUNT_SQL = "INSERT INTO validated_peers_counts_history (ts, connection_id, validated_peers_counts) VALUES %s"
 INSERT_UNCONFIRMED_TX_SQL =  "INSERT INTO unconfirmed_tx (last_blockheight, connection_id, tx) VALUES %s"
+INSERT_MEMPOOL_SIZE_SQL =  "INSERT INTO mempool_size_history (ts, connection_id, mempool_size) VALUES %s"
 
 maxBlockHeight = -1
 
@@ -278,7 +281,15 @@ def batchInsert(cursor, sqlScript, datalist):
 
 def insertRedisBlockheight(blockheightData):
     t0 = time.time()
-    r = redis.StrictRedis(host=redisHost, port=redisPort, db=redisDb)
+    if "REDIS_PASS" in os.environ:
+        # Testing locally
+        r = redis.StrictRedis(
+            host=redisHost, port=redisPort, db=redisDb, 
+            password=redisPass)
+    else:
+        r = redis.StrictRedis(
+            host=redisHost, port=redisPort, db=redisDb)
+
     for (ts, connectionId, blockcount) in blockheightData:
         result = r.hget(redisNamespace + 'node', connectionId)
         if result!=None:
@@ -287,6 +298,26 @@ def insertRedisBlockheight(blockheightData):
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
     t1 = time.time()
     logger.info('Redis Took %.2f ms' % (1000*(t1-t0)))
+
+def insertRedisUnconfirmedTxCount(mempoolsizeData):
+    t0 = time.time()
+    if "REDIS_PASS" in os.environ:
+        # Testing locally
+        r = redis.StrictRedis(
+            host=redisHost, port=redisPort, db=redisDb, 
+            password=redisPass)
+    else:
+        r = redis.StrictRedis(
+            host=redisHost, port=redisPort, db=redisDb)
+
+    for (ts, connectionId, mempoolsize) in mempoolsizeData:
+        result = r.hget(redisNamespace + 'node', connectionId)
+        if result!=None:
+            node_info=json.loads(result)
+            node_info["mempool_size"] = mempoolsize
+            r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
+    t1 = time.time()
+    logger.info('insertRedisUnconfirmedTxCount Redis Took %.2f ms' % (1000*(t1-t0)))
 
 def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
             , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData):
@@ -301,6 +332,9 @@ def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connec
     insertRedisBlockheight(blockheightData)
 
     batchInsert(cursor, INSERT_ONLINE_SQL, onlineData)
+
+    batchInsert(cursor, INSERT_MEMPOOL_SIZE_SQL, mempoolsizeData)
+    insertRedisUnconfirmedTxCount(mempoolsizeData)
 
     batchInsert(cursor, INSERT_VERSION_SQL, versionData)
 

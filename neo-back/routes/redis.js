@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var redis = require("redis")
-var axios =  require('axios') ;
 
 // Global (Avoids Duplicate Connections)
 var redisClient = null;
@@ -28,7 +27,6 @@ function openRedisConnection() {
 router.get('/', function (req, res, next) {
     res.send('respond with a resource');
 });
-
 
 router.get('/bestblock', function (req, res, next) {
     const client = openRedisConnection();
