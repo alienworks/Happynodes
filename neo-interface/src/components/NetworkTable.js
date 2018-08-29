@@ -6,7 +6,7 @@ import filterFactory, { textFilter, selectFilter } from 'react-bootstrap-table2-
 
 class NetworkTable extends Component {
   render() {
-    const { networktable, addr_filter, version_filter } = this.props;
+    const { networktable, addr_filter, version_filter, blockheight_filter } = this.props;
 
     if (networktable.pending) {
       return (
@@ -33,10 +33,17 @@ class NetworkTable extends Component {
         false: "false"
       };
 
+      function hyperlinkFormatter(cell, row){
+        return (
+          <a href={"/" + cell}>{cell}</a>
+        )
+      }
+
       const columns = [{
         dataField: 'id',
         text: 'ID',
-        sort: true
+        sort: true,
+        formatter: hyperlinkFormatter
       }, {
         dataField: 'health_score',
         text: 'Health Score',
@@ -46,7 +53,9 @@ class NetworkTable extends Component {
         dataField: 'blockheight',
         text: 'Blockheight',
         sort: true,
-        filter: textFilter(),
+        filter: textFilter({
+          defaultValue: blockheight_filter
+        }),
         formatter: (cell) => { return max_bh - cell > 0 ? String(cell) + " (-" + (max_bh - cell) + ")" : cell }
       }, {
         dataField: 'address',
