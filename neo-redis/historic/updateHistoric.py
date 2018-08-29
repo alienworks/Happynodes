@@ -43,7 +43,8 @@ DYNAMIC_ENDPOINTS_SQL="""select
                             ce.port,
                             loc.locale,
                             loca.location,
-                            pings.stability_thousand_pings
+                            pings.stability_thousand_pings,
+                            mb.blockheight
                         from
                             connection_endpoints ce
                         inner join nodes n on
@@ -52,6 +53,10 @@ DYNAMIC_ENDPOINTS_SQL="""select
                             ce.id = loc.connection_id
                         inner join location loca on
                             ce.id = loca.connection_id
+                        inner join (select connection_id, max(blockheight) as blockheight
+										from blockheight_history
+										group by connection_id) mb
+						on ce.id = mb.connection_id
                         inner join
                         (select
                             z.connection_id,
@@ -446,9 +451,12 @@ if __name__ == "__main__":
         results = cursor.fetchall()
 
         key = redisNamespace+"dynamic_connection_endpoints"
+
+        bestblock = int(r.get(redisNamespace+'bestblock'))
         
-        for (id, protocol, url, address, port, locale, location, pings_score) in results:
-            if pings_score != 0:
+        for (id, protocol, url, address, port, locale, location, pings_score, node_blockheight) in results:
+            diffBlocks = abs(node_blockheight-bestblock)
+            if pings_score != 0 and diffBlocks >20:
                 jsonObject = {
                     "protocol": protocol,
                     "url": url,
