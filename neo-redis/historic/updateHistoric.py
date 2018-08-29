@@ -456,7 +456,7 @@ if __name__ == "__main__":
         
         for (id, protocol, url, address, port, locale, location, pings_score, node_blockheight) in results:          
             diffBlocks = abs(node_blockheight-bestblock)
-            if pings_score != 0 and diffBlocks<20:
+            if pings_score != 0 and diffBlocks<2000000:
                 jsonObject = {
                     "protocol": protocol,
                     "url": url,
