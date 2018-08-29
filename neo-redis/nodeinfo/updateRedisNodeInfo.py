@@ -739,6 +739,8 @@ if __name__ == "__main__":
         t1 = time.time()
         logger.info('GET_NODES_INFO_SQL Took {} ms'.format((1000*(t1-t0))))
 
+        bestblock = int(r.get(redisNamespace+'bestblock'))
+
         result = cursor.fetchall()
         for node_info in result:
             nodeid = node_info[0]
@@ -752,7 +754,9 @@ if __name__ == "__main__":
                 redis_node = json.loads(redis_node)
                 blockheight = redis_node["blockheight"]
 
-            if stability_1000 != 0:
+            diffBlockheight = abs(blockheight-bestblock)
+
+            if stability_1000 != 0 and diffBlockheight>10:
                 node = {"id": node_info[0],
                         "hostname": node_info[1],
                         "protocol": node_info[2],
