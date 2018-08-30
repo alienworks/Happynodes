@@ -176,6 +176,7 @@ Test: Based on a test conducted on 29 Aug 2018
     "http://52.204.61.212:10332": []
 }
 Suggestion: Do not use nodes with bad blocks
+</pre>
 
 <pre>
 Node: https://seed1.spotcoin.com:10332
