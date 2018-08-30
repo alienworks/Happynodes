@@ -50,7 +50,8 @@ Reported by: @jseagrave21
 Issue Link (if appicable): N/A
 Type: Python
 Issue: Some nodes have corrupted blocks
-Details: The corrupted blocks are shown below their parent nodes. Bad blocks were queried based on bad blocks found in http://108.252.121.18:10332
+Details: The corrupted blocks are shown below their parent nodes.
+Bad blocks were queried based on bad blocks found in http://108.252.121.18:10332
 Test: Based on a test conducted on 29 Aug 2018
 {
     "http://node2.nyc3.bridgeprotocol.io:10332": [
