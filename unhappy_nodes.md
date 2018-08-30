@@ -52,7 +52,7 @@ Type: Python
 Issue: Some nodes have corrupted blocks
 Details: The corrupted blocks are shown below their parent nodes.
 Bad blocks were queried based on bad blocks found in http://108.252.121.18:10332
-Test: Based on a test conducted on 29 Aug 2018
+Test: Based on a test conducted on 30 Aug 2018
 {
     "http://node2.nyc3.bridgeprotocol.io:10332": [
         2631533,
@@ -62,6 +62,7 @@ Test: Based on a test conducted on 29 Aug 2018
         2603556
     ],
     "http://node2.sgp1.bridgeprotocol.io:10332": [
+        2647581,
         2631533,
         2631520,
         2628876,
@@ -69,6 +70,8 @@ Test: Based on a test conducted on 29 Aug 2018
         2603556
     ],
     "https://pyrpc1.redpulse.com:10331": [
+        2673477,
+        2673353,
         2669088,
         2669006,
         2668576,
@@ -89,6 +92,8 @@ Test: Based on a test conducted on 29 Aug 2018
         2603556
     ],
     "https://pyrpc2.redpulse.com:10331": [
+        2673477,
+        2673353,
         2669088,
         2669006,
         2668576,
@@ -109,6 +114,8 @@ Test: Based on a test conducted on 29 Aug 2018
         2603556
     ],
     "http://pyrpc1.redpulse.com:10332": [
+        2673477,
+        2673353,
         2669088,
         2669006,
         2668576,
@@ -129,6 +136,8 @@ Test: Based on a test conducted on 29 Aug 2018
         2603556
     ],
     "http://pyrpc2.redpulse.com:10332": [
+        2673477,
+        2673353,
         2669088,
         2669006,
         2668576,
@@ -153,6 +162,8 @@ Test: Based on a test conducted on 29 Aug 2018
     "https://pyrpc3.narrative.org:443": [],
     "https://pyrpc4.narrative.org:443": [],
     "http://108.252.121.18:10332": [
+        2673477,
+        2673353,
         2669088,
         2669006,
         2668576,
