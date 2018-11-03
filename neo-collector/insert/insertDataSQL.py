@@ -279,6 +279,7 @@ def batchInsert(cursor, sqlScript, datalist):
     psycopg2.extras.execute_values(cursor, sqlScript,datalist)
 
 def insertRedisBlockheight(blockheightData):
+    global last_max_blockheight_ts
     max_blockheight = -1
     max_blockheight_ts = -1
     t0 = time.time()
