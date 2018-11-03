@@ -118,7 +118,7 @@ class CreateUpdatePrimarySQL:
                     cursor.execute("INSERT INTO location (connection_id, location) VALUES (%s, %s)"
                                 , [lastid, endpoint["location"]])
                     
-                    response = requests.get("https://geoip.nekudo.com/api/"+ip)
+                    response = requests.get("http://ip-api.com/json/"+ip)
                     json_data = json.loads(response.text)
 
                     lat = json_data["location"]['latitude']
