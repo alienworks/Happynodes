@@ -121,8 +121,8 @@ class CreateUpdatePrimarySQL:
                     response = requests.get("http://ip-api.com/json/"+ip)
                     json_data = json.loads(response.text)
 
-                    lat = json_data["location"]['latitude']
-                    long = json_data["location"]['longitude']
+                    lat = json_data['lat']
+                    long = json_data['lon']
 
                     cursor.execute("INSERT INTO coordinates (connection_id, lat, long) VALUES (%s, %s, %s)", [lastid, lat, long])
         conn.commit()
