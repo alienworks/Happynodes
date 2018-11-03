@@ -64,13 +64,13 @@ if __name__ == "__main__":
 
         # r.set(redisNamespace+'bestblock', result[0][0])
 
-        cursor.execute(GET_LASTBLOCK_TIME_SQL)
+        # cursor.execute(GET_LASTBLOCK_TIME_SQL)
 
-        result = cursor.fetchall()
+        # result = cursor.fetchall()
 
-        r.set(redisNamespace+'lastblock', result[0][0])
+        # r.set(redisNamespace+'lastblock', result[0][0])
 
-        print(float(r.get(redisNamespace+'lastblock')))
+        # print(float(r.get(redisNamespace+'lastblock')))
 
         cursor.execute(GET_AVG_BLOCK_TIME_SQL)
 
