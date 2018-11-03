@@ -16,6 +16,7 @@ import datetime
 import traceback
 import redis
 import sys
+from datetime import timezone
 ssl.match_hostname = lambda cert, hostname: True
 
 logger = logging.getLogger(__name__)
@@ -295,9 +296,8 @@ def insertRedisBlockheight(blockheightData):
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
     if last_max_blockheight_ts != -1:
         a = datetime.datetime.strptime(max_blockheight_ts, '%Y-%m-%d %H:%M:%S')
-        b = datetime.datetime.strptime(last_max_blockheight_ts, '%Y-%m-%d %H:%M:%S')
         r.set(redisNamespace+'lastblock', 
-            (a-b).total_seconds())
+            a.replace(tzinfo=timezone.utc).timestamp())
 
         
         
