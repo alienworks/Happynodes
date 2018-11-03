@@ -52,6 +52,8 @@ MIN_CON = 1
 MAX_CON = 800
 tcp = ThreadedConnectionPool(MIN_CON, MAX_CON, dsn)
 
+last_max_blockheight_ts = -1
+
 GET_ENDPOINTS_SQL="""SELECT endpoint.id, 
                     concat(endpoint.protocol, '://', n.hostname,':' , endpoint.port) AS url 
                     FROM connection_endpoints endpoint  
@@ -291,8 +293,9 @@ def insertRedisBlockheight(blockheightData):
             node_info["blockheight"] = blockcount
             logger.info("blockheight {}".format(blockcount))
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
-
-    # r.set(redisNamespace+'lastblock', max_blockheight_ts)
+    if last_max_blockheight_ts != -1:
+        r.set(redisNamespace+'lastblock', max_blockheight_ts-last_max_blockheight_ts)
+    last_max_blockheight_ts = max_blockheight_ts
     r.set(redisNamespace+'bestblock', max_blockheight)
     t1 = time.time()
     logger.info('Redis Took %.2f ms' % (1000*(t1-t0)))
