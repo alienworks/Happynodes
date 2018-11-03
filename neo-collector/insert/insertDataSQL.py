@@ -298,7 +298,7 @@ def insertRedisBlockheight(blockheightData):
         a = datetime.datetime.strptime(max_blockheight_ts, '%Y-%m-%d %H:%M:%S')
         b = datetime.datetime.strptime(last_max_blockheight_ts, '%Y-%m-%d %H:%M:%S')
         r.set(redisNamespace+'lastblock', 
-            (a-b).total_seconds())
+            (a).total_seconds())
 
         
         
