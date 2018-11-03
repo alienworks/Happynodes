@@ -284,7 +284,7 @@ def insertRedisBlockheight(blockheightData):
         if result!=None:
             node_info=json.loads(result)
             node_info["blockheight"] = blockcount
-            logger.info("blockheight {}".format(blockheight))
+            logger.info("blockheight {}".format(blockcount))
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
     t1 = time.time()
     logger.info('Redis Took %.2f ms' % (1000*(t1-t0)))
