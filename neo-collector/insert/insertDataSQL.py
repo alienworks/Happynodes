@@ -278,6 +278,7 @@ def batchInsert(cursor, sqlScript, datalist):
 
 def insertRedisBlockheight(blockheightData):
     max_blockheight = -1
+    max_blockheight_ts = -1
     t0 = time.time()
     r = redis.StrictRedis(host=redisHost, port=redisPort, db=redisDb)
     for (ts, connectionId, blockcount) in blockheightData:
@@ -291,7 +292,7 @@ def insertRedisBlockheight(blockheightData):
             logger.info("blockheight {}".format(blockcount))
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
 
-    # r.set(redisNamespace+'lastblock', max_blockheight_ts)
+    r.set(redisNamespace+'lastblock', max_blockheight_ts)
     r.set(redisNamespace+'bestblock', max_blockheight)
     t1 = time.time()
     logger.info('Redis Took %.2f ms' % (1000*(t1-t0)))
