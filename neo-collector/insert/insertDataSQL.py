@@ -295,7 +295,7 @@ def insertRedisBlockheight(blockheightData):
             logger.info("blockheight {}".format(blockcount))
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
     if last_max_blockheight_ts != -1:
-        r.set(redisNamespace+'lastblock', max_blockheight_ts-last_max_blockheight_ts)
+        r.set(redisNamespace+'lastblock', int(max_blockheight_ts)-int(last_max_blockheight_ts))
     last_max_blockheight_ts = max_blockheight_ts
     r.set(redisNamespace+'bestblock', max_blockheight)
     t1 = time.time()
