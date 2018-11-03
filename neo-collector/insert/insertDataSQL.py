@@ -277,15 +277,22 @@ def batchInsert(cursor, sqlScript, datalist):
     psycopg2.extras.execute_values(cursor, sqlScript,datalist)
 
 def insertRedisBlockheight(blockheightData):
+    max_blockheight = -1
     t0 = time.time()
     r = redis.StrictRedis(host=redisHost, port=redisPort, db=redisDb)
     for (ts, connectionId, blockcount) in blockheightData:
         result = r.hget(redisNamespace + 'node', connectionId)
+        if blockcount > max_blockheight:
+            max_blockheight = blockcount
+            max_blockheight_ts = ts
         if result!=None:
             node_info=json.loads(result)
             node_info["blockheight"] = blockcount
             logger.info("blockheight {}".format(blockcount))
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
+
+    r.set(redisNamespace+'lastblock', max_blockheight_ts)
+    r.set(redisNamespace+'blocktime', max_blockheight)
     t1 = time.time()
     logger.info('Redis Took %.2f ms' % (1000*(t1-t0)))
 
