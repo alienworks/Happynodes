@@ -58,11 +58,11 @@ if __name__ == "__main__":
 
         cursor = conn.cursor()
 
-        cursor.execute(GET_MAX_BLOCKHEIGHT_SQL)
+        # cursor.execute(GET_MAX_BLOCKHEIGHT_SQL)
 
-        result = cursor.fetchall()
+        # result = cursor.fetchall()
 
-        r.set(redisNamespace+'bestblock', result[0][0])
+        # r.set(redisNamespace+'bestblock', result[0][0])
 
         cursor.execute(GET_LASTBLOCK_TIME_SQL)
 
