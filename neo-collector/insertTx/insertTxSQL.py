@@ -229,10 +229,10 @@ def updateSql(latencyData, blockheightData, mempoolData):
     conn = tcp.getconn()
     cursor = conn.cursor()
     
-    batchInsert(cursor, INSERT_LATENCY_SQL, latencyData)
+    # batchInsert(cursor, INSERT_LATENCY_SQL, latencyData)
     
-    batchInsert(cursor, INSERT_BLOCKHEIGHT_SQL, blockheightData)
-    insertRedisBlockheight(blockheightData)
+    # batchInsert(cursor, INSERT_BLOCKHEIGHT_SQL, blockheightData)
+    # insertRedisBlockheight(blockheightData)
 
     logger.info("len(mempoolData) {}".format(len(mempoolData)) )
     batchInsert(cursor, INSERT_UNCONFIRMED_TX_SQL, mempoolData)

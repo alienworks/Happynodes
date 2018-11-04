@@ -7,6 +7,7 @@ import config from './config'
 class NodeInfo extends Component {
     render() {
         const { nodeinfo } = this.props;
+        
         if (nodeinfo.pending) {
             return (
 
@@ -22,6 +23,7 @@ class NodeInfo extends Component {
                 </div>
             )
         } else if (nodeinfo.fulfilled) {
+            console.log("nodeinfo", nodeinfo)
 
             const data = nodeinfo.value;
 
@@ -94,6 +96,31 @@ class NodeInfo extends Component {
                             <div className="infoblock">
                                 <h4>offline</h4>
                                 <h5>P2P WS Status</h5>
+                            </div>
+                        )}
+
+
+                    {data.rcp_http_status ? (
+                        <div className="infoblock">
+                            <h4>online</h4>
+                            <h5>RCP HTTP Status</h5>
+                        </div>
+                    ) : (
+                            <div className="infoblock">
+                                <h4>offline</h4>
+                                <h5>RCP HTTP Status</h5>
+                            </div>
+                        )}
+
+                    {data.rcp_https_status ? (
+                        <div className="infoblock">
+                            <h4>online</h4>
+                            <h5>RCP HTTPs Status</h5>
+                        </div>
+                    ) : (
+                            <div className="infoblock">
+                                <h4>offline</h4>
+                                <h5>RCP HTTPs Status</h5>
                             </div>
                         )}
 
