@@ -138,23 +138,23 @@ def test_getIpToEndpointMap():
 #     cursor.close()
 #     conn.close()
 
-def test_insertHttpsSQL():
-    conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
-    cursor = conn.cursor()
+# def test_insertHttpsSQL():
+#     conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
+#     cursor = conn.cursor()
 
-    cursor.close()
-    conn.close()
+#     cursor.close()
+#     conn.close()
 
-def test_insertPeerSQL():
-    conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
-    cursor = conn.cursor()
+# def test_insertPeerSQL():
+#     conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
+#     cursor = conn.cursor()
 
-    cursor.close()
-    conn.close()
+#     cursor.close()
+#     conn.close()
 
-def test_insertPeerCountsSQL():
-    conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
-    cursor = conn.cursor()
+# def test_insertPeerCountsSQL():
+#     conn = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(databasename, user, host, password))
+#     cursor = conn.cursor()
 
-    cursor.close()
-    conn.close()
+#     cursor.close()
+#     conn.close()

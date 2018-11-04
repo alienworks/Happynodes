@@ -3,6 +3,7 @@ import psycopg2
 import time
 import json
 import os
+import logging
 
 host = str(os.environ['PGHOST'])
 databasename = str(os.environ['PGDATABASE'])
@@ -15,6 +16,24 @@ redisHost = str(os.environ['REDIS_HOST'])
 redisPort = str(os.environ['REDIS_PORT'])
 redisDb = str(os.environ['REDIS_DB'])
 redisNamespace = str(os.environ['REDIS_NAMESPACE'])
+if "REDIS_PASS" in os.environ:
+    redisPass = str(os.environ['REDIS_PASS'])
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+# create console handler and set level to debug
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+
+# create formatter
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# add formatter to ch
+ch.setFormatter(formatter)
+
+# add ch to logger
+logger.addHandler(ch)
 
 GET_MAX_BLOCKHEIGHT_SQL = """SELECT max(blockheight)  
                         FROM  blockheight_history  
@@ -51,8 +70,18 @@ GET_AVG_BLOCK_TIME_SQL = """SELECT avg(e.diff)
 
 if __name__ == "__main__":
     while True:
-        r = redis.StrictRedis(
-            host=redisHost, port=redisPort, db=redisDb)
+        r=None
+        if "REDIS_PASS" in os.environ:
+            # Testing locally
+            r = redis.StrictRedis(
+                host=redisHost, port=redisPort, 
+                db=redisDb, 
+                password=redisPass)
+        else:
+            r = redis.StrictRedis(
+                host=redisHost, 
+                port=redisPort, 
+                db=redisDb)
 
         conn = psycopg2.connect(connection_str)
 
@@ -62,25 +91,42 @@ if __name__ == "__main__":
 
         # result = cursor.fetchall()
 
-        # r.set(redisNamespace+'bestblock', result[0][0])
+# <<<<<<< HEAD
+#         # r.set(redisNamespace+'bestblock', result[0][0])
+# =======
+#         r.set(redisNamespace+'bestblock', 
+#             result[0][0])
+        
+#         logger.info("bestblock")
+#         logger.info((r.get(redisNamespace+'bestblock')))
+# >>>>>>> cb20c9c3cc714e1a76106104be8b1273d30d7d3a
 
-        # cursor.execute(GET_LASTBLOCK_TIME_SQL)
+#         # cursor.execute(GET_LASTBLOCK_TIME_SQL)
 
-        # result = cursor.fetchall()
+#         # result = cursor.fetchall()
 
-        # r.set(redisNamespace+'lastblock', result[0][0])
+# <<<<<<< HEAD
+#         # r.set(redisNamespace+'lastblock', result[0][0])
 
-        # print(float(r.get(redisNamespace+'lastblock')))
+#         # print(float(r.get(redisNamespace+'lastblock')))
+# =======
+#         r.set(redisNamespace+'lastblock', 
+#             result[0][0])
+
+#         logger.info("lastblock")
+#         logger.info(float(r.get(redisNamespace+'lastblock')))
+# >>>>>>> cb20c9c3cc714e1a76106104be8b1273d30d7d3a
 
         cursor.execute(GET_AVG_BLOCK_TIME_SQL)
 
         result = cursor.fetchall()
-        print(result[0][0].total_seconds())
+        logger.info("blocktime")
 
-        r.set(redisNamespace+'blocktime', result[0][0].total_seconds())
+        r.set(redisNamespace+'blocktime', 
+            result[0][0].total_seconds())
 
-        print(float(r.get(redisNamespace+'blocktime')))
-        time.sleep(2)
+        logger.info(float(r.get(redisNamespace+'blocktime')))
+        time.sleep(1)
 
 
 

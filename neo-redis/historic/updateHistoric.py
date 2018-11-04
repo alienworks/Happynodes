@@ -3,6 +3,7 @@ import psycopg2
 import time
 import json
 import os
+import logging
 
 host = str(os.environ['PGHOST'])
 databasename = str(os.environ['PGDATABASE'])
@@ -15,17 +16,26 @@ redisHost = str(os.environ['REDIS_HOST'])
 redisPort = str(os.environ['REDIS_PORT'])
 redisDb = str(os.environ['REDIS_DB'])
 redisNamespace = str(os.environ['REDIS_NAMESPACE'])
+if "REDIS_PASS" in os.environ:
+    redisPass = str(os.environ['REDIS_PASS'])
 
-if __name__ == "__main__":
-    while True:
-        r = redis.StrictRedis(
-            host=redisHost, port=redisPort, db=redisDb)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
-        conn = psycopg2.connect(connection_str)
+# create console handler and set level to debug
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
 
-        cursor = conn.cursor()
+# create formatter
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-        cursor.execute("""select
+# add formatter to ch
+ch.setFormatter(formatter)
+
+# add ch to logger
+logger.addHandler(ch)
+
+DYNAMIC_ENDPOINTS_SQL="""select
                             ce.id,
                             ce.protocol,
                             n.hostname as url,
@@ -33,7 +43,8 @@ if __name__ == "__main__":
                             ce.port,
                             loc.locale,
                             loca.location,
-                            pings.stability_thousand_pings
+                            pings.stability_thousand_pings,
+                            mb.blockheight
                         from
                             connection_endpoints ce
                         inner join nodes n on
@@ -42,6 +53,10 @@ if __name__ == "__main__":
                             ce.id = loc.connection_id
                         inner join location loca on
                             ce.id = loca.connection_id
+                        inner join (select connection_id, max(blockheight) as blockheight
+										from blockheight_history
+										group by connection_id) mb
+						on ce.id = mb.connection_id
                         inner join
                         (select
                             z.connection_id,
@@ -69,27 +84,9 @@ if __name__ == "__main__":
                             z.row_number <= 1000
                         group by
                             z.connection_id) pings
-                            on pings.connection_id=ce.id""")
+                            on pings.connection_id=ce.id"""
 
-        results = cursor.fetchall()
-
-        key = redisNamespace+"dynamic_connection_endpoints"
-
-        for (id, protocol, url, address, port, locale, location, pings_score) in results:
-            if pings_score != 0:
-                jsonObject = {
-                    "protocol": protocol,
-                    "url": url,
-                    "location": location,
-                    "address": address,
-                    "locale": locale,
-                    "port": port,
-                    "type": "RPC"
-                }
-
-                r.hset(key, str(id) , json.dumps(jsonObject))
-
-        cursor.execute("""select  dl.timeday, coalesce(totalonline, 0) as totalonline, coalesce(total, 0) as total
+NODES_ONLINE_DAILY_SQL = """select  dl.timeday, coalesce(totalonline, 0) as totalonline, coalesce(total, 0) as total
                             from
                             (select to_char(
                                     generate_series(min(ts),
@@ -122,16 +119,9 @@ if __name__ == "__main__":
                                 connection_id) oh
                             group by timeday) networksize
                             on dl.timeday = networksize.timeday
-                            order by dl.timeday""")
+                            order by dl.timeday"""
 
-        results = cursor.fetchall()
-
-        key = redisNamespace+"nodes_online_daily"
-
-        for (day, totalonline, total) in results:
-            r.hset(key, day, json.dumps({"totalonline":totalonline, "total":total}))
-
-        cursor.execute("""select
+NODES_ONLINE_WEEKLY = """select
                             ws.year,
                             ws.week,
                             totalonline,
@@ -186,24 +176,9 @@ if __name__ == "__main__":
                                 week) networksize_weekly on
                             networksize_weekly.year = ws.year
                             and networksize_weekly.week = ws.week
-                            order by ws.year, ws.week""")
+                            order by ws.year, ws.week"""
 
-        results = cursor.fetchall()
-
-        key = redisNamespace+"nodes_online_weekly"
-
-        for (year, week, totalonline, total) in results:
-            year_week = str(int(year))+ "-" + str(int(week))
-            r.hset(key, year_week, json.dumps({"totalonline":totalonline, "total":total}))
-
-        cursor.execute("""select id from public.connection_endpoints""")
-
-        endpoints = cursor.fetchall()
-
-        key = redisNamespace+"node_stability_daily"
-
-        for id in endpoints:
-            cursor.execute("""select  dl.timeday, coalesce(isonline, 0) as isonline
+NODES_STABLILTY_DAILY_SQL="""select  dl.timeday, coalesce(isonline, 0) as isonline
                                 from
                                 (select to_char(
                                         generate_series(min(ts),
@@ -235,16 +210,9 @@ if __name__ == "__main__":
                                 ) st 
                                 on st.timeday = dl.timeday
                                 order by dl.timeday
-                            """, [id[0]])
-            result = cursor.fetchall()
-            print(key, id[0],result)
-            r.hset(key, int(id[0]), result)
-            print("r.hget(key, id)", r.hget(key, id[0]))
+                            """
 
-        key = redisNamespace+"node_stability_weekly"
-
-        for id in endpoints:
-            cursor.execute("""select
+NODES_STABLILTY_WEEKLY_SQL = """select
                                 ws.year,
                                 ws.week,
                                 isonline
@@ -299,16 +267,9 @@ if __name__ == "__main__":
                                 ohw.year = ws.year
                                 and ohw.week = ws.week
                                 order by ws.year, ws.week
-                            """, [id[0]])
-            result = cursor.fetchall()
-            print(key, id[0], result)
-            r.hset(key, int(id[0]), result)
-            print("r.hget(key, id)", r.hget(key, id[0]))
+                            """
 
-        key = redisNamespace+"node_latency_daily"
-
-        for id in endpoints:
-            cursor.execute("""select
+NODES_LATENCY_DAILY_SQL = """select
                             dl.timeday,
                             coalesce(
                                 avg_latency*1000,
@@ -347,16 +308,8 @@ if __name__ == "__main__":
                             ) lt on
                             lt.timeday = dl.timeday
                             order by dl.timeday
-                            """, [id[0]])
-            result = cursor.fetchall()
-            print(key, id[0], result)
-            r.hset(key, int(id[0]), result)
-            print("r.hget(key, id)", r.hget(key, id[0]))
-
-        key = redisNamespace+"node_latency_weekly"
-
-        for id in endpoints:
-            cursor.execute("""select
+                            """
+NODES_LATENCY_WEEKLY_SQL = """select
                                 ws.year,
                                 ws.week,
                                 coalesce(
@@ -412,18 +365,9 @@ if __name__ == "__main__":
                                 lt.year = ws.year
                                 and lt.week = ws.week
                                 order by ws.year, ws.week
-                            """, [id[0]])
-            result = cursor.fetchall()
-            print(key, id[0], result)
-            print(result)
-            r.hset(key, int(id[0]), result)
-            print("r.hget(key, id)", r.hget(key, id[0]))
+                            """
 
-
-        key = redisNamespace+"blockheight_lag"
-
-        for id in endpoints:
-            cursor.execute("""select
+NODES_BLOCKLAG_SQL = """select
                                 blocklist.blockheight,
                                 min_ts,
                                 max_ts,
@@ -433,11 +377,11 @@ if __name__ == "__main__":
                                 ) as block_lag
                             from
                                 (
-                                    select
+                                   select
                                         generate_series(
-                                            2537572,
-                                            max( blockheight )
-                                        ) as blockheight
+                                            2537572/100,
+                                            max( blockheight)/100
+                                        ) * 100 as blockheight
                                     from
                                         public.blockheight_history
                                 ) blocklist
@@ -477,14 +421,160 @@ if __name__ == "__main__":
                                 bh.ts between min_ts_t.min_ts and max_ts_t.max_ts::timestamp - interval '1 seconds'
                             order by
                                 blocklist.blockheight desc
-                            """, [id[0]])
+                            limit 10000
+                            """
+
+SLEEP_TIME = 60*60*24
+
+if __name__ == "__main__":
+    while True:
+        r=None
+        if "REDIS_PASS" in os.environ:
+            # Testing locally
+            r = redis.StrictRedis(
+                host=redisHost, port=redisPort, db=redisDb, 
+                password=redisPass)
+        else:
+            r = redis.StrictRedis(
+                host=redisHost, port=redisPort, db=redisDb)
+
+        conn = psycopg2.connect(connection_str)
+
+        cursor = conn.cursor()
+
+        cursor.execute("""select id from public.connection_endpoints""")
+        endpoints = cursor.fetchall()
+
+        t0 = time.time()
+        cursor.execute(DYNAMIC_ENDPOINTS_SQL)
+
+        results = cursor.fetchall()
+
+        key = redisNamespace+"dynamic_connection_endpoints"
+
+        bestblock = int(r.get(redisNamespace+'bestblock'))
+        
+        for (id, protocol, url, address, port, locale, location, pings_score, node_blockheight) in results:          
+            diffBlocks = abs(node_blockheight-bestblock)
+            if pings_score != 0 and diffBlocks<20:
+                jsonObject = {
+                    "protocol": protocol,
+                    "url": url,
+                    "location": location,
+                    "address": address,
+                    "locale": locale,
+                    "port": port,
+                    "type": "RPC"
+                }
+                logger.info(key)
+                logger.info("jsonObject: {}".format(jsonObject))
+                logger.info("Set node id {}".format(str(id)))
+                r.hset(key, str(id) , json.dumps(jsonObject))
+            else:
+                logger.info("Deleted node id {}".format(str(id)))
+                r.hdel(key, str(id))
+        t1 = time.time()
+        logger.info('{} Took {} ms'.format(key, (1000*(t1-t0))))
+
+        t0 = time.time()
+        cursor.execute(NODES_ONLINE_DAILY_SQL)
+
+        results = cursor.fetchall()
+
+        key = redisNamespace+"nodes_online_daily"
+
+        for (day, totalonline, total) in results:
+            logger.info(key)
+            logger.info({"totalonline":totalonline, "total":total})
+            r.hset(key, day, json.dumps({"totalonline":totalonline, "total":total}))
+        
+        t1 = time.time()
+        logger.info('{} Took {} ms'.format(key, (1000*(t1-t0))))
+
+        t0 = time.time()
+        cursor.execute(NODES_ONLINE_WEEKLY)
+        results = cursor.fetchall()
+
+        key = redisNamespace+"nodes_online_weekly"
+
+        for (year, week, totalonline, total) in results:
+            year_week = str(int(year))+ "-" + str(int(week))
+            logger.info(key)
+            logger.info({"totalonline":totalonline, "total":total})
+            r.hset(key, year_week, json.dumps({"totalonline":totalonline, "total":total}))
+        
+        t1 = time.time()
+        logger.info('{} Took {} ms'.format(key, (1000*(t1-t0))))
+
+        key = redisNamespace+"node_stability_daily"
+        t0 = time.time()
+
+        for id in endpoints:
+            cursor.execute(NODES_STABLILTY_DAILY_SQL, [id[0]])
             result = cursor.fetchall()
-            print(key, id[0], result)
-            print(result)
+            logger.info("len(result) {}".format(len(result)))
             r.hset(key, int(id[0]), result)
-            print("r.hget(key, id)", r.hget(key, id[0]))
+            logger.info(key)
+            logger.info(id[0])
+        
+        t1 = time.time()
+        logger.info('{} Took {} ms'.format(key, (1000*(t1-t0))))
 
-        time.sleep(60*60*24)
+        key = redisNamespace+"node_stability_weekly"
+        t0 = time.time()
 
+        for id in endpoints:
+            cursor.execute(NODES_STABLILTY_WEEKLY_SQL, [id[0]])
+            result = cursor.fetchall()
+            logger.info("len(result) {}".format(len(result)))
+            r.hset(key, int(id[0]), result)
+            logger.info(key)
+            logger.info(id[0])
 
+        t1 = time.time()
+        logger.info('{} Took {} ms'.format(key, (1000*(t1-t0))))
 
+        key = redisNamespace+"node_latency_daily"
+        t0 = time.time()
+
+        for id in endpoints:
+            cursor.execute(NODES_LATENCY_DAILY_SQL, [id[0]])
+            result = cursor.fetchall()
+            logger.info("len(result) {}".format(len(result)))
+            r.hset(key, int(id[0]), result)
+            logger.info(key)
+            logger.info(id[0])
+        
+        t1 = time.time()
+        logger.info('{} Took {} ms'.format(key, (1000*(t1-t0))))
+
+        key = redisNamespace+"node_latency_weekly"
+        t0 = time.time()
+
+        for id in endpoints:
+            cursor.execute(NODES_LATENCY_WEEKLY_SQL, [id[0]])
+            result = cursor.fetchall()
+            logger.info("len(result) {}".format(len(result)))
+            r.hset(key, int(id[0]), result)
+            logger.info(key)
+            logger.info(id[0])
+        
+        t1 = time.time()
+        logger.info('{} Took {} ms'.format(key, (1000*(t1-t0))))
+
+        key = redisNamespace+"blockheight_lag"
+        t0 = time.time()
+
+        for id in endpoints:
+            logger.info("endpoints: {}".format(id[0]))
+            cursor.execute(NODES_BLOCKLAG_SQL, [id[0]])
+            result = cursor.fetchall()
+            logger.info("len(result) {}".format(len(result)))
+            r.hset(key, int(id[0]), result)
+            logger.info(key)
+            logger.info(id[0])
+        
+        t1 = time.time()
+        logger.info('{} Took {} ms'.format(key, (1000*(t1-t0))))
+
+        time.sleep(SLEEP_TIME)
