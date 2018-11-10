@@ -142,6 +142,11 @@ class NodeInfo extends Component {
                         <h5>Country</h5>
                     </div>
 
+                    <div className="infoblock">
+                        <h4>{data.last_update_time}%</h4>
+                        <h5>Last Update Time</h5>
+                    </div>
+
                     <h3 style={{ paddingTop: '4rem', clear: 'left' }}>Happynodes Score</h3>
                     <h5>Score is calculated by taking the average of four metrics</h5>
                     <hr />
