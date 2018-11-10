@@ -118,7 +118,7 @@ async def testPort(url, port):
                 ts = getSqlDateTime(time.time())
                 logger.info ("url:{} port:{} rpc port looks good".format(url, port))
                 return ts, portOkay
-        except (aiohttp.InvalidURL, aiohttp.ClientConnectorError) as e:
+        except (aiohttp.InvalidURL, aiohttp.ClientConnectorError, asyncio.TimeoutError) as e:
             logger.info ("url:{} port:{} rpc port times out".format(url, port))
             ts = getSqlDateTime(time.time())
             return ts, False
