@@ -307,13 +307,12 @@ def insertRedisBlockheight(blockheightData):
         if result!=None:
             node_info=json.loads(result)
             node_info["blockheight"] = blockcount
+            node_info["last_update_time"] = ts
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
     if last_max_blockheight_ts != -1:
         a = datetime.datetime.strptime(max_blockheight_ts, '%Y-%m-%d %H:%M:%S')
         r.set(redisNamespace+'lastblock', 
             a.replace(tzinfo=timezone.utc).timestamp())
-
-        
         
     last_max_blockheight_ts = max_blockheight_ts
     r.set(redisNamespace+'bestblock', max_blockheight)
