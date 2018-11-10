@@ -106,15 +106,16 @@ async def callEndpoint(url, method):
             logger.error("{} {} Timeout".format(url, method))
             return None
 
-async def testPort(url, port):
+async def testPort(protocol, url, port):
     url = url.split(":")[0]
-    url = url + ":" + str(port)
+    url = protocol + url + ":" + str(port)
     timeout = aiohttp.ClientTimeout(total=1)
     async with aiohttp.ClientSession() as session:
         try:
             async with session.post(url, json={'jsonrpc': '2.0', 'method': 'getblockcount', 'params': [], 'id': 1}
                 , timeout=timeout) as response:
-                portOkay = await response.status_code >=200 or response.status_code<300
+                status_code = response.status
+                portOkay = status_code >=200 or status_code<300
                 ts = getSqlDateTime(time.time())
                 logger.info ("url:{} port:{} rpc port looks good".format(url, port))
                 return ts, portOkay
@@ -149,8 +150,8 @@ async def updateEndpoint(url, connectionId):
         connectioncountResult = await callEndpoint(url, 'getconnectioncount')
         rawmempoolResult = await callEndpoint(url, 'getrawmempool')
         peersResult = await callEndpoint(url, 'getpeers')
-        rpc_https_service = await testPort(url, JSON_RPC_HTTPS_PORT)
-        rpc_http_service = await testPort(url, JSON_RPC_HTTP_PORT)
+        rpc_https_service = await testPort("https://", url, JSON_RPC_HTTPS_PORT)
+        rpc_http_service = await testPort("http://", url, JSON_RPC_HTTP_PORT)
 
         logger.info( "{} done".format(url))
 
