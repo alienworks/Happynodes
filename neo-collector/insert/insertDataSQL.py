@@ -152,13 +152,15 @@ async def updateEndpoint(url, connectionId):
         rpc_https_service = await testPort( url, JSON_RPC_HTTPS_PORT)
         rpc_http_service = await testPort( url, JSON_RPC_HTTP_PORT)
 
+        wallet_status = await callEndpoint(url, 'listaddress')
+
         logger.info( "{} done".format(url))
 
         return connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
-                rawmempoolResult, peersResult, rpc_https_service, rpc_http_service
+                rawmempoolResult, peersResult, rpc_https_service, rpc_http_service, wallet_status
     else:
         logger.info( "{} done".format(url))
-        return connectionId, latencyResult, None, None, None, None, None, None, None
+        return connectionId, latencyResult, None, None, None, None, None, None, None, None
     
 
 async def main(endpointslist):
@@ -208,7 +210,9 @@ def prepareSqlInsert(done, ipToEndpointMap):
 
     for task in done:
         connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
-                    rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService = task.result()
+                    rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService, wallet_status = task.result()
+        print("wallet_status")
+        print(wallet_status)
 
         if latencyResult!=None:
             ts, latency = latencyResult
