@@ -74,6 +74,10 @@ class NodeInfo extends Component {
                         <h5>Version</h5>
                     </div>
 
+                    <div className="infoblock">
+                        <h4>{data.min_ts}</h4>
+                        <h5>First Recorded</h5>
+                    </div>
 
                     {data.p2p_tcp_status ? (
                         <div className="infoblock">
