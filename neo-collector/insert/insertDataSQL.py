@@ -204,6 +204,8 @@ def prepareSqlInsert(done, ipToEndpointMap):
     validatedPeersHistoryData = []
     validatedPeersCountData = []
 
+    wallet_status_data = []
+
     numTimeout=0
     
     global maxBlockHeight
@@ -211,8 +213,6 @@ def prepareSqlInsert(done, ipToEndpointMap):
     for task in done:
         connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
                     rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService, wallet_status = task.result()
-        print("wallet_status")
-        print(wallet_status)
 
         if latencyResult!=None:
             ts, latency = latencyResult
@@ -254,6 +254,13 @@ def prepareSqlInsert(done, ipToEndpointMap):
                 ts, rpcHttp = rpcHttpService
                 rcpHttpData.append((ts, connectionId, rpcHttp))
 
+            if wallet_status!=None:
+                ts, _ = wallet_status
+                wallet_status_data.append((ts, connectionId, True))
+            else:
+                ts = getSqlDateTime(time.time())
+                wallet_status_data.append((ts, connectionId, False))
+
             if peersResult!=None:
                 ts, peers = peersResult
                 peers = [ i['address'] for i in (peers["result"]['connected'])]
@@ -281,10 +288,11 @@ def prepareSqlInsert(done, ipToEndpointMap):
             ts = getSqlDateTime(time.time())
             latencyData.append((ts, connectionId, 2))
             onlineData.append((ts, connectionId, False))
+            wallet_status_data.append((ts, connectionId, False))
 
     logger.info("numTimeout {}".format(numTimeout))
     return latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
-        , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData
+        , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData, wallet_status_data
 
 def batchInsert(cursor, sqlScript, datalist):
     psycopg2.extras.execute_values(cursor, sqlScript,datalist)
@@ -343,8 +351,32 @@ def insertRedisUnconfirmedTxCount(mempoolsizeData):
     t1 = time.time()
     logger.info('insertRedisUnconfirmedTxCount Redis Took %.2f ms' % (1000*(t1-t0)))
 
+def insertRedisWalletStatus(wallet_status_data):
+    if "REDIS_PASS" in os.environ:
+        # Testing locally
+        r = redis.StrictRedis(
+            host=redisHost, port=redisPort, db=redisDb, 
+            password=redisPass)
+    else:
+        r = redis.StrictRedis(
+            host=redisHost, port=redisPort, db=redisDb)
+
+    for ts, connectionId, wallet_status in wallet_status_data:
+        result = r.hget(redisNamespace + 'node', connectionId)
+        if result!=None:
+            node_info=json.loads(result)
+            node_info["wallet_status"] = wallet_status
+            r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
+
+    t1 = time.time()
+    logger.info('insertRedisWalletStatus Redis Took %.2f ms' % (1000*(t1-t0)))
+
+
+
+
+
 def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
-            , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData):
+            , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData, wallet_status_data):
     t0 = time.time()
 
     conn = tcp.getconn()
@@ -372,6 +404,8 @@ def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connec
 
     batchInsert(cursor, INSERT_CONNECTIONS_COUNT_SIZE_SQL, connectionscountData)
 
+    insertRedisWalletStatus(wallet_status_data)
+
     conn.commit()
     tcp.putconn(conn)
 
@@ -392,10 +426,10 @@ def updateApp():
             done = loop.run_until_complete(main(endpointsList))
 
             latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
-            , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData = prepareSqlInsert(done, ipToEndpointMap)
+            , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData, wallet_status_data = prepareSqlInsert(done, ipToEndpointMap)
 
             updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
-                , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData)
+                , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData, wallet_status_data)
         except Exception as e:
             logger.error(e)
             logger.error(traceback.format_exc())
