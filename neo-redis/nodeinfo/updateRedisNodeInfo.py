@@ -775,6 +775,14 @@ join (
 	) max_blockheight
 order by
 	health_score desc"""
+from datetime import date, datetime
+
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    raise TypeError ("Type %s not serializable" % type(obj))
 
 if __name__ == "__main__":
     while True:
@@ -842,7 +850,7 @@ if __name__ == "__main__":
                         "locale": node_info[22],
                         "version": node_info[23],
                         "max_blockheight": node_info[24],
-                        "min_ts": node_info[26]}
+                        "min_ts": node_info[26].strftime('%m/%d/%Y')}
                 logger.info("Set node id {}".format(nodeid))
                 r.hset(redisNamespace + 'node', nodeid, json.dumps(node))
             else:
