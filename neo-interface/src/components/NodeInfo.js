@@ -79,10 +79,17 @@ class NodeInfo extends Component {
                         <h5>First Recorded</h5>
                     </div>
 
-                    <div className="infoblock">
-                        <h4>{data.wallet_status}</h4>
-                        <h5>Wallet Status</h5>
-                    </div>
+                    {data.wallet_status ? (
+                        <div className="infoblock">
+                            <h4>open</h4>
+                            <h5>Wallet Status</h5>
+                        </div>
+                    ) : (
+                            <div className="infoblock">
+                                <h4>closed</h4>
+                                <h5>Wallet Status</h5>
+                            </div>
+                        )}
 
                     {data.p2p_tcp_status ? (
                         <div className="infoblock">
