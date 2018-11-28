@@ -850,9 +850,9 @@ if __name__ == "__main__":
                         "locale": node_info[22],
                         "version": node_info[23],
                         "max_blockheight": node_info[24],
-                        "min_ts": node_info[26].strftime('%m/%d/%Y')}
+                        "min_ts": node_info[26]}
                 logger.info("Set node id {}".format(nodeid))
-                r.hset(redisNamespace + 'node', nodeid, json.dumps(node))
+                r.hset(redisNamespace + 'node', nodeid, json.dumps(node, default=json_serial))
             else:
                 logger.info("Deleted node id {}".format(nodeid))
                 r.hdel(redisNamespace + 'node', nodeid)
