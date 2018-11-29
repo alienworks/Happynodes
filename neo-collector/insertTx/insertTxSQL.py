@@ -235,7 +235,7 @@ def insertRedisBlockheight(blockheightData):
 def updateSql(latencyData, blockheightData, mempoolData):
     t0 = time.time()
 
-    conn = tcp.getconn()
+    conn = tcp.getconn(key="same")
     cursor = conn.cursor()
     
     # batchInsert(cursor, INSERT_LATENCY_SQL, latencyData)
@@ -247,7 +247,7 @@ def updateSql(latencyData, blockheightData, mempoolData):
     batchInsert(cursor, INSERT_UNCONFIRMED_TX_SQL, mempoolData)
 
     conn.commit()
-    tcp.putconn(conn, close=True)
+    tcp.putconn(conn, key="same")
 
     t1 = time.time()
     logger.info('SQL Took %.2f ms' % (1000*(t1-t0)))
