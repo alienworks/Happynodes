@@ -51,7 +51,7 @@ password = str(os.environ['PGPASSWORD'])
 
 dsn = "postgresql://{}:{}@{}/{}".format(user, password, host, databasename)
 MIN_CON = 1
-MAX_CON = 800
+MAX_CON = 100
 tcp = ThreadedConnectionPool(MIN_CON, MAX_CON, dsn)
 
 GET_ENDPOINTS_SQL="""SELECT endpoint.id, 

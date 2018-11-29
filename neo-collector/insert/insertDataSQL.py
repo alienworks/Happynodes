@@ -52,7 +52,7 @@ password = str(os.environ['PGPASSWORD'])
 
 dsn = "postgresql://{}:{}@{}/{}".format(user, password, host, databasename)
 MIN_CON = 1
-MAX_CON = 800
+MAX_CON = 100
 tcp = ThreadedConnectionPool(MIN_CON, MAX_CON, dsn)
 
 last_max_blockheight_ts = -1
