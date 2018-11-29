@@ -407,7 +407,7 @@ def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connec
     insertRedisWalletStatus(wallet_status_data)
 
     conn.commit()
-    tcp.putconn(conn)
+    tcp.putconn(conn, close=True)
 
     t1 = time.time()
     logger.info('SQL Took %.2f ms' % (1000*(t1-t0)))

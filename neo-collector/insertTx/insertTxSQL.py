@@ -247,7 +247,7 @@ def updateSql(latencyData, blockheightData, mempoolData):
     batchInsert(cursor, INSERT_UNCONFIRMED_TX_SQL, mempoolData)
 
     conn.commit()
-    tcp.putconn(conn)
+    tcp.putconn(conn, close=True)
 
     t1 = time.time()
     logger.info('SQL Took %.2f ms' % (1000*(t1-t0)))
