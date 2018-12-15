@@ -119,6 +119,14 @@ class NetworkTable extends Component {
         dataField: 'mempool_size',
         text: 'Unconfirmed Tx',
         sort: true
+      }, {
+        dataField: 'min_ts',
+        text: 'Date first Seen',
+        sort: true
+      }, {
+        dataField: 'last_update_time',
+        text: 'Last Updated',
+        sort: true
       }
       ];
 
