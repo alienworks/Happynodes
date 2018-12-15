@@ -35,6 +35,16 @@ class NodeInfo extends Component {
             }
             const gap = (data.max_blockheight > data.blockheight) ? "(" + (data.blockheight - data.max_blockheight) + ")" : "";
 
+            var date_min_ts = new Date(data.min_ts * 1000);
+            var min_ts = date_min_ts.toLocaleTimeString() + " " + date_min_ts.toLocaleDateString();
+
+            var hours = date_min_ts.getHours();
+            // Minutes part from the timestamp
+            var minutes = "0" + date_min_ts.getMinutes();
+            // Seconds part from the timestamp
+            var seconds = "0" + date_min_ts.getSeconds();
+            // Will display time in 10:30:23 format
+            var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
 
             return (
                 <div className="jumbotron nodes" style={{ display: 'inline-block', width: '100%' }}>
@@ -75,7 +85,7 @@ class NodeInfo extends Component {
                     </div>
 
                     <div className="infoblock">
-                        <h4>{data.min_ts}</h4>
+                        <h4>{min_ts}</h4>
                         <h5>First Recorded</h5>
                     </div>
 
@@ -119,24 +129,24 @@ class NodeInfo extends Component {
                     {data.rcp_http_status ? (
                         <div className="infoblock">
                             <h4>online</h4>
-                            <h5>RCP HTTP Status</h5>
+                            <h5>RPC HTTP Status</h5>
                         </div>
                     ) : (
                             <div className="infoblock">
                                 <h4>offline</h4>
-                                <h5>RCP HTTP Status</h5>
+                                <h5>RPC HTTP Status</h5>
                             </div>
                         )}
 
                     {data.rcp_https_status ? (
                         <div className="infoblock">
                             <h4>online</h4>
-                            <h5>RCP HTTPs Status</h5>
+                            <h5>RPC HTTPS Status</h5>
                         </div>
                     ) : (
                             <div className="infoblock">
                                 <h4>offline</h4>
-                                <h5>RCP HTTPs Status</h5>
+                                <h5>RPC HTTPS Status</h5>
                             </div>
                         )}
 
@@ -159,7 +169,7 @@ class NodeInfo extends Component {
                     </div>
 
                     <div className="infoblock">
-                        <h4>{data.last_update_time}%</h4>
+                        <h4>{data.last_update_time}</h4>
                         <h5>Last Update Time</h5>
                     </div>
 
