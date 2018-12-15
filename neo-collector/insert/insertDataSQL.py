@@ -150,9 +150,9 @@ async def updateEndpoint(url, connectionId):
     if latencyResult != None:
         blockcountResult = await callEndpoint(url, 'getblockcount')
         if maxBlockHeight == -1:
-            max_block_result = await callEndpoint(url, 'getblockcount', params=[10000, 1])
+            max_block_result = await callEndpoint(url, 'getblock', params=[10000, 1])
         else:
-            max_block_result = await callEndpoint(url, 'getblockcount', params=[maxBlockHeight, 1])
+            max_block_result = await callEndpoint(url, 'getblock', params=[maxBlockHeight, 1])
         versionResult = await callEndpoint(url, 'getversion')
         connectioncountResult = await callEndpoint(url, 'getconnectioncount')
         rawmempoolResult = await callEndpoint(url, 'getrawmempool')
