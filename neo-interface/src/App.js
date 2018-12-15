@@ -9,6 +9,7 @@ import BlockSize from './components/BlockSize'
 import LastBlock from './components/LastBlock'
 import BlockTime from './components/BlockTime'
 import NodesByRegion from './components/NodesByRegion'
+import Validators from './components/Validators'
 import NodeInfo from './components/NodeInfo'
 import NodeEdges from './components/NodeEdges'
 import NetworkGraph from './components/NetworkGraph'
@@ -48,6 +49,9 @@ class App extends Component {
           <div className="container-fluid">
           <Route exact path="/" render={({match})=><NodesByRegion/>} />
           <Route path="/:id(\d+)" render={({match})=><NodesByRegion node_id={match.params.id}/>} />
+          <Route exact path="/" render={({match})=><Validators/>} />
+          <Route exact path="/:id(\d+)" render={({match})=><Validators/>} />
+          
           <Route exact path="/unconfirmed" render={({match})=><UnconfirmedTx/>} />
           <Route path="/unconfirmedtxinfo/:tx/:connection_id" render={({match})=><UnconfirmedTx/>} />
           <div className="col col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -62,7 +66,6 @@ class App extends Component {
           <Route path="/table/filterbyversion/:v" render={({match})=><NetworkTable version_filter={match.params.v}/>} />
           
           <Route exact path="/history" render={({match})=><HistoryTest/>} />
-
           </div>
         </div>
         <footer className="App-footer">
