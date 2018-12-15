@@ -321,6 +321,7 @@ def insertRedisBlockInfo(max_block_result_data):
         r = get_redis_instance()
         ts, max_block_result = max_block_result_data[0]
 
+        r.set(redisNamespace+'lastestblock', maxBlockHeight+1)
         r.set(redisNamespace+'lastestblocksize', max_block_result['size'])
         r.set(redisNamespace+'lastesttxcount', len(max_block_result['tx']))
         r.set(redisNamespace+'lastestblocktime', max_block_result['time'])
