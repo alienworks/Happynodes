@@ -93,11 +93,27 @@ router.get('/validators', function (req, res, next) {
     });
 });
 
-router.get('/last_updated_tot_gas', function (req, res, next) {
+router.get('/lastupdatedtotgas', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
     client.get(namespace.concat("last_updated_tot_gas"), function (err, reply) {
         res.json({ last_updated_tot_gas: reply })
+    });
+});
+
+router.get('/activeaddresses', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("activeaddresses"), function (err, reply) {
+        res.json({ activeaddresses: reply })
+    });
+});
+
+router.get('/totaladdresscount', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("total_address_count"), function (err, reply) {
+        res.json({ total_address_count: reply })
     });
 });
 
