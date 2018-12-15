@@ -56,7 +56,7 @@ router.get('/lastestblocksize', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
     client.get(namespace.concat("lastestblocksize"), function (err, reply) {
-        res.json({ blocktime: reply })
+        res.json({ lastestblocksize: reply })
     });
 });
 
@@ -64,7 +64,7 @@ router.get('/lastesttxcount', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
     client.get(namespace.concat("lastesttxcount"), function (err, reply) {
-        res.json({ blocktime: reply })
+        res.json({ lastesttxcount: reply })
     });
 });
 
@@ -72,7 +72,16 @@ router.get('/lastestblocktime', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
     client.get(namespace.concat("lastestblocktime"), function (err, reply) {
-        res.json({ blocktime: reply })
+        res.json({ lastestblocktime: reply })
+    });
+});
+
+
+router.get('/lastestblock', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.mget([namespace.concat("lastestblocksize"), namespace.concat("lastesttxcount"), namespace.concat("lastestblocktime")], function (err, reply) {
+        res.json({ reply })
     });
 });
 
@@ -80,7 +89,7 @@ router.get('/validators', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
     client.get(namespace.concat("validators"), function (err, reply) {
-        res.json({ blocktime: reply })
+        res.json({ validators: reply })
     });
 });
 
