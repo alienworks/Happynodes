@@ -76,6 +76,14 @@ router.get('/lastestblocktime', function (req, res, next) {
     });
 });
 
+router.get('/validators', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("validators"), function (err, reply) {
+        res.json({ blocktime: reply })
+    });
+});
+
 
 router.get('/unconfirmed', function (req, res, next) {
     const client = openRedisConnection();
