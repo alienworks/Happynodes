@@ -92,6 +92,21 @@ text.recharts-text.recharts-cartesian-axis-tick-value {
     color: #3b3b3b;
 }
 
+.top-block.green p {
+  background-color: #00ff0d;
+  color: #3b3b3b;
+}
+
+.top-block.grey p {
+  background-color: #b9b9b9;
+  color: #3b3b3b;
+}
+
+.top-block.orange p {
+  background-color: #fab03a;
+  color: #3b3b3b;
+}
+
 .jumbotron.nodes.padgraph {
     padding-bottom: 8rem !important;
 
@@ -176,9 +191,13 @@ footer.App-footer p {
   border-radius: 0.6rem;
 }
 
-h2, h3, h4 {
+h2, h3, h4, h5, h6 {
   font-weight: 600 !important;
   overflow-wrap: break-word;
+}
+
+ol {
+    padding-left: 0px;
 }
 
 .Footer-app-logo {

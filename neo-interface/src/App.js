@@ -2,10 +2,14 @@ import React, { Component } from 'react';
 import { Router, Route, IndexRoute, BrowserRouter, browserHistory} from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import './App.css';
+import BlockTimeStamp from './components/BlockTimeStamp'
+import NoTx from './components/NoTx'
 import BestBlock from './components/BestBlock'
+import BlockSize from './components/BlockSize'
 import LastBlock from './components/LastBlock'
 import BlockTime from './components/BlockTime'
 import NodesByRegion from './components/NodesByRegion'
+import Validators from './components/Validators'
 import NodeInfo from './components/NodeInfo'
 import NodeEdges from './components/NodeEdges'
 import NetworkGraph from './components/NetworkGraph'
@@ -33,15 +37,23 @@ class App extends Component {
         <header className="App-header">
         
           <Link to='/'><img src={logo} className="App-logo" alt="logo" /></Link>
-           <BestBlock/>
-            <LastBlock/>
-            <BlockTime/>
+          <BlockTimeStamp/>
+          <NoTx/>
+          <BlockSize/>
+          <BestBlock/>
+          <LastBlock/>
+          <BlockTime/>
         </header>
         
         <div className="App-intro">
           <div className="container-fluid">
+          <div className="col col-lg-3 col-md-3 col-sm-12 col-xs-12">
           <Route exact path="/" render={({match})=><NodesByRegion/>} />
           <Route path="/:id(\d+)" render={({match})=><NodesByRegion node_id={match.params.id}/>} />
+          <Route exact path="/" render={({match})=><Validators/>} />
+          <Route exact path="/:id(\d+)" render={({match})=><Validators/>} />
+          </div>
+
           <Route exact path="/unconfirmed" render={({match})=><UnconfirmedTx/>} />
           <Route path="/unconfirmedtxinfo/:tx/:connection_id" render={({match})=><UnconfirmedTx/>} />
           <div className="col col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -56,7 +68,6 @@ class App extends Component {
           <Route path="/table/filterbyversion/:v" render={({match})=><NetworkTable version_filter={match.params.v}/>} />
           
           <Route exact path="/history" render={({match})=><HistoryTest/>} />
-
           </div>
         </div>
         <footer className="App-footer">

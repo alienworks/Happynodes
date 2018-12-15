@@ -15,12 +15,13 @@ class bestblock extends Component {
             return (
                 <div className="top-block blue">
                 <h2>42</h2>
-                <p>BEST BLOCK</p></div>
+                <p>BEST BLOCK</p>
+                </div>
             );
         }
         return (
             <div className="top-block blue">
-            <h2>{Number(bestblock.value.bestblock).toLocaleString()}</h2>
+            <h2>{Number(bestblock.value.reply[0]).toLocaleString()}</h2>
             <p>BEST BLOCK</p></div>
         );
     }
@@ -30,7 +31,7 @@ class bestblock extends Component {
 
 export default connect( (props)=> ({
     bestblock: {
-        url: config.api_url.concat(`/bestblock`),
+        url: config.api_url.concat(`/latestblock`),
         refreshInterval: 3000
     }
 }))(bestblock)
