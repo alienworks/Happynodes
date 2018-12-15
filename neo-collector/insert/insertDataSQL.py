@@ -152,7 +152,7 @@ async def updateEndpoint(url, connectionId):
         if maxBlockHeight == -1:
             max_block_result = await callEndpoint(url, 'getblock', params=[10000, 1])
         else:
-            max_block_result = await callEndpoint(url, 'getblock', params=[maxBlockHeight+1, 1])
+            max_block_result = await callEndpoint(url, 'getblock', params=[maxBlockHeight, 1])
         versionResult = await callEndpoint(url, 'getversion')
         validators_result = await callEndpoint(url, 'getvalidators')
         connectioncountResult = await callEndpoint(url, 'getconnectioncount')
