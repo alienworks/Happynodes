@@ -52,6 +52,30 @@ router.get('/blocktime', function (req, res, next) {
     });
 });
 
+router.get('/lastestblocksize', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("lastestblocksize"), function (err, reply) {
+        res.json({ blocktime: reply })
+    });
+});
+
+router.get('/lastesttxcount', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("lastesttxcount"), function (err, reply) {
+        res.json({ blocktime: reply })
+    });
+});
+
+router.get('/lastestblocktime', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("lastestblocktime"), function (err, reply) {
+        res.json({ blocktime: reply })
+    });
+});
+
 
 router.get('/unconfirmed', function (req, res, next) {
     const client = openRedisConnection();
