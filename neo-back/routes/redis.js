@@ -77,7 +77,7 @@ router.get('/lastestblocktime', function (req, res, next) {
 });
 
 
-router.get('/lastestblock', function (req, res, next) {
+router.get('/latestblock', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
     client.mget([namespace.concat("lastestblock"), namespace.concat("lastestblocksize"), namespace.concat("lastesttxcount"), namespace.concat("lastestblocktime")], function (err, reply) {
