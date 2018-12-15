@@ -356,7 +356,7 @@ def insertRedisBlockheight(blockheightData):
         if result!=None:
             node_info=json.loads(result)
             node_info["blockheight"] = blockcount
-            node_info["last_update_time"] = ts
+            # node_info["last_update_time"] = ts
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
 
     if last_max_blockheight_ts != -1:

@@ -159,7 +159,7 @@ class NodeInfo extends Component {
                     </div>
 
                     <div className="infoblock">
-                        <h4>{data.last_update_time}%</h4>
+                        <h4>{data.last_update_time}</h4>
                         <h5>Last Update Time</h5>
                     </div>
 
