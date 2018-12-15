@@ -76,6 +76,14 @@ class NetworkTable extends Component {
         text: 'Stability',
         sort: true
       }, {
+        dataField: 'wallet_status',
+        text: 'Wallet Open',
+        sort: true,
+        formatter: cell => selectOptions[cell],
+        filter: selectFilter({
+          options: selectOptions
+        })
+      }, {
         dataField: 'p2p_tcp_status',
         text: 'P2P',
         sort: true,
