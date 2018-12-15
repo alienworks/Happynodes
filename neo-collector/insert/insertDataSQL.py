@@ -316,7 +316,7 @@ def insertRedisBlockInfo(max_block_result_data):
     logger.info("hello mother fuckers {}".format(str(max_block_result)))
     r.set(redisNamespace+'lastestblocksize', max_block_result['size'])
     r.set(redisNamespace+'lastesttxcount', len(max_block_result['tx']))
-    r.set(redisNamespace+'lastestblocktime', len(max_block_result['time']))
+    r.set(redisNamespace+'lastestblocktime', max_block_result['time'])
 
 def insertRedisBlockheight(blockheightData):
     global last_max_blockheight_ts
