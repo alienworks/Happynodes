@@ -313,7 +313,7 @@ def batchInsert(cursor, sqlScript, datalist):
 def insertRedisBlockInfo(max_block_result_data):
     r = get_redis_instance()
     ts, max_block_result = max_block_result_data[0]
-    logger.info("hello mother fuckers", max_block_result)
+    logger.info("hello mother fuckers {}".format(str(max_block_result)))
     r.set(redisNamespace+'lastestblocksize', max_block_result['size'])
     r.set(redisNamespace+'lastesttxcount', len(max_block_result['tx']))
     r.set(redisNamespace+'lastestblocktime', len(max_block_result['time']))
