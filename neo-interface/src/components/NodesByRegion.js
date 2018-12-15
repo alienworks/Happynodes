@@ -15,17 +15,17 @@ class NodesByRegion extends Component {
 
         if (nodesbyregion.pending) {
             return (
-                <div className="col col-lg-3 col-md-3 col-sm-12 col-xs-12">
+
                     <div className="jumbotron">
                         <h2>Loading...</h2>
-                    </div></div>
+                    </div>
             )
         } else if (nodesbyregion.rejected) {
             return (
-                <div className="col col-lg-3 col-md-3 col-sm-12 col-xs-12">
+
                     <div>
                         error
-                </div></div>
+                </div>
             )
         } else if (nodesbyregion.fulfilled) {
 
@@ -64,7 +64,7 @@ class NodesByRegion extends Component {
             }
 
             return (
-                <div className="col col-lg-3 col-md-3 col-sm-12 col-xs-12">
+
                     <div className="jumbotron nodes">
                         <h2>Nodes</h2>
                         <h3>Online ({online_asia.length + online_europe.length + online_americas.length})</h3> <hr style={{
@@ -130,7 +130,7 @@ class NodesByRegion extends Component {
                                 </LinkWithTooltip>)
                             }
                         </div>
-                    </div></div>
+                    </div>
             )
         }
     }

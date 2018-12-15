@@ -30,25 +30,40 @@ class Validators extends Component {
             let parsed_allvalidators = JSON.parse(allvalidators)
 
             return (
-                <div className="col col-lg-3 col-md-3 col-sm-12 col-xs-12">
+
                     <div className="jumbotron nodes">
                         <h2>Validators</h2>
-                        <h3>Consensus </h3> <hr style={{
+                        <h3>Consensus Nodes ({parsed_allvalidators.filter(item => item.active).length})</h3> <hr style={{
                             'borderColor': '#78cadd', 'borderWidth': '3px'
                         }} />
 
-                        {parsed_allvalidators.filter(item => item.active).map((item, i) => <h4>Address: {item.publickey }</h4> )
+                        <ol>
+                        {parsed_allvalidators.filter(item => item.active).map((item, i) =>
+                        <li>
+                        <h6>{item.publickey}</h6>
+                        <h5>Votes: {item.votes}</h5>
+                        </li>
+                        )
+
                         }
-                        
+
+                        </ol>
+
                         <br />
-                        <h3 style={{ clear: 'left', 'paddingTop': '2rem' }}>Candidate </h3> <hr style={{
+                        <h3 style={{ clear: 'left', 'paddingTop': '2rem' }}>Candidate Nodes ({parsed_allvalidators.filter(item => !item.active).length})</h3> <hr style={{
                             'borderColor': '#78cadd', 'borderWidth': '3px'
                         }} />
-                        {parsed_allvalidators.filter(item => !item.active).map((item, i) => <h4>Address: {item.publickey } </h4> )
-                        }
-                        }
+                        <ol>
+                        {parsed_allvalidators.filter(item => !item.active).map((item, i) =>
+                        <li>
+                        <h6>{item.publickey}</h6>
+                        <h5>Votes: {item.votes}</h5>
+                        </li>
+                        )
+
+                        }</ol>
                     </div>
-                </div>
+
             )
         }
     }

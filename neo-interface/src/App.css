@@ -191,9 +191,13 @@ footer.App-footer p {
   border-radius: 0.6rem;
 }
 
-h2, h3, h4 {
+h2, h3, h4, h5, h6 {
   font-weight: 600 !important;
   overflow-wrap: break-word;
+}
+
+ol {
+    padding-left: 0px;
 }
 
 .Footer-app-logo {

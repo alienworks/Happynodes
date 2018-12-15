@@ -47,10 +47,12 @@ class App extends Component {
         
         <div className="App-intro">
           <div className="container-fluid">
+          <div className="col col-lg-3 col-md-3 col-sm-12 col-xs-12">
           <Route exact path="/" render={({match})=><NodesByRegion/>} />
           <Route path="/:id(\d+)" render={({match})=><NodesByRegion node_id={match.params.id}/>} />
-          {/* <Route exact path="/" render={({match})=><Validators/>} />
-          <Route exact path="/:id(\d+)" render={({match})=><Validators/>} /> */}
+          <Route exact path="/" render={({match})=><Validators/>} />
+          <Route exact path="/:id(\d+)" render={({match})=><Validators/>} />
+          </div>
 
           <Route exact path="/unconfirmed" render={({match})=><UnconfirmedTx/>} />
           <Route path="/unconfirmedtxinfo/:tx/:connection_id" render={({match})=><UnconfirmedTx/>} />
