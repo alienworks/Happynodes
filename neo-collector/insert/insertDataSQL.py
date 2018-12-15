@@ -16,6 +16,7 @@ import datetime
 import traceback
 import redis
 import sys
+from datetime import timezone
 ssl.match_hostname = lambda cert, hostname: True
 
 logger = logging.getLogger(__name__)
@@ -51,8 +52,10 @@ password = str(os.environ['PGPASSWORD'])
 
 dsn = "postgresql://{}:{}@{}/{}".format(user, password, host, databasename)
 MIN_CON = 1
-MAX_CON = 800
+MAX_CON = 100
 tcp = ThreadedConnectionPool(MIN_CON, MAX_CON, dsn)
+
+last_max_blockheight_ts = -1
 
 GET_ENDPOINTS_SQL="""SELECT endpoint.id, 
                     concat(endpoint.protocol, '://', n.hostname,':' , endpoint.port) AS url 
@@ -104,17 +107,19 @@ async def callEndpoint(url, method):
             return None
 
 async def testPort(url, port):
-    url = url.split(":")[0]
-    url = url + ":" + str(port)
+    url = url[:-5] + str(port)
     timeout = aiohttp.ClientTimeout(total=1)
     async with aiohttp.ClientSession() as session:
         try:
             async with session.post(url, json={'jsonrpc': '2.0', 'method': 'getblockcount', 'params': [], 'id': 1}
                 , timeout=timeout) as response:
-                portOkay = await response.status_code >=200 or response.status_code<300
+                status_code = response.status
+                portOkay = status_code >=200 or status_code<300
                 ts = getSqlDateTime(time.time())
+                logger.info ("url:{} port:{} rpc port looks good".format(url, port))
                 return ts, portOkay
-        except (aiohttp.InvalidURL, aiohttp.ClientConnectorError) as e:
+        except (aiohttp.InvalidURL, aiohttp.ClientConnectorError, asyncio.TimeoutError) as e:
+            logger.info ("url:{} port:{} rpc port times out".format(url, port))
             ts = getSqlDateTime(time.time())
             return ts, False
 
@@ -144,16 +149,18 @@ async def updateEndpoint(url, connectionId):
         connectioncountResult = await callEndpoint(url, 'getconnectioncount')
         rawmempoolResult = await callEndpoint(url, 'getrawmempool')
         peersResult = await callEndpoint(url, 'getpeers')
-        rpc_https_service = await testPort(url, JSON_RPC_HTTPS_PORT)
-        rpc_http_service = await testPort(url, JSON_RPC_HTTP_PORT)
+        rpc_https_service = await testPort( url, JSON_RPC_HTTPS_PORT)
+        rpc_http_service = await testPort( url, JSON_RPC_HTTP_PORT)
+
+        wallet_status = await callEndpoint(url, 'listaddress')
 
         logger.info( "{} done".format(url))
 
         return connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
-                rawmempoolResult, peersResult, rpc_https_service, rpc_http_service
+                rawmempoolResult, peersResult, rpc_https_service, rpc_http_service, wallet_status
     else:
         logger.info( "{} done".format(url))
-        return connectionId, latencyResult, None, None, None, None, None, None, None
+        return connectionId, latencyResult, None, None, None, None, None, None, None, None
     
 
 async def main(endpointslist):
@@ -197,13 +204,15 @@ def prepareSqlInsert(done, ipToEndpointMap):
     validatedPeersHistoryData = []
     validatedPeersCountData = []
 
+    wallet_status_data = []
+
     numTimeout=0
     
     global maxBlockHeight
 
     for task in done:
         connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
-                    rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService = task.result()
+                    rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService, wallet_status = task.result()
 
         if latencyResult!=None:
             ts, latency = latencyResult
@@ -245,6 +254,13 @@ def prepareSqlInsert(done, ipToEndpointMap):
                 ts, rpcHttp = rpcHttpService
                 rcpHttpData.append((ts, connectionId, rpcHttp))
 
+            if wallet_status!=None:
+                ts, _ = wallet_status
+                wallet_status_data.append((ts, connectionId, True))
+            else:
+                ts = getSqlDateTime(time.time())
+                wallet_status_data.append((ts, connectionId, False))
+
             if peersResult!=None:
                 ts, peers = peersResult
                 peers = [ i['address'] for i in (peers["result"]['connected'])]
@@ -272,15 +288,19 @@ def prepareSqlInsert(done, ipToEndpointMap):
             ts = getSqlDateTime(time.time())
             latencyData.append((ts, connectionId, 2))
             onlineData.append((ts, connectionId, False))
+            wallet_status_data.append((ts, connectionId, False))
 
     logger.info("numTimeout {}".format(numTimeout))
     return latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
-        , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData
+        , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData, wallet_status_data
 
 def batchInsert(cursor, sqlScript, datalist):
     psycopg2.extras.execute_values(cursor, sqlScript,datalist)
 
 def insertRedisBlockheight(blockheightData):
+    global last_max_blockheight_ts
+    max_blockheight = -1
+    max_blockheight_ts = -1
     t0 = time.time()
     if "REDIS_PASS" in os.environ:
         # Testing locally
@@ -293,10 +313,21 @@ def insertRedisBlockheight(blockheightData):
 
     for (ts, connectionId, blockcount) in blockheightData:
         result = r.hget(redisNamespace + 'node', connectionId)
+        if blockcount > max_blockheight:
+            max_blockheight = blockcount
+            max_blockheight_ts = ts
         if result!=None:
             node_info=json.loads(result)
             node_info["blockheight"] = blockcount
+            node_info["last_update_time"] = ts
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
+    if last_max_blockheight_ts != -1:
+        a = datetime.datetime.strptime(max_blockheight_ts, '%Y-%m-%d %H:%M:%S')
+        r.set(redisNamespace+'lastblock', 
+            a.replace(tzinfo=timezone.utc).timestamp())
+        
+    last_max_blockheight_ts = max_blockheight_ts
+    r.set(redisNamespace+'bestblock', max_blockheight)
     t1 = time.time()
     logger.info('Redis Took %.2f ms' % (1000*(t1-t0)))
 
@@ -320,11 +351,35 @@ def insertRedisUnconfirmedTxCount(mempoolsizeData):
     t1 = time.time()
     logger.info('insertRedisUnconfirmedTxCount Redis Took %.2f ms' % (1000*(t1-t0)))
 
+def insertRedisWalletStatus(wallet_status_data):
+    if "REDIS_PASS" in os.environ:
+        # Testing locally
+        r = redis.StrictRedis(
+            host=redisHost, port=redisPort, db=redisDb, 
+            password=redisPass)
+    else:
+        r = redis.StrictRedis(
+            host=redisHost, port=redisPort, db=redisDb)
+
+    for ts, connectionId, wallet_status in wallet_status_data:
+        result = r.hget(redisNamespace + 'node', connectionId)
+        if result!=None:
+            node_info=json.loads(result)
+            node_info["wallet_status"] = wallet_status
+            r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
+
+    t1 = time.time()
+    logger.info('insertRedisWalletStatus Redis Took %.2f ms' % (1000*(t1-t0)))
+
+
+
+
+
 def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
-            , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData):
+            , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData, wallet_status_data):
     t0 = time.time()
 
-    conn = tcp.getconn()
+    conn = tcp.getconn(key="same")
     cursor = conn.cursor()
     
     batchInsert(cursor, INSERT_LATENCY_SQL, latencyData)
@@ -349,8 +404,10 @@ def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connec
 
     batchInsert(cursor, INSERT_CONNECTIONS_COUNT_SIZE_SQL, connectionscountData)
 
+    insertRedisWalletStatus(wallet_status_data)
+
     conn.commit()
-    tcp.putconn(conn)
+    tcp.putconn(conn, key="same")
 
     t1 = time.time()
     logger.info('SQL Took %.2f ms' % (1000*(t1-t0)))
@@ -369,10 +426,10 @@ def updateApp():
             done = loop.run_until_complete(main(endpointsList))
 
             latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
-            , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData = prepareSqlInsert(done, ipToEndpointMap)
+            , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData, wallet_status_data = prepareSqlInsert(done, ipToEndpointMap)
 
             updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
-                , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData)
+                , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData, wallet_status_data)
         except Exception as e:
             logger.error(e)
             logger.error(traceback.format_exc())

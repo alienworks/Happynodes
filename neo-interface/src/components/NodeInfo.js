@@ -7,6 +7,7 @@ import config from './config'
 class NodeInfo extends Component {
     render() {
         const { nodeinfo } = this.props;
+        
         if (nodeinfo.pending) {
             return (
 
@@ -22,6 +23,7 @@ class NodeInfo extends Component {
                 </div>
             )
         } else if (nodeinfo.fulfilled) {
+            console.log("nodeinfo", nodeinfo)
 
             const data = nodeinfo.value;
 
@@ -72,6 +74,22 @@ class NodeInfo extends Component {
                         <h5>Version</h5>
                     </div>
 
+                    <div className="infoblock">
+                        <h4>{data.min_ts}</h4>
+                        <h5>First Recorded</h5>
+                    </div>
+
+                    {data.wallet_status ? (
+                        <div className="infoblock">
+                            <h4>open</h4>
+                            <h5>Wallet Status</h5>
+                        </div>
+                    ) : (
+                            <div className="infoblock">
+                                <h4>closed</h4>
+                                <h5>Wallet Status</h5>
+                            </div>
+                        )}
 
                     {data.p2p_tcp_status ? (
                         <div className="infoblock">
@@ -97,6 +115,31 @@ class NodeInfo extends Component {
                             </div>
                         )}
 
+
+                    {data.rcp_http_status ? (
+                        <div className="infoblock">
+                            <h4>online</h4>
+                            <h5>RCP HTTP Status</h5>
+                        </div>
+                    ) : (
+                            <div className="infoblock">
+                                <h4>offline</h4>
+                                <h5>RCP HTTP Status</h5>
+                            </div>
+                        )}
+
+                    {data.rcp_https_status ? (
+                        <div className="infoblock">
+                            <h4>online</h4>
+                            <h5>RCP HTTPs Status</h5>
+                        </div>
+                    ) : (
+                            <div className="infoblock">
+                                <h4>offline</h4>
+                                <h5>RCP HTTPs Status</h5>
+                            </div>
+                        )}
+
                     <div className="infoblock" style={{ clear: 'left' }}>
                         <h4>{data.mempool_size}</h4>
                         <h5>Unconfirmed Transactions</h5>
@@ -113,6 +156,11 @@ class NodeInfo extends Component {
                     <div className="infoblock">
                         <h4>{emojiFlags.countryCode(data.locale).name} ({emojiFlags.countryCode(data.locale).emoji})</h4>
                         <h5>Country</h5>
+                    </div>
+
+                    <div className="infoblock">
+                        <h4>{data.last_update_time}%</h4>
+                        <h5>Last Update Time</h5>
                     </div>
 
                     <h3 style={{ paddingTop: '4rem', clear: 'left' }}>Happynodes Score</h3>

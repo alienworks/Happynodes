@@ -51,7 +51,7 @@ password = str(os.environ['PGPASSWORD'])
 
 dsn = "postgresql://{}:{}@{}/{}".format(user, password, host, databasename)
 MIN_CON = 1
-MAX_CON = 800
+MAX_CON = 100
 tcp = ThreadedConnectionPool(MIN_CON, MAX_CON, dsn)
 
 GET_ENDPOINTS_SQL="""SELECT endpoint.id, 
@@ -235,19 +235,19 @@ def insertRedisBlockheight(blockheightData):
 def updateSql(latencyData, blockheightData, mempoolData):
     t0 = time.time()
 
-    conn = tcp.getconn()
+    conn = tcp.getconn(key="same")
     cursor = conn.cursor()
     
-    batchInsert(cursor, INSERT_LATENCY_SQL, latencyData)
+    # batchInsert(cursor, INSERT_LATENCY_SQL, latencyData)
     
-    batchInsert(cursor, INSERT_BLOCKHEIGHT_SQL, blockheightData)
-    insertRedisBlockheight(blockheightData)
+    # batchInsert(cursor, INSERT_BLOCKHEIGHT_SQL, blockheightData)
+    # insertRedisBlockheight(blockheightData)
 
     logger.info("len(mempoolData) {}".format(len(mempoolData)) )
     batchInsert(cursor, INSERT_UNCONFIRMED_TX_SQL, mempoolData)
 
     conn.commit()
-    tcp.putconn(conn)
+    tcp.putconn(conn, key="same")
 
     t1 = time.time()
     logger.info('SQL Took %.2f ms' % (1000*(t1-t0)))

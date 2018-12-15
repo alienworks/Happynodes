@@ -87,25 +87,35 @@ if __name__ == "__main__":
 
         cursor = conn.cursor()
 
-        cursor.execute(GET_MAX_BLOCKHEIGHT_SQL)
+        # cursor.execute(GET_MAX_BLOCKHEIGHT_SQL)
 
-        result = cursor.fetchall()
+        # result = cursor.fetchall()
 
-        r.set(redisNamespace+'bestblock', 
-            result[0][0])
+# <<<<<<< HEAD
+#         # r.set(redisNamespace+'bestblock', result[0][0])
+# =======
+#         r.set(redisNamespace+'bestblock', 
+#             result[0][0])
         
-        logger.info("bestblock")
-        logger.info((r.get(redisNamespace+'bestblock')))
+#         logger.info("bestblock")
+#         logger.info((r.get(redisNamespace+'bestblock')))
+# >>>>>>> cb20c9c3cc714e1a76106104be8b1273d30d7d3a
 
-        cursor.execute(GET_LASTBLOCK_TIME_SQL)
+#         # cursor.execute(GET_LASTBLOCK_TIME_SQL)
 
-        result = cursor.fetchall()
+#         # result = cursor.fetchall()
 
-        r.set(redisNamespace+'lastblock', 
-            result[0][0])
+# <<<<<<< HEAD
+#         # r.set(redisNamespace+'lastblock', result[0][0])
 
-        logger.info("lastblock")
-        logger.info(float(r.get(redisNamespace+'lastblock')))
+#         # print(float(r.get(redisNamespace+'lastblock')))
+# =======
+#         r.set(redisNamespace+'lastblock', 
+#             result[0][0])
+
+#         logger.info("lastblock")
+#         logger.info(float(r.get(redisNamespace+'lastblock')))
+# >>>>>>> cb20c9c3cc714e1a76106104be8b1273d30d7d3a
 
         cursor.execute(GET_AVG_BLOCK_TIME_SQL)
 
