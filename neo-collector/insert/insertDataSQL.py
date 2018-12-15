@@ -326,7 +326,8 @@ def insertRedisBlockInfo(max_block_result_data):
         r.set(redisNamespace+'lastesttxcount', len(max_block_result['tx']))
         r.set(redisNamespace+'lastestblocktime', max_block_result['time'])
 
-        logger.info("helllllloooo mother fucking {}", str(max_block_result))
+    else:
+        logger.info("nothing in the list motherfucker")
 
 def insertRedisValidators(validators_result_data):
     r = get_redis_instance()
