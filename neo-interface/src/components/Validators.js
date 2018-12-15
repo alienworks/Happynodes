@@ -9,17 +9,17 @@ class Validators extends Component {
 
         if (validators.pending) {
             return (
-                <div className="col col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                    <div className="jumbotron">
+
+                    <div className="jumbotron nodes">
                         <h2>Loading...</h2>
-                    </div></div>
+                    </div>
             )
         } else if (validators.rejected) {
             return (
-                <div className="col col-lg-3 col-md-3 col-sm-12 col-xs-12">
+
                     <div>
                         error
-                </div></div>
+                </div>
             )
         } else if (validators.fulfilled) {
             
