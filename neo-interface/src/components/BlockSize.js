@@ -15,14 +15,14 @@ class blocksize extends Component {
             return (
                 <div className="top-block orange">
                 <h2>42</h2>
-                <p>BEST BLOCK</p>
+                <p>BLOCK SIZE</p>
                 </div>
             );
         }
         return (
             <div className="top-block orange">
             <h2>{Number(blocksize.value.reply[1]).toLocaleString()}</h2>
-            <p>BEST BLOCK</p></div>
+            <p>BLOCK SIZE</p></div>
         );
     }
 }
