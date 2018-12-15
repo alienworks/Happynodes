@@ -396,10 +396,6 @@ def insertRedisWalletStatus(wallet_status_data):
             node_info["wallet_status"] = wallet_status
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
 
-    t1 = time.time()
-    logger.info('insertRedisWalletStatus Redis Took %.2f ms' % (1000*(t1-t0)))
-
-
 
 def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
             , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData, wallet_status_data, max_block_result_data):
