@@ -239,9 +239,9 @@ def prepareSqlInsert(done, ipToEndpointMap):
                 if blockcount["result"]> maxBlockHeight:
                     maxBlockHeight=blockcount["result"]
 
-            if max_block_result_data!= None:
-                ts, max_block_result = max_block_result_data
-                max_block_result_data.append((ts, max_block_result["result"]))
+            if max_block_result!= None:
+                ts, max_block_info = max_block_result
+                max_block_result_data.append((ts, max_block_info["result"]))
             
             if connectioncountResult!=None:
                 ts, connectioncount = connectioncountResult
