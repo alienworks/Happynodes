@@ -751,7 +751,7 @@ left join (
 left join (
 		select
 			connection_id,
-			min( ts ) as ts
+			min(extract(epoch from ts) ) as ts
 		from
 			public.online_history
 		group by
