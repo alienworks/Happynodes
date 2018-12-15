@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { Router, Route, IndexRoute, BrowserRouter, browserHistory} from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import './App.css';
+import BlockTimeStamp from './components/BlockTimeStamp'
+import NoTx from './components/NoTx'
 import BestBlock from './components/BestBlock'
+import BlockSize from './components/BlockSize'
 import LastBlock from './components/LastBlock'
 import BlockTime from './components/BlockTime'
 import NodesByRegion from './components/NodesByRegion'
@@ -33,9 +36,12 @@ class App extends Component {
         <header className="App-header">
         
           <Link to='/'><img src={logo} className="App-logo" alt="logo" /></Link>
-           <BestBlock/>
-            <LastBlock/>
-            <BlockTime/>
+          <BlockTimeStamp/>
+          <NoTx/>
+          <BlockSize/>
+          <BestBlock/>
+          <LastBlock/>
+          <BlockTime/>
         </header>
         
         <div className="App-intro">

@@ -92,6 +92,21 @@ text.recharts-text.recharts-cartesian-axis-tick-value {
     color: #3b3b3b;
 }
 
+.top-block.green p {
+  background-color: #00ff0d;
+  color: #3b3b3b;
+}
+
+.top-block.grey p {
+  background-color: #b9b9b9;
+  color: #3b3b3b;
+}
+
+.top-block.orange p {
+  background-color: #fab03a;
+  color: #3b3b3b;
+}
+
 .jumbotron.nodes.padgraph {
     padding-bottom: 8rem !important;
 
