@@ -82,18 +82,7 @@ INSERT_UNCONFIRMED_TX_SQL =  "INSERT INTO unconfirmed_tx (last_blockheight, conn
 INSERT_MEMPOOL_SIZE_SQL =  "INSERT INTO mempool_size_history (ts, connection_id, mempool_size) VALUES %s"
 INSERT_CONNECTIONS_COUNT_SIZE_SQL = "INSERT INTO connection_counts_history (ts, connection_id, connection_counts) VALUES %s"
 
-
-
-LATENCY_COUNT = 0
-BLOCKHEIGHT_COUNT = 0
-ONLINE_COUNT = 0
-VERSION_COUNT = 0
-RPC_HTTP_COUNT = 0
-RPC_HTTPS_COUNT = 0
-MEMPOOL_SIZE_COUNT = 0
-CONNECTIONS_COUNT_SIZE_COUNT = 0
-
-
+COUNTS_ENDPOINT = 0
 
 def getSqlDateTime(ts):
     return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
@@ -158,6 +147,7 @@ async def getLatency(url):
             return None
 
 async def updateEndpoint(url, connectionId):
+    global COUNTS_ENDPOINT
     max_block_result = None
     latencyResult = await getLatency(url)
     if latencyResult != None:
@@ -166,13 +156,38 @@ async def updateEndpoint(url, connectionId):
             max_block_result = await callEndpoint(url, 'getblock', params=[10000, 1])
         else:
             max_block_result = await callEndpoint(url, 'getblock', params=[maxBlockHeight+1, 1])
-        versionResult = await callEndpoint(url, 'getversion')
-        validators_result = await callEndpoint(url, 'getvalidators')
-        connectioncountResult = await callEndpoint(url, 'getconnectioncount')
+
+        if COUNTS_ENDPOINT%3000==0:
+            versionResult = await callEndpoint(url, 'getversion')
+        else:
+            versionResult = None
+
+        if COUNTS_ENDPOINT%3000==0:
+            validators_result = await callEndpoint(url, 'getvalidators')
+        else:
+            validators_result = None
+
+        if COUNTS_ENDPOINT%300==0:
+            connectioncountResult = await callEndpoint(url, 'getconnectioncount')
+        else:
+            connectioncountResult = None
+
         rawmempoolResult = await callEndpoint(url, 'getrawmempool')
-        peersResult = await callEndpoint(url, 'getpeers')
-        rpc_https_service = await testPort( url, JSON_RPC_HTTPS_PORT)
-        rpc_http_service = await testPort( url, JSON_RPC_HTTP_PORT)
+
+        if COUNTS_ENDPOINT%300==0:
+            peersResult = await callEndpoint(url, 'getpeers')
+        else:
+            peersResult = None
+
+        if COUNTS_ENDPOINT%3000==0:
+            rpc_https_service = await testPort( url, JSON_RPC_HTTPS_PORT)
+        else:
+            rpc_https_service = None
+
+        if COUNTS_ENDPOINT%3000==0:
+            rpc_http_service = await testPort( url, JSON_RPC_HTTP_PORT)
+        else:
+            rpc_http_service = None
 
         wallet_status = await callEndpoint(url, 'listaddress')
 
@@ -186,9 +201,12 @@ async def updateEndpoint(url, connectionId):
     
 
 async def main(endpointslist):
+    global COUNTS_ENDPOINT
     logger.info( "size of endpoints list {} done".format(len(endpointslist)))
     t0 = time.time()
     done, pending = await asyncio.wait([updateEndpoint(url, id) for id, url in endpointslist])
+
+    COUNTS_ENDPOINT = COUNTS_ENDPOINT + 1
 
     t1 = time.time()
     logger.info('Asyncio Took %.2f ms' % (1000*(t1-t0)))
@@ -233,6 +251,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
     numTimeout=0
     
     global maxBlockHeight
+    global COUNTS_ENDPOINT
 
     for task in done:
         connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
@@ -240,8 +259,10 @@ def prepareSqlInsert(done, ipToEndpointMap):
 
         if latencyResult!=None:
             ts, latency = latencyResult
-            latencyData.append( (ts, connectionId, latency))
-            onlineData.append( (ts, connectionId, True))
+
+            if COUNTS_ENDPOINT%300:
+                latencyData.append( (ts, connectionId, latency))
+                onlineData.append( (ts, connectionId, True))
 
             if versionResult!=None:
                 ts, version = versionResult
@@ -318,8 +339,9 @@ def prepareSqlInsert(done, ipToEndpointMap):
         else:
             numTimeout = numTimeout + 1
             ts = getSqlDateTime(time.time())
-            latencyData.append((ts, connectionId, 2))
-            onlineData.append((ts, connectionId, False))
+            if COUNTS_ENDPOINT%300:
+                latencyData.append((ts, connectionId, 2))
+                onlineData.append((ts, connectionId, False))
             wallet_status_data.append((ts, connectionId, False))
 
     logger.info("numTimeout {}".format(numTimeout))
@@ -333,7 +355,6 @@ def insertRedisBlockInfo(max_block_result_data):
     if len(max_block_result_data)!=0:
         r = get_redis_instance()
         ts, max_block_result = max_block_result_data[0]
-
         r.set(redisNamespace+'lastestblock', max_block_result['index'])
         r.set(redisNamespace+'lastestblocksize', max_block_result['size'])
         r.set(redisNamespace+'lastesttxcount', len(max_block_result['tx']))
