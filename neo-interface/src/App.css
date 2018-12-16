@@ -93,12 +93,17 @@ text.recharts-text.recharts-cartesian-axis-tick-value {
 }
 
 .top-block.green p {
-  background-color: #00ff0d;
+  background-color: #ace6af;
   color: #3b3b3b;
 }
 
-.top-block.grey p {
-  background-color: #b9b9b9;
+.top-block.olive p {
+  background-color: #a5ca49;
+  color: #3b3b3b;
+}
+
+.top-block.red p {
+  background-color: #e6a3a3;
   color: #3b3b3b;
 }
 

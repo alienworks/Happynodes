@@ -40,7 +40,7 @@ class LastTime extends Component {
         return (
             <div className="top-block pink">
 
-                <h2>{this.state.seconds}s ago</h2>
+                <h3>{this.state.seconds}s ago</h3>
 
 
                 <p>LAST BLOCK SEEN</p></div>

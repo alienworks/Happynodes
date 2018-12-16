@@ -14,8 +14,8 @@ class blocktimestamp extends Component {
         }
         if (blocktimestamp.value === null || blocktimestamp.value === 'undefined'){
             return (
-                <div className="top-block grey">
-                <h2>42</h2>
+                <div className="top-block red">
+                <h3>42</h3>
                 <p>BLOCK TIMESTAMP</p>
                 </div>
             );
@@ -32,8 +32,8 @@ class blocktimestamp extends Component {
         var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
 
         return (
-            <div className="top-block grey">
-            <h2>{formattedTime}</h2>
+            <div className="top-block red">
+            <h3>{formattedTime}</h3>
             <p>BLOCK TIMESTAMP</p></div>
         );
     }
