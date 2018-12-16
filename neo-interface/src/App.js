@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Router, Route, IndexRoute, BrowserRouter, browserHistory} from 'react-router-dom'
+import { Route, BrowserRouter} from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import './App.css';
 import LatestBlockInfo from './components/LatestBlockInfo'
