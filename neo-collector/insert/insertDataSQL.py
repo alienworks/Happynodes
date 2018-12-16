@@ -428,6 +428,7 @@ def insertRedisLatency(latencyData):
             node_info["list_of_latency"] = list_latency
             node_info["average_latency"] = statistics.median(list_latency)
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
+            logger.info("inserting latency for connectionId {}".format(connectionId))
 
 
 def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
