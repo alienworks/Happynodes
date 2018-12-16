@@ -817,9 +817,9 @@ if __name__ == "__main__":
             stability_1000 = node_info[25]
 
             blockheight = None
-            redis_node={}
 
             if(redis_node == None):
+                redis_node={}
                 blockheight = node_info[19]
             else:
                 redis_node = json.loads(redis_node)
