@@ -819,7 +819,6 @@ if __name__ == "__main__":
             blockheight = None
 
             if(redis_node == None):
-                redis_node={}
                 blockheight = node_info[19]
             else:
                 redis_node = json.loads(redis_node)
