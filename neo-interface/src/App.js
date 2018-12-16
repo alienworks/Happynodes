@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import { Router, Route, IndexRoute, BrowserRouter, browserHistory} from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import './App.css';
-import BlockTimeStamp from './components/BlockTimeStamp'
-import NoTx from './components/NoTx'
-import BestBlock from './components/BestBlock'
-import BlockSize from './components/BlockSize'
+import LatestBlockInfo from './components/LatestBlockInfo'
+import NetworkStatistics from './components/NetworkStatistics'
 import LastBlock from './components/LastBlock'
 import BlockTime from './components/BlockTime'
 import NodesByRegion from './components/NodesByRegion'
@@ -37,10 +35,7 @@ class App extends Component {
         <header className="App-header">
         
           <Link to='/'><img src={logo} className="App-logo" alt="logo" /></Link>
-          <BlockTimeStamp/>
-          <NoTx/>
-          <BlockSize/>
-          <BestBlock/>
+          <LatestBlockInfo/>
           <LastBlock/>
           <BlockTime/>
         </header>
@@ -50,12 +45,16 @@ class App extends Component {
           <div className="col col-lg-3 col-md-3 col-sm-12 col-xs-12">
           <Route exact path="/" render={({match})=><NodesByRegion/>} />
           <Route path="/:id(\d+)" render={({match})=><NodesByRegion node_id={match.params.id}/>} />
+          <Route exact path="/" render={({match})=><NetworkStatistics/>} />
+          <Route exact path="/:id(\d+)" render={({match})=><NetworkStatistics/>} />
           <Route exact path="/" render={({match})=><Validators/>} />
           <Route exact path="/:id(\d+)" render={({match})=><Validators/>} />
-          </div>
-
           <Route exact path="/unconfirmed" render={({match})=><UnconfirmedTx/>} />
           <Route path="/unconfirmedtxinfo/:tx/:connection_id" render={({match})=><UnconfirmedTx/>} />
+          </div>
+
+
+
           <div className="col col-lg-9 col-md-9 col-sm-12 col-xs-12">
             <Route path="/:id(\d+)" render={({match})=><NodeInfo node_id={match.params.id}/>} />
             <Route path="/:id(\d+)" render={({match})=><NodeEdges node_id={match.params.id}/>} />

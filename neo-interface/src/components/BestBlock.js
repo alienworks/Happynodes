@@ -14,15 +14,15 @@ class bestblock extends Component {
         if (bestblock.value === null || bestblock.value === 'undefined'){
             return (
                 <div className="top-block blue">
-                <h2>42</h2>
-                <p>BEST BLOCK</p>
+                <h3>42</h3>
+                <p>LATEST BLOCK</p>
                 </div>
             );
         }
         return (
             <div className="top-block blue">
-            <h2>{Number(bestblock.value.reply[0]).toLocaleString()}</h2>
-            <p>BEST BLOCK</p></div>
+            <h3>{Number(bestblock.value.reply[0]).toLocaleString()}</h3>
+            <p>LATEST BLOCK</p></div>
         );
     }
 }

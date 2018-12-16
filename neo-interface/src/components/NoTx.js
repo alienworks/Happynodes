@@ -14,15 +14,15 @@ class notx extends Component {
         if (notx.value === null || notx.value === 'undefined'){
             return (
                 <div className="top-block green">
-                <h2>42</h2>
+                <h3>42</h3>
                 <p>NO. TX</p>
                 </div>
             );
         }
         return (
             <div className="top-block green">
-            <h2>{Number(notx.value.reply[2]).toLocaleString()}</h2>
-            <p>NO. TX</p></div>
+            <h3>{Number(notx.value.reply[2]).toLocaleString()}</h3>
+            <p>TRANSACTIONS</p></div>
         );
     }
 }
