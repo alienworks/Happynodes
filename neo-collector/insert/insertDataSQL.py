@@ -83,6 +83,7 @@ INSERT_MEMPOOL_SIZE_SQL =  "INSERT INTO mempool_size_history (ts, connection_id,
 INSERT_CONNECTIONS_COUNT_SIZE_SQL = "INSERT INTO connection_counts_history (ts, connection_id, connection_counts) VALUES %s"
 
 
+
 LATENCY_COUNT = 0
 BLOCKHEIGHT_COUNT = 0
 ONLINE_COUNT = 0
@@ -91,6 +92,7 @@ RPC_HTTP_COUNT = 0
 RPC_HTTPS_COUNT = 0
 MEMPOOL_SIZE_COUNT = 0
 CONNECTIONS_COUNT_SIZE_COUNT = 0
+
 
 
 def getSqlDateTime(ts):
@@ -162,10 +164,8 @@ async def updateEndpoint(url, connectionId):
         blockcountResult = await callEndpoint(url, 'getblockcount')
         if maxBlockHeight == -1:
             max_block_result = await callEndpoint(url, 'getblock', params=[10000, 1])
-            max_block_result_1 = max_block_result
         else:
             max_block_result = await callEndpoint(url, 'getblock', params=[maxBlockHeight+1, 1])
-            max_block_result_1 = await callEndpoint(url, 'getblock', params=[maxBlockHeight, 1])
         versionResult = await callEndpoint(url, 'getversion')
         validators_result = await callEndpoint(url, 'getvalidators')
         connectioncountResult = await callEndpoint(url, 'getconnectioncount')
@@ -179,7 +179,7 @@ async def updateEndpoint(url, connectionId):
         logger.info( "{} done".format(url))
 
         return connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
-                rawmempoolResult, peersResult, rpc_https_service, rpc_http_service, wallet_status, (max_block_result, max_block_result_1), validators_result
+                rawmempoolResult, peersResult, rpc_https_service, rpc_http_service, wallet_status, max_block_result, validators_result
     else:
         logger.info( "{} done".format(url))
         return connectionId, latencyResult, None, None, None, None, None, None, None, None, None, None
@@ -236,9 +236,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
 
     for task in done:
         connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
-                    rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService, wallet_status, (max_block_result, max_block_result_1), validators_result = task.result()
-
-        max_block_result = max_block_result if max_block_result else max_block_result_1
+                    rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService, wallet_status, max_block_result, validators_result = task.result()
 
         if latencyResult!=None:
             ts, latency = latencyResult
