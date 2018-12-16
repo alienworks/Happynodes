@@ -162,10 +162,7 @@ async def updateEndpoint(url, connectionId):
         else:
             versionResult = None
 
-        if COUNTS_ENDPOINT%3000==0:
-            validators_result = await callEndpoint(url, 'getvalidators')
-        else:
-            validators_result = None
+        validators_result = await callEndpoint(url, 'getvalidators')
 
         if COUNTS_ENDPOINT%300==0:
             connectioncountResult = await callEndpoint(url, 'getconnectioncount')
