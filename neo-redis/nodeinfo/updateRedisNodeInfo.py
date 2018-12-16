@@ -812,6 +812,7 @@ if __name__ == "__main__":
         result = cursor.fetchall()
         for node_info in result:
             nodeid = node_info[0]
+			logger.info("nodeid {}".format(nodeid))
             redis_node = r.hget(redisNamespace + 'node', nodeid)
             stability_1000 = node_info[25]
 
