@@ -414,12 +414,11 @@ def insertRedisWalletStatus(wallet_status_data):
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
 
 def insertRedisLatency(latencyData):
-    logger.info("latencyData {}".format(latencyData))
     r = get_redis_instance()
     for ts, connectionId, latency in latencyData:
         result = r.hget(redisNamespace + 'node', connectionId)
         if result==None:
-            return
+            continue
         else:
             node_info=json.loads(result)
             list_latency = node_info.get("list_of_latency", [])
