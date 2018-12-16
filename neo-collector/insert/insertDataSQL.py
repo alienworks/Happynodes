@@ -414,6 +414,7 @@ def insertRedisWalletStatus(wallet_status_data):
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
 
 def insertRedisLatency(latencyData):
+    logger.info("latencyData", latencyData)
     r = get_redis_instance()
     for ts, connectionId, latency in latencyData:
         result = r.hget(redisNamespace + 'node', connectionId)
