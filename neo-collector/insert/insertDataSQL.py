@@ -412,6 +412,21 @@ def insertRedisWalletStatus(wallet_status_data):
             node_info["wallet_status"] = wallet_status
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
 
+def insertRedisLatency(latencyData):
+    r = get_redis_instance()
+    for ts, connectionId, latency in latencyData:
+        result = r.hget(redisNamespace + 'node', connectionId)
+        if result==None:
+            return
+        else:
+            node_info=json.loads(result)
+            list_latency = node_info.get("list_of_latency", [])
+            list_latency.append(latency)
+            if len(list_latency) > 200:
+                list_latency.pop()
+            node_info["list_of_latency"] = list_latency
+            r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
+
 
 def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connectionscountData, onlineData\
             , versionData, rcpHttpData, rcpHttpsData, validatedPeersHistoryData, validatedPeersCountData, wallet_status_data, max_block_result_data, validators_result_data):
@@ -423,6 +438,7 @@ def updateSql(latencyData, blockheightData, mempoolsizeData, mempoolData, connec
     insertRedisValidators(validators_result_data)
     
     batchInsert(cursor, INSERT_LATENCY_SQL, latencyData)
+    insertRedisLatency(latencyData)
     
     batchInsert(cursor, INSERT_BLOCKHEIGHT_SQL, blockheightData)
     insertRedisBlockheight(blockheightData)

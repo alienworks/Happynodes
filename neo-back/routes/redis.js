@@ -125,6 +125,14 @@ router.get('/addressesstat', function (req, res, next) {
     });
 });
 
+router.get('/networkstatistics', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.mget([namespace.concat("total_address_count"), namespace.concat("activeaddresses"), namespace.concat("last_updated_tot_gas"), namespace.concat("last_updated_block")], function (err, reply) {
+        res.json({ addressesstat: reply })
+    });
+});
+
 
 router.get('/unconfirmed', function (req, res, next) {
     const client = openRedisConnection();
