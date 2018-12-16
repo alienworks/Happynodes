@@ -257,7 +257,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
         if latencyResult!=None:
             ts, latency = latencyResult
 
-            if COUNTS_ENDPOINT%300:
+            if COUNTS_ENDPOINT%100:
                 latencyData.append( (ts, connectionId, latency))
                 onlineData.append( (ts, connectionId, True))
 
@@ -336,7 +336,7 @@ def prepareSqlInsert(done, ipToEndpointMap):
         else:
             numTimeout = numTimeout + 1
             ts = getSqlDateTime(time.time())
-            if COUNTS_ENDPOINT%300:
+            if COUNTS_ENDPOINT%100:
                 latencyData.append((ts, connectionId, 2))
                 onlineData.append((ts, connectionId, False))
             wallet_status_data.append((ts, connectionId, False))
