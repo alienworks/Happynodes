@@ -426,7 +426,7 @@ def insertRedisLatency(latencyData):
             if len(list_latency) > 200:
                 list_latency.pop()
             node_info["list_of_latency"] = list_latency
-            node_info["average_latency"] = statistics.median(list_latency)
+            node_info["average_latency"] = statistics.median(list_latency)*1000
             r.hset(redisNamespace + 'node', connectionId, json.dumps(node_info))
             logger.info("inserting latency for connectionId {}".format(connectionId))
 
