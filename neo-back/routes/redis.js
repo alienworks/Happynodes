@@ -133,7 +133,6 @@ router.get('/networkstatistics', function (req, res, next) {
     });
 });
 
-
 router.get('/unconfirmed', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
