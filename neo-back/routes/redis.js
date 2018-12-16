@@ -101,19 +101,11 @@ router.get('/lastupdatedtotgas', function (req, res, next) {
     });
 });
 
-router.get('/activeaddresses', function (req, res, next) {
+router.get('/addressesstat', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
-    client.get(namespace.concat("activeaddresses"), function (err, reply) {
-        res.json({ activeaddresses: reply })
-    });
-});
-
-router.get('/totaladdresscount', function (req, res, next) {
-    const client = openRedisConnection();
-    const namespace = process.env.REDIS_NAMESPACE
-    client.get(namespace.concat("total_address_count"), function (err, reply) {
-        res.json({ total_address_count: reply })
+    client.mget([namespace.concat("activeaddresses"), namespace.concat("total_address_count")], function (err, reply) {
+        res.json({ addressesstat: reply })
     });
 });
 
