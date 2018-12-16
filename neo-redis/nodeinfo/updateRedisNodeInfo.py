@@ -816,6 +816,8 @@ if __name__ == "__main__":
             stability_1000 = node_info[25]
 
             blockheight = None
+            redis_node={}
+
             if(redis_node == None):
                 blockheight = node_info[19]
             else:
@@ -825,7 +827,7 @@ if __name__ == "__main__":
             diffBlockheight = abs(blockheight-bestblock)
 
             if stability_1000 != 0 and diffBlockheight<600000:
-                node = {**node_info,
+                node = {**redis_node,
 						"id": node_info[0],
                         "hostname": node_info[1],
                         "protocol": node_info[2],
