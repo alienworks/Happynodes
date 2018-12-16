@@ -178,11 +178,8 @@ async def updateEndpoint(url, connectionId):
 
         logger.info( "{} done".format(url))
 
-
-        max_block_result = max_block_result if len(max_block_result)> 0 else max_block_result_1
-
         return connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
-                rawmempoolResult, peersResult, rpc_https_service, rpc_http_service, wallet_status, max_block_result, validators_result
+                rawmempoolResult, peersResult, rpc_https_service, rpc_http_service, wallet_status, (max_block_result, max_block_result_1), validators_result
     else:
         logger.info( "{} done".format(url))
         return connectionId, latencyResult, None, None, None, None, None, None, None, None, None, None
@@ -239,7 +236,9 @@ def prepareSqlInsert(done, ipToEndpointMap):
 
     for task in done:
         connectionId, latencyResult, blockcountResult, versionResult, connectioncountResult,\
-                    rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService, wallet_status, max_block_result, validators_result = task.result()
+                    rawmempoolResult, peersResult, rpcHttpsService, rpcHttpService, wallet_status, (max_block_result, max_block_result_1), validators_result = task.result()
+
+        max_block_result = max_block_result if max_block_result else max_block_result_1
 
         if latencyResult!=None:
             ts, latency = latencyResult
