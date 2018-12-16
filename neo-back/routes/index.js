@@ -168,6 +168,26 @@ router.post('/unconfirmed/tx/:connection_id/:tx', cache('5 minutes'), function (
 		})
 });
 
+router.post('/block/:blockid', cache('5 minutes'), function (req, res, next) {
+	let blockid = req.params.blockid;
+	nel_url = "https://api.nel.group/api/mainnet";
+	axios.post(nel_url, {
+							"jsonrpc": "2.0",
+							"method": "getblock",
+							"params": [blockid],
+							"id": 1
+						})
+						.then(function (response) {
+							console.log(response);
+							res.json({ data: response.data });
+						})
+						.catch(function (error) {
+							console.log(error);
+							res.json({ error });
+						});
+	});
+
+
 // select min(A.ts), min(B.ts), (min(A.ts) - min(B.ts)) / 39 as avg
 // from blockheight_history A, blockheight_history B
 // where A.blockheight in (select max(blockheight)  

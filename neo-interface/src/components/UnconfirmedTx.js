@@ -13,18 +13,18 @@ class UnconfirmedTx extends Component {
 
         if (unconfirmed.pending || bestBlock.pending) {
             return (
-                <div className="col col-lg-3 col-md-3 col-sm-12 col-xs-12">
+
                     <div className="jumbotron">
                         <h2>Loading...</h2>
-                    </div></div>
+                    </div>
             )
         } else if (unconfirmed.rejected || bestBlock.rejected) {
 
             return (
-                <div className="col col-lg-3 col-md-3 col-sm-12 col-xs-12">
+
                     <div>
                         error
-                </div></div>
+                </div>
             )
         } else if (unconfirmed.fulfilled && bestBlock.fulfilled) {
 
@@ -33,7 +33,7 @@ class UnconfirmedTx extends Component {
             const top_20_txs = txs.slice(0, 20);
 
             return (
-                <div className="col col-lg-3 col-md-3 col-sm-12 col-xs-12">
+
                     <div className="jumbotron nodes">
                         <h2>{txs.length} Unconfirmed Transactions for block {(last_block + 1).toLocaleString()}</h2>
 
@@ -54,7 +54,7 @@ class UnconfirmedTx extends Component {
                                 )}
                             </tbody></table>
 
-                    </div></div>
+                    </div>
             )
         }
     }

@@ -116,17 +116,25 @@ class NetworkTable extends Component {
         sort: true,
         formatter: (cell) => { return cell === 200 ? "Can't be reached" : parseFloat(cell).toFixed(2) }
       }, {
+        dataField: 'average_latency',
+        text: 'Avg Latency',
+        sort: true,
+        formatter: (cell) => { return cell === 200 ? "Can't be reached" : parseFloat(cell).toFixed(2) }
+      }, {
         dataField: 'mempool_size',
         text: 'Unconfirmed Tx',
         sort: true
       }, {
         dataField: 'min_ts',
         text: 'Date first Seen',
-        sort: true
+        sort: true,
+        formatter: (cell) => { return new Date(cell * 1000).toLocaleTimeString() + " " + new Date(cell * 1000).toLocaleDateString()}
+
       }, {
         dataField: 'last_update_time',
         text: 'Last Updated',
-        sort: true
+        sort: true,
+        formatter: (cell) => { return new Date(cell * 1000).toLocaleTimeString() + " " + new Date(cell * 1000).toLocaleDateString()}
       }
       ];
 

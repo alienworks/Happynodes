@@ -14,14 +14,14 @@ class blocksize extends Component {
         if (blocksize.value === null || blocksize.value === 'undefined'){
             return (
                 <div className="top-block orange">
-                <h2>42</h2>
+                <h3>42</h3>
                 <p>BLOCK SIZE</p>
                 </div>
             );
         }
         return (
             <div className="top-block orange">
-            <h2>{Number(blocksize.value.reply[1]).toLocaleString()}</h2>
+            <h3>{Number(blocksize.value.reply[1]).toLocaleString()}</h3>
             <p>BLOCK SIZE</p></div>
         );
     }

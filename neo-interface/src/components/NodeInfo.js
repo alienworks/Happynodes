@@ -36,6 +36,8 @@ class NodeInfo extends Component {
             const gap = (data.max_blockheight > data.blockheight) ? "(" + (data.blockheight - data.max_blockheight) + ")" : "";
 
             var date_min_ts = new Date(data.min_ts * 1000);
+            var date_last_ts = new Date(data.last_update_time * 1000);
+            var last_ts = date_last_ts.toLocaleTimeString() + " " + date_last_ts.toLocaleDateString();
             var min_ts = date_min_ts.toLocaleTimeString() + " " + date_min_ts.toLocaleDateString();
 
             var hours = date_min_ts.getHours();
@@ -75,6 +77,11 @@ class NodeInfo extends Component {
                     <div className="infoblock">
                         <h4>{Number((Number(data.latency)).toFixed(0)).toLocaleString()}</h4>
                         <h5>Server Side Latency (ms)</h5>
+                    </div>
+
+                    <div className="infoblock">
+                        <h4>{Number((Number(data.average_latency)).toFixed(0)).toLocaleString()}</h4>
+                        <h5>Avg Latency (ms) (Last 200 pings)</h5>
                     </div>
 
                     <ClientSideLatency url={data.address} />
@@ -169,7 +176,7 @@ class NodeInfo extends Component {
                     </div>
 
                     <div className="infoblock">
-                        <h4>{data.last_update_time}</h4>
+                        <h4>{last_ts}</h4>
                         <h5>Last Update Time</h5>
                     </div>
 
