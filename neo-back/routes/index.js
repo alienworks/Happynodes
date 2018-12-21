@@ -168,6 +168,101 @@ router.post('/unconfirmed/tx/:connection_id/:tx', cache('5 minutes'), function (
 		})
 });
 
+router.get('/block/:blockid', cache('5 minutes'), function (req, res, next) {
+	let blockid = req.params.blockid;
+	nel_url = "https://api.nel.group/api/mainnet";
+	axios.post(nel_url, {
+							"jsonrpc": "2.0",
+							"method": "getblock",
+							"params": [blockid],
+							"id": 1
+						})
+						.then(function (response) {
+							console.log(response);
+							res.json({ data: response.data });
+						})
+						.catch(function (error) {
+							console.log(error);
+							res.json({ error });
+						});
+	});
+
+router.get('/transaction/:txid', cache('5 minutes'), function (req, res, next) {
+	let blockid = req.params.blockid;
+	nel_url = "https://api.nel.group/api/mainnet";
+	axios.post(nel_url, {
+							"jsonrpc": "2.0",
+							"method": "getrawtransaction",
+							"params": [txid],
+							"id": 1
+						})
+						.then(function (response) {
+							console.log(response);
+							res.json({ data: response.data });
+						})
+						.catch(function (error) {
+							console.log(error);
+							res.json({ error });
+						});
+	});
+
+router.get('/allassets', cache('5 minutes'), function (req, res, next) {
+	let blockid = req.params.blockid;
+	nel_url = "https://api.nel.group/api/mainnet";
+	axios.post(nel_url, {
+							"jsonrpc": "2.0",
+							"method": "getrawtransaction",
+							"params": [],
+							"id": 1
+						})
+						.then(function (response) {
+							console.log(response);
+							res.json({ data: response.data });
+						})
+						.catch(function (error) {
+							console.log(error);
+							res.json({ error });
+						});
+	});
+
+router.get('/assets/:assetid', cache('5 minutes'), function (req, res, next) {
+	let blockid = req.params.blockid;
+	nel_url = "https://api.nel.group/api/mainnet";
+	axios.post(nel_url, {
+							"jsonrpc": "2.0",
+							"method": "getasset",
+							"params": [assetid],
+							"id": 1
+						})
+						.then(function (response) {
+							console.log(response);
+							res.json({ data: response.data });
+						})
+						.catch(function (error) {
+							console.log(error);
+							res.json({ error });
+						});
+	});
+
+router.get('/address/:addressref', cache('5 minutes'), function (req, res, next) {
+	let blockid = req.params.blockid;
+	nel_url = "https://api.nel.group/api/mainnet";
+	axios.post(nel_url, {
+							"jsonrpc": "2.0",
+							"method": "getaddr",
+							"params": [addressref],
+							"id": 1
+						})
+						.then(function (response) {
+							console.log(response);
+							res.json({ data: response.data });
+						})
+						.catch(function (error) {
+							console.log(error);
+							res.json({ error });
+						});
+	});
+
 // select min(A.ts), min(B.ts), (min(A.ts) - min(B.ts)) / 39 as avg
 // from blockheight_history A, blockheight_history B
 // where A.blockheight in (select max(blockheight)  
