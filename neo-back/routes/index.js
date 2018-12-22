@@ -188,7 +188,7 @@ router.get('/block/:blockid', cache('5 minutes'), function (req, res, next) {
 	});
 
 router.get('/transaction/:txid', cache('5 minutes'), function (req, res, next) {
-	let blockid = req.params.blockid;
+	let txid = req.params.txid;
 	nel_url = "https://api.nel.group/api/mainnet";
 	axios.post(nel_url, {
 							"jsonrpc": "2.0",
@@ -211,7 +211,7 @@ router.get('/allassets', cache('5 minutes'), function (req, res, next) {
 	nel_url = "https://api.nel.group/api/mainnet";
 	axios.post(nel_url, {
 							"jsonrpc": "2.0",
-							"method": "getrawtransaction",
+							"method": "getallasset",
 							"params": [],
 							"id": 1
 						})
@@ -226,7 +226,7 @@ router.get('/allassets', cache('5 minutes'), function (req, res, next) {
 	});
 
 router.get('/assets/:assetid', cache('5 minutes'), function (req, res, next) {
-	let blockid = req.params.blockid;
+	let assetid = req.params.assetid;
 	nel_url = "https://api.nel.group/api/mainnet";
 	axios.post(nel_url, {
 							"jsonrpc": "2.0",
