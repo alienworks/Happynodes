@@ -9,6 +9,8 @@ import BlockTime from './components/BlockTime'
 import NodesByRegion from './components/NodesByRegion'
 import Validators from './components/Validators'
 import NodeInfo from './components/NodeInfo'
+import BlockInfo from './components/BlockInfo'
+import TransactionInfo from './components/TransactionInfo'
 import NodeEdges from './components/NodeEdges'
 import NetworkGraph from './components/NetworkGraph'
 import NetworkTable from './components/NetworkTable'
@@ -56,6 +58,8 @@ class App extends Component {
 
 
           <div className="col col-lg-9 col-md-9 col-sm-12 col-xs-12">
+            <Route path="/block/:id(\d+)" render={({match})=><BlockInfo block_id={match.params.id}/>} />
+            <Route path="/transaction/:id" render={({match})=><TransactionInfo tx_id={match.params.id}/>} />
             <Route path="/:id(\d+)" render={({match})=><NodeInfo node_id={match.params.id}/>} />
             <Route path="/:id(\d+)" render={({match})=><NodeEdges node_id={match.params.id}/>} />
             <Route path="/unconfirmedtxinfo/:connection_id/:tx" render={({match})=><UnconfirmedTxInfo  connection_id={match.params.connection_id} tx={match.params.tx}/>} />
