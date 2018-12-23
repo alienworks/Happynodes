@@ -106,7 +106,7 @@ router.get('/blockstatistics/day/:start/:end', function (req, res, next) {
     const namespace = process.env.REDIS_NAMESPACE
     client.get(namespace.concat("block_statistics_day"), function (err, reply) {
         const stats = JSON.parse(reply);
-        filtered_stats = stats.filter((item) => item >= req.params.start && item <= req.params.end)
+        filtered_stats = stats.filter((item) => item.name >= req.params.start && item.name <= req.params.end)
         res.json({ data: filtered_stats })
     });
 });
