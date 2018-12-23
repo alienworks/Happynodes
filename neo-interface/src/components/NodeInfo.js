@@ -40,14 +40,6 @@ class NodeInfo extends Component {
             var last_ts = date_last_ts.toLocaleTimeString() + " " + date_last_ts.toLocaleDateString();
             var min_ts = date_min_ts.toLocaleTimeString() + " " + date_min_ts.toLocaleDateString();
 
-            var hours = date_min_ts.getHours();
-            // Minutes part from the timestamp
-            var minutes = "0" + date_min_ts.getMinutes();
-            // Seconds part from the timestamp
-            var seconds = "0" + date_min_ts.getSeconds();
-            // Will display time in 10:30:23 format
-            var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-
             return (
                 <div className="jumbotron nodes" style={{ display: 'inline-block', width: '100%' }}>
                     <div className="node-box" style={boxStyle}><p>{Number(data.health_score.toFixed(0))}</p></div>

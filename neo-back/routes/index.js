@@ -225,7 +225,7 @@ router.get('/allassets', cache('5 minutes'), function (req, res, next) {
 						});
 	});
 
-router.get('/assets/:assetid', cache('5 minutes'), function (req, res, next) {
+router.get('/asset/:assetid', cache('5 minutes'), function (req, res, next) {
   let assetid = req.params.assetid;
 	nel_url = "https://api.nel.group/api/mainnet";
 	axios.post(nel_url, {
@@ -243,6 +243,69 @@ router.get('/assets/:assetid', cache('5 minutes'), function (req, res, next) {
 							res.json({ error });
 						});
 	});
+
+
+router.get('/blocks/:numentries/:pagenumber', cache('1 minutes'), function (req, res, next) {
+	let numentries = req.params.numentries;
+	let pagenumber = req.params.pagenumber;
+	nel_url = "https://api.nel.group/api/mainnet";
+	axios.post(nel_url, {
+							"jsonrpc": "2.0",
+							"method": "getblocks",
+							"params": [numentries,pagenumber],
+							"id": 1
+						})
+						.then(function (response) {
+							console.log(response);
+							res.json({ data: response.data });
+						})
+						.catch(function (error) {
+							console.log(error);
+							res.json({ error });
+						});
+	});
+
+router.get('/transactions/:numentries/:pagenumber', cache('1 minutes'), function (req, res, next) {
+	let numentries = req.params.numentries;
+	let pagenumber = req.params.pagenumber;
+	nel_url = "https://api.nel.group/api/mainnet";
+	axios.post(nel_url, {
+							"jsonrpc": "2.0",
+							"method": "getrawtransactions",
+							"params": [numentries,pagenumber],
+							"id": 1
+						})
+						.then(function (response) {
+							console.log(response);
+							res.json({ data: response.data });
+						})
+						.catch(function (error) {
+							console.log(error);
+							res.json({ error });
+						});
+	});
+
+router.get('/balancerank/:assetid/:numentries/:pagenumber', cache('1 minutes'), function (req, res, next) {
+	let assetid = req.params.assetid;
+	let numentries = req.params.numentries;
+	let pagenumber = req.params.pagenumber;
+	nel_url = "https://apiscan.nel.group/api/mainnet";
+	axios.post(nel_url, {
+							"jsonrpc": "2.0",
+							"method": "getrankbyasset",
+							"params": [assetid,numentries,pagenumber],
+							"id": 1
+						})
+						.then(function (response) {
+							console.log(response);
+							res.json({ data: response.data });
+						})
+						.catch(function (error) {
+							console.log(error);
+							res.json({ error });
+						});
+	});
+
 
 router.get('/address/:addressref', cache('5 minutes'), function (req, res, next) {
 	let addressref = req.params.addressref;
