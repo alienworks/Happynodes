@@ -35,10 +35,14 @@ class NodeInfo extends Component {
             }
             const gap = (data.max_blockheight > data.blockheight) ? "(" + (data.blockheight - data.max_blockheight) + ")" : "";
 
+            var online_pct = data.online_pct;
             var date_min_ts = new Date(data.min_ts * 1000);
             var date_last_ts = new Date(data.last_update_time * 1000);
             var last_ts = date_last_ts.toLocaleTimeString() + " " + date_last_ts.toLocaleDateString();
             var min_ts = date_min_ts.toLocaleTimeString() + " " + date_min_ts.toLocaleDateString();
+            
+            var timeDiff = Math.abs(date_last_ts.getTime() - date_min_ts.getTime())*online_pct;
+            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
             return (
                 <div className="jumbotron nodes" style={{ display: 'inline-block', width: '100%' }}>
@@ -86,6 +90,11 @@ class NodeInfo extends Component {
                     <div className="infoblock">
                         <h4>{min_ts}</h4>
                         <h5>First Recorded</h5>
+                    </div>
+
+                    <div className="infoblock">
+                        <h4>{diffDays}</h4>
+                        <h5>Online Times(days)</h5>
                     </div>
 
                     {data.wallet_status ? (
