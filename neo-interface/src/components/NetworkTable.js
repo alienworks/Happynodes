@@ -53,11 +53,11 @@ class NetworkTable extends Component {
         rows[i].online_time = diffDays;
 
         if (Math.abs(max_bh - blockheight) < 4 && online) {
-          rows[i].online_status = 0
+          rows[i].online_status = "Online"
         } else if (Math.abs(max_bh - blockheight) >= 4 && online) {
-          rows[i].online_status = 1
+          rows[i].online_status = "Delayed"
         } else {
-          rows[i].online_status = 2
+          rows[i].online_status = "Offline"
         }
       }
 
