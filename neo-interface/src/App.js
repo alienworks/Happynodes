@@ -11,8 +11,11 @@ import Validators from './components/Validators'
 import BlockList from './components/BlockList'
 import TransactionList from './components/TransactionList'
 import AssetList from './components/AssetList'
+import AssetInfo from './components/AssetInfo'
 import NodeInfo from './components/NodeInfo'
 import BlockInfo from './components/BlockInfo'
+import AddressTxs from './components/AddressTxs'
+import AddressInfo from './components/AddressInfo'
 import AssetRank from './components/AssetRank'
 import TransactionInfo from './components/TransactionInfo'
 import NodeEdges from './components/NodeEdges'
@@ -60,6 +63,7 @@ class App extends Component {
           <Route path="/asset/:id" render={({match})=><AssetList/>} />
           <Route exact path="/:id(\d+)" render={({match})=><NetworkStatistics/>} />
           <Route exact path="/" render={({match})=><Validators/>} />
+          <Route path="/address/:id" render={({match})=><AddressTxs addr={match.params.id}/>} />
           <Route exact path="/:id(\d+)" render={({match})=><Validators/>} />
           <Route exact path="/unconfirmed" render={({match})=><UnconfirmedTx/>} />
           <Route path="/unconfirmedtxinfo/:tx/:connection_id" render={({match})=><UnconfirmedTx/>} />
@@ -70,7 +74,9 @@ class App extends Component {
           <div className="col col-lg-9 col-md-9 col-sm-12 col-xs-12">
             <Route path="/block/:id(\d+)" render={({match})=><BlockInfo block_id={match.params.id}/>} />
             <Route path="/transaction/:id" render={({match})=><TransactionInfo tx_id={match.params.id}/>} />
+            <Route path="/asset/:id" render={({match})=><AssetInfo asset_id={match.params.id}/>} />
             <Route path="/asset/:id" render={({match})=><AssetRank asset_id={match.params.id}/>} />
+            <Route path="/address/:id" render={({match})=><AddressInfo addr={match.params.id}/>} />
             <Route path="/:id(\d+)" render={({match})=><NodeInfo node_id={match.params.id}/>} />
             <Route path="/:id(\d+)" render={({match})=><NodeEdges node_id={match.params.id}/>} />
             <Route path="/unconfirmedtxinfo/:connection_id/:tx" render={({match})=><UnconfirmedTxInfo  connection_id={match.params.connection_id} tx={match.params.tx}/>} />

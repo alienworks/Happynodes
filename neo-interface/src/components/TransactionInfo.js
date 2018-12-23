@@ -21,23 +21,20 @@ class TransactionInfo extends Component {
                 </div>
             )
         } else if (txinfo.fulfilled) {
-            console.log("txinfo", txinfo.value.data.result[0])
-
             const data = txinfo.value.data.result[0];
+            let vout = data.vout
+            let vout_addrs = vout.map((v, i, arr) => {
+                return v.address;
+            })
+            let vout_addrs_unique = new Set(vout_addrs)
 
-            const boxStyle = {
-                backgroundColor: '#acf3ae',
-                float: 'left',
-                padding: '2rem',
-                margin: '4px 2rem 2rem 0px',
-            }
-
-           let vins = data.vin
+            let vins = data.vin
             let vin_txs = vins.map((v, i, arr) => {
                 return v.txid;
             })
 
             let y = JSON.stringify(txinfo.value.data.result[0], null, 4, 50)
+
 
             return (
                 <div className="jumbotron nodes" style={{ display: 'inline-block', width: '100%' }}>
@@ -92,18 +89,31 @@ class TransactionInfo extends Component {
                         </tbody>
                     </table>
 
+                    <h3 style={{ paddingTop: '4rem', clear: 'left' }}>Addresses Involved</h3>
+
+
+                    <table className="table">
+                        <tbody>
+                            {Array.from(vout_addrs_unique).map((item, i) =>
+                                <tr key={i}>
+                                    <td className="tx_td" style={{ 'padding': '1rem' }}><a href={'../address/' + item}>{item}</a></td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+
                     <h3 style={{ paddingTop: '4rem', clear: 'left' }}>Scripts</h3>
                     <hr />
 
                     <div className="infoblock">
-                    <p style={{ 'wordBreak': 'break-all'}}>{data.scripts.len > 0 ? data.scripts[0].invocation : ""}</p>
+                    <p style={{ 'wordBreak': 'break-all'}}>{data.scripts.length > 0 ? data.scripts[0].invocation : ""}</p>
                     <h5>Invocation Script</h5>
 
                     </div>
 
                     <div className="infoblock">
-                    <p style={{ 'wordBreak': 'break-all'}}>{data.scripts.len > 0 ? data.scripts[0].verification : ""}</p>
-                    <h5>Verifcation Script</h5>
+                    <p style={{ 'wordBreak': 'break-all'}}>{data.scripts.length > 0 ? data.scripts[0].verification : ""}</p>
+                    <h5>Verification Script</h5>
 
                     </div>
 
