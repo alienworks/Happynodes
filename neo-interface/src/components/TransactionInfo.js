@@ -96,13 +96,13 @@ class TransactionInfo extends Component {
                     <hr />
 
                     <div className="infoblock">
-                    <p style={{ 'wordBreak': 'break-all'}}>{data.scripts[0].invocation}</p>
+                    <p style={{ 'wordBreak': 'break-all'}}>{data.scripts.len > 0 ? data.scripts[0].invocation : ""}</p>
                     <h5>Invocation Script</h5>
 
                     </div>
 
                     <div className="infoblock">
-                    <p style={{ 'wordBreak': 'break-all'}}>{data.scripts[0].verification}</p>
+                    <p style={{ 'wordBreak': 'break-all'}}>{data.scripts.len > 0 ? data.scripts[0].verification : ""}</p>
                     <h5>Verifcation Script</h5>
 
                     </div>

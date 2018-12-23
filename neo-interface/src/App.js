@@ -8,8 +8,12 @@ import LastBlock from './components/LastBlock'
 import BlockTime from './components/BlockTime'
 import NodesByRegion from './components/NodesByRegion'
 import Validators from './components/Validators'
+import BlockList from './components/BlockList'
+import TransactionList from './components/TransactionList'
+import AssetList from './components/AssetList'
 import NodeInfo from './components/NodeInfo'
 import BlockInfo from './components/BlockInfo'
+import AssetRank from './components/AssetRank'
 import TransactionInfo from './components/TransactionInfo'
 import NodeEdges from './components/NodeEdges'
 import NetworkGraph from './components/NetworkGraph'
@@ -48,6 +52,12 @@ class App extends Component {
           <Route exact path="/" render={({match})=><NodesByRegion/>} />
           <Route path="/:id(\d+)" render={({match})=><NodesByRegion node_id={match.params.id}/>} />
           <Route exact path="/" render={({match})=><NetworkStatistics/>} />
+          <Route path="/blocks" render={({match})=><BlockList numentries='30' numpages='1'/>} />
+          <Route path="/block/:id(\d+)" render={({match})=><BlockList numentries='30' numpages='1'/>} />
+          <Route path="/transactions" render={({match})=><TransactionList numentries='30' numpages='1'/>} />
+          <Route path="/transaction/:id" render={({match})=><TransactionList numentries='30' numpages='1'/>} />
+          <Route path="/assets" render={({match})=><AssetList/>} />
+          <Route path="/asset/:id" render={({match})=><AssetList/>} />
           <Route exact path="/:id(\d+)" render={({match})=><NetworkStatistics/>} />
           <Route exact path="/" render={({match})=><Validators/>} />
           <Route exact path="/:id(\d+)" render={({match})=><Validators/>} />
@@ -60,6 +70,7 @@ class App extends Component {
           <div className="col col-lg-9 col-md-9 col-sm-12 col-xs-12">
             <Route path="/block/:id(\d+)" render={({match})=><BlockInfo block_id={match.params.id}/>} />
             <Route path="/transaction/:id" render={({match})=><TransactionInfo tx_id={match.params.id}/>} />
+            <Route path="/asset/:id" render={({match})=><AssetRank asset_id={match.params.id}/>} />
             <Route path="/:id(\d+)" render={({match})=><NodeInfo node_id={match.params.id}/>} />
             <Route path="/:id(\d+)" render={({match})=><NodeEdges node_id={match.params.id}/>} />
             <Route path="/unconfirmedtxinfo/:connection_id/:tx" render={({match})=><UnconfirmedTxInfo  connection_id={match.params.connection_id} tx={match.params.tx}/>} />
