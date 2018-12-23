@@ -38,17 +38,27 @@ class NetworkTable extends Component {
           <a href={"/" + cell}>{cell}</a>
         )
       }
-      console.log(rows[0])
+      console.log(max_bh)
 
       var arrayLength = rows.length;
       for (var i = 0; i < arrayLength; i++) {
         var data = rows[i];
+        var blockheight = data.blockheight;
+        var online = data.online;
         var online_pct = data.online_pct;
         var date_min_ts = new Date(data.min_ts * 1000);
         var date_last_ts = new Date(data.last_update_time * 1000);
         var timeDiff = Math.abs(date_last_ts.getTime() - date_min_ts.getTime())*online_pct;
         var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
         rows[i].online_time = diffDays;
+
+        if (Math.abs(max_bh - blockheight) < 10 && online) {
+          rows[i].online_status = "Online"
+        } else if (Math.abs(max_bh - blockheight) >= 10 && online) {
+          rows[i].online_status = "Delayed"
+        } else {
+          rows[i].online_status = "Offline"
+        }
       }
 
       const columns = [{
@@ -68,7 +78,7 @@ class NetworkTable extends Component {
         filter: textFilter({
           defaultValue: blockheight_filter
         }),
-        formatter: (cell) => { return max_bh - cell > 0 ? String(cell) + " (-" + (max_bh - cell) + ")" : cell }
+        formatter: (cell) => { return max_bh - cell > 0 ? String(cell) + " (-" + (max_bh - cell) + ")" : cell },
       }, {
         dataField: 'address',
         text: 'Address',
@@ -150,6 +160,13 @@ class NetworkTable extends Component {
         dataField: 'online_time',
         text: 'Online Time(days)',
         sort: true,
+      }, {
+        dataField: 'online_status',
+        text: 'Online Status',
+        sort: true,
+        filter: selectFilter({
+          options: selectOptions
+        })
       }
       ];
 
