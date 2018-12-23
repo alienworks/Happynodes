@@ -116,7 +116,8 @@ GET_NODES_INFO_SQL = """select
 		stab_1000.stability_thousand_pings,
 		0
 	) as stability_thousand_pings,
-	w.ts as min_ts
+	w.ts as min_ts,
+	y.online_count*1.0/y.total as online_pct
 from
 	connection_endpoints endpoints
 inner join coordinates co on
@@ -748,6 +749,11 @@ left join (
 			) temp
 	) v on
 	v.connection_id = endpoints.id
+left join (
+SELECT connection_id, count(CASE WHEN online THEN 1 END) as online_count,count(online) as total
+FROM public.online_history oh
+group by connection_id
+) y on y.connection_id = endpoints.id 
 left join (
 		select
 			connection_id,
