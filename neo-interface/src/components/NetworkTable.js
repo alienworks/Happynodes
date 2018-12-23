@@ -38,6 +38,18 @@ class NetworkTable extends Component {
           <a href={"/" + cell}>{cell}</a>
         )
       }
+      console.log(rows[0])
+
+      var arrayLength = rows.length;
+      for (var i = 0; i < arrayLength; i++) {
+        var data = rows[i];
+        var online_pct = data.online_pct;
+        var date_min_ts = new Date(data.min_ts * 1000);
+        var date_last_ts = new Date(data.last_update_time * 1000);
+        var timeDiff = Math.abs(date_last_ts.getTime() - date_min_ts.getTime())*online_pct;
+        var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        rows[i].online_time = diffDays;
+      }
 
       const columns = [{
         dataField: 'id',
@@ -129,12 +141,15 @@ class NetworkTable extends Component {
         text: 'Date first Seen',
         sort: true,
         formatter: (cell) => { return new Date(cell * 1000).toLocaleTimeString() + " " + new Date(cell * 1000).toLocaleDateString()}
-
       }, {
         dataField: 'last_update_time',
         text: 'Last Updated',
         sort: true,
         formatter: (cell) => { return new Date(cell * 1000).toLocaleTimeString() + " " + new Date(cell * 1000).toLocaleDateString()}
+      }, {
+        dataField: 'online_time',
+        text: 'Online Time(days)',
+        sort: true,
       }
       ];
 
