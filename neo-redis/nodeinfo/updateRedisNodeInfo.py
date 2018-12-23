@@ -863,6 +863,7 @@ if __name__ == "__main__":
                         "max_blockheight": node_info[24],
                         "min_ts": node_info[26],
 						"last_update_time": time.time(),
+						"online_pct": node_info[27],
 						}
                 logger.info("Set node id {}".format(nodeid))
                 r.hset(redisNamespace + 'node', nodeid, json.dumps(node, default=json_serial))
