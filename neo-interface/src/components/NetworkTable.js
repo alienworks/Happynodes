@@ -38,7 +38,7 @@ class NetworkTable extends Component {
           <a href={"/" + cell}>{cell}</a>
         )
       }
-      console.log(rows[0])
+      console.log(max_bh)
 
       var arrayLength = rows.length;
       for (var i = 0; i < arrayLength; i++) {
@@ -52,9 +52,9 @@ class NetworkTable extends Component {
         var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
         rows[i].online_time = diffDays;
 
-        if (Math.abs(max_bh - blockheight) < 4 && online) {
+        if (Math.abs(max_bh - blockheight) < 10 && online) {
           rows[i].online_status = "Online"
-        } else if (Math.abs(max_bh - blockheight) >= 4 && online) {
+        } else if (Math.abs(max_bh - blockheight) >= 10 && online) {
           rows[i].online_status = "Delayed"
         } else {
           rows[i].online_status = "Offline"
@@ -160,6 +160,13 @@ class NetworkTable extends Component {
         dataField: 'online_time',
         text: 'Online Time(days)',
         sort: true,
+      }, {
+        dataField: 'online_status',
+        text: 'Online Status',
+        sort: true,
+        filter: selectFilter({
+          options: selectOptions
+        })
       }
       ];
 
