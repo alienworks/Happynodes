@@ -33,6 +33,12 @@ class NetworkTable extends Component {
         false: "false"
       };
 
+      const delayOptions = {
+        Online: "Online",
+        Delayed: "Delayed",
+        Offline: "Offline"
+      };
+
       function hyperlinkFormatter(cell, row){
         return (
           <a href={"/" + cell}>{cell}</a>
@@ -165,7 +171,7 @@ class NetworkTable extends Component {
         text: 'Online Status',
         sort: true,
         filter: selectFilter({
-          options: selectOptions
+          options: delayOptions
         })
       }
       ];
