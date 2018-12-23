@@ -116,7 +116,8 @@ GET_NODES_INFO_SQL = """select
 		stab_1000.stability_thousand_pings,
 		0
 	) as stability_thousand_pings,
-	w.ts as min_ts
+	w.ts as min_ts,
+	y.online_count*1.0/y.total as online_pct
 from
 	connection_endpoints endpoints
 inner join coordinates co on
@@ -749,6 +750,11 @@ left join (
 	) v on
 	v.connection_id = endpoints.id
 left join (
+SELECT connection_id, count(CASE WHEN online THEN 1 END) as online_count,count(online) as total
+FROM public.online_history oh
+group by connection_id
+) y on y.connection_id = endpoints.id 
+left join (
 		select
 			connection_id,
 			min(extract(epoch from ts) ) as ts
@@ -857,6 +863,7 @@ if __name__ == "__main__":
                         "max_blockheight": node_info[24],
                         "min_ts": node_info[26],
 						"last_update_time": time.time(),
+						"online_pct": float(node_info[27]),
 						}
                 logger.info("Set node id {}".format(nodeid))
                 r.hset(redisNamespace + 'node', nodeid, json.dumps(node, default=json_serial))
