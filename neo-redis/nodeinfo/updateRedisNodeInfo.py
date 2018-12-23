@@ -860,7 +860,7 @@ if __name__ == "__main__":
                         "long": node_info[21],
                         "locale": node_info[22],
                         "version": node_info[23],
-                        "max_blockheight": node_info[24],
+                        "max_blockheight": bestblock,
                         "min_ts": node_info[26],
 						"last_update_time": time.time(),
 						"online_pct": float(node_info[27]),
