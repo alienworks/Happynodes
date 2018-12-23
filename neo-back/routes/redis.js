@@ -101,11 +101,83 @@ router.get('/lastupdatedtotgas', function (req, res, next) {
     });
 });
 
+router.get('/blockstatistics/month/:start/:end', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("block_statistics_month"), function (err, reply) {
+        const stats = JSON.parse(reply);
+        filtered_stats = stats.filter((item) => item.name >= req.params.start && item.name <= req.params.end)
+        res.json({ data: filtered_stats })
+    });
+});
+
+router.get('/blockstatistics/month', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("block_statistics_month"), function (err, reply) {
+        res.json({ data: reply })
+    });
+});
+
+router.get('/blockstatistics/day/:start/:end', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("block_statistics_day"), function (err, reply) {
+        const stats = JSON.parse(reply);
+        filtered_stats = stats.filter((item) => item.name >= req.params.start && item.name <= req.params.end)
+        res.json({ data: filtered_stats })
+    });
+});
+
+router.get('/blockstatistics/day', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("block_statistics_day"), function (err, reply) {
+        res.json({ data: reply })
+    });
+});
+
+router.get('/blockstatistics/hour/:start/:end', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("block_statistics_hour"), function (err, reply) {
+        const stats = JSON.parse(reply);
+        filtered_stats = stats.filter((item) => item.name >= req.params.start && item.name <= req.params.end)
+        res.json({ data: filtered_stats })
+    });
+});
+
+router.get('/blockstatistics/hour', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("block_statistics_hour"), function (err, reply) {
+        res.json({ data: reply })
+    });
+});
+
 router.get('/activeaddresses', function (req, res, next) {
     const client = openRedisConnection();
     const namespace = process.env.REDIS_NAMESPACE
     client.get(namespace.concat("activeaddresses"), function (err, reply) {
         res.json({ activeaddresses: reply })
+    });
+});
+
+router.get('/addressstatistics/day', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("address_statistics_day"), function (err, reply) {
+        res.json({ data: reply })
+    });
+});
+
+router.get('/addressstatistics/day/:start/:end', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("address_statistics_day"), function (err, reply) {
+        const stats = JSON.parse(reply);
+        filtered_stats = stats.filter((item) => item.name >= req.params.start && item.name <= req.params.end)
+        res.json({ data: filtered_stats })
     });
 });
 

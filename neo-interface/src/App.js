@@ -22,6 +22,7 @@ import NodeEdges from './components/NodeEdges'
 import NetworkGraph from './components/NetworkGraph'
 import NetworkTable from './components/NetworkTable'
 import HistoryTest from './components/History'
+import BlockStatistics from './components/BlockStatistics'
 import logo from './HappyNodes_Logo.png'
 import f27logo from './27-light-red.png'
 import UnconfirmedTx from './components/UnconfirmedTx'
@@ -88,6 +89,7 @@ class App extends Component {
           <Route path="/table/filterbyversion/:v" render={({match})=><NetworkTable version_filter={match.params.v}/>} />
           
           <Route exact path="/history" render={({match})=><HistoryTest/>} />
+          <Route exact path="/blockstatistics" render={({match})=><BlockStatistics/>} />
           </div>
         </div>
         <footer className="App-footer">
