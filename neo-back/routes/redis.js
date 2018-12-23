@@ -93,6 +93,45 @@ router.get('/validators', function (req, res, next) {
     });
 });
 
+router.get('/lastupdatedtotgas', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("last_updated_tot_gas"), function (err, reply) {
+        res.json({ last_updated_tot_gas: reply })
+    });
+});
+
+router.get('/activeaddresses', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("activeaddresses"), function (err, reply) {
+        res.json({ activeaddresses: reply })
+    });
+});
+
+router.get('/totaladdresscount', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.get(namespace.concat("total_address_count"), function (err, reply) {
+        res.json({ total_address_count: reply })
+    });
+});
+
+router.get('/addressesstat', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.mget([namespace.concat("activeaddresses"), namespace.concat("total_address_count")], function (err, reply) {
+        res.json({ addressesstat: reply })
+    });
+});
+
+router.get('/networkstatistics', function (req, res, next) {
+    const client = openRedisConnection();
+    const namespace = process.env.REDIS_NAMESPACE
+    client.mget([namespace.concat("total_address_count"), namespace.concat("activeaddresses"), namespace.concat("last_updated_tot_gas"), namespace.concat("last_updated_block")], function (err, reply) {
+        res.json({ networkstatistics: reply })
+    });
+});
 
 router.get('/unconfirmed', function (req, res, next) {
     const client = openRedisConnection();

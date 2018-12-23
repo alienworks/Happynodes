@@ -751,7 +751,7 @@ left join (
 left join (
 		select
 			connection_id,
-			min( ts ) as ts
+			min(extract(epoch from ts) ) as ts
 		from
 			public.online_history
 		group by
@@ -812,10 +812,12 @@ if __name__ == "__main__":
         result = cursor.fetchall()
         for node_info in result:
             nodeid = node_info[0]
+            logger.info("nodeid {}".format(nodeid))
             redis_node = r.hget(redisNamespace + 'node', nodeid)
             stability_1000 = node_info[25]
 
             blockheight = None
+
             if(redis_node == None):
                 blockheight = node_info[19]
             else:
@@ -825,7 +827,10 @@ if __name__ == "__main__":
             diffBlockheight = abs(blockheight-bestblock)
 
             if stability_1000 != 0 and diffBlockheight<600000:
-                node = {"id": node_info[0],
+                if (redis_node == None):
+                    redis_node={}
+                node = {**redis_node,
+						"id": node_info[0],
                         "hostname": node_info[1],
                         "protocol": node_info[2],
                         "port": node_info[3],
@@ -850,7 +855,9 @@ if __name__ == "__main__":
                         "locale": node_info[22],
                         "version": node_info[23],
                         "max_blockheight": node_info[24],
-                        "min_ts": node_info[26]}
+                        "min_ts": node_info[26],
+						"last_update_time": time.time(),
+						}
                 logger.info("Set node id {}".format(nodeid))
                 r.hset(redisNamespace + 'node', nodeid, json.dumps(node, default=json_serial))
             else:
