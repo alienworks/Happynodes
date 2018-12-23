@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-refetch'
 import config from './config'
 
+
 class AddressInfo extends Component {
     render() {
         const { addressinfo } = this.props;
@@ -22,13 +23,13 @@ class AddressInfo extends Component {
             )
         } else if (addressinfo.fulfilled) {
             console.log("addressinfo", addressinfo.value)
-
             const data = addressinfo.value;
 
             return (
                 <div className="jumbotron nodes" style={{ display: 'inline-block', width: '100%' }}>
 
                     <h2 style={{ float: 'left', 'overflowWrap': 'break-word', 'width': '80%' }}>Address {data.address}</h2>
+
                     <hr style={{
                         'clear': 'left',
                         'borderColor': '#78cadd', 'borderWidth': '3px'
