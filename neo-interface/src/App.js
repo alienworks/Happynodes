@@ -11,12 +11,15 @@ import Validators from './components/Validators'
 import BlockList from './components/BlockList'
 import TransactionList from './components/TransactionList'
 import AssetList from './components/AssetList'
+import NEP5AssetList from './components/NEP5AssetList'
 import AssetInfo from './components/AssetInfo'
+import NEP5AssetInfo from './components/NEP5AssetInfo'
 import NodeInfo from './components/NodeInfo'
 import BlockInfo from './components/BlockInfo'
 import AddressTxs from './components/AddressTxs'
 import AddressInfo from './components/AddressInfo'
 import AssetRank from './components/AssetRank'
+import NEP5AssetRank from './components/NEP5AssetRank'
 import TransactionInfo from './components/TransactionInfo'
 import NodeEdges from './components/NodeEdges'
 import NetworkGraph from './components/NetworkGraph'
@@ -61,7 +64,9 @@ class App extends Component {
           <Route path="/transactions" render={({match})=><TransactionList numentries='30' numpages='1'/>} />
           <Route path="/transaction/:id" render={({match})=><TransactionList numentries='30' numpages='1'/>} />
           <Route path="/assets" render={({match})=><AssetList/>} />
+          <Route path="/nep5assets" render={({match})=><NEP5AssetList/>} />
           <Route path="/asset/:id" render={({match})=><AssetList/>} />
+          <Route path="/nep5assets/:id" render={({match})=><NEP5AssetList/>} />
           <Route exact path="/:id(\d+)" render={({match})=><NetworkStatistics/>} />
           <Route exact path="/" render={({match})=><Validators/>} />
           <Route path="/address/:id" render={({match})=><AddressTxs addr={match.params.id}/>} />
@@ -77,6 +82,8 @@ class App extends Component {
             <Route path="/transaction/:id" render={({match})=><TransactionInfo tx_id={match.params.id}/>} />
             <Route path="/asset/:id" render={({match})=><AssetInfo asset_id={match.params.id}/>} />
             <Route path="/asset/:id" render={({match})=><AssetRank asset_id={match.params.id}/>} />
+            <Route path="/nep5asset/:id" render={({match})=><NEP5AssetInfo asset_id={match.params.id}/>} />
+            <Route path="/nep5asset/:id" render={({match})=><NEP5AssetRank asset_id={match.params.id}/>} />
             <Route path="/address/:id" render={({match})=><AddressInfo addr={match.params.id}/>} />
             <Route path="/:id(\d+)" render={({match})=><NodeInfo node_id={match.params.id}/>} />
             <Route path="/:id(\d+)" render={({match})=><NodeEdges node_id={match.params.id}/>} />

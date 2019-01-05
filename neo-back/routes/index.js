@@ -225,12 +225,50 @@ router.get('/allassets', cache('5 minutes'), function (req, res, next) {
 						});
 	});
 
+router.get('/allnep5assets', cache('5 minutes'), function (req, res, next) {
+	let blockid = req.params.blockid;
+	nel_url = "https://api.nel.group/api/mainnet";
+	axios.post(nel_url, {
+							"jsonrpc": "2.0",
+							"method": "getallnep5asset",
+							"params": [],
+							"id": 1
+						})
+						.then(function (response) {
+							console.log(response);
+							res.json({ data: response.data });
+						})
+						.catch(function (error) {
+							console.log(error);
+							res.json({ error });
+						});
+	});
+
 router.get('/asset/:assetid', cache('5 minutes'), function (req, res, next) {
   let assetid = req.params.assetid;
 	nel_url = "https://api.nel.group/api/mainnet";
 	axios.post(nel_url, {
 							"jsonrpc": "2.0",
 							"method": "getasset",
+							"params": [assetid],
+							"id": 1
+						})
+						.then(function (response) {
+							console.log(response);
+							res.json({ data: response.data });
+						})
+						.catch(function (error) {
+							console.log(error);
+							res.json({ error });
+						});
+	});
+
+router.get('/nep5asset/:assetid', cache('5 minutes'), function (req, res, next) {
+  let assetid = req.params.assetid;
+	nel_url = "https://api.nel.group/api/mainnet";
+	axios.post(nel_url, {
+							"jsonrpc": "2.0",
+							"method": "getnep5asset",
 							"params": [assetid],
 							"id": 1
 						})
