@@ -3,6 +3,18 @@ import { connect } from 'react-refetch'
 import config from './config'
 
 class BlockInfo extends Component {
+    timeConverter(UNIX_timestamp){
+        var a = new Date(UNIX_timestamp * 1000);
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var year = a.getFullYear();
+        var month = months[a.getMonth()];
+        var date = a.getDate();
+        var hour = a.getHours();
+        var min = a.getMinutes();
+        var sec = a.getSeconds();
+        var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+        return time;
+    }
     render() {
         const { blockinfo } = this.props;
         
@@ -79,7 +91,7 @@ class BlockInfo extends Component {
                     </div>
 
                     <div className="infoblock">
-                        <h4>{data.time}</h4>
+                        <h4>{this.timeConverter(data.time)}</h4>
                         <h5>Timestamp</h5>
                     </div>
 
@@ -90,7 +102,7 @@ class BlockInfo extends Component {
 
                     <div className="infoblock">
                         <h4>{data.nextconsensus}</h4>
-                        <h5>Next Consensus Address</h5>
+                        <h5>Next Consensus Validator</h5>
                     </div>
 
                     <h3 style={{ paddingTop: '4rem', clear: 'left' }}>Scripts</h3>
