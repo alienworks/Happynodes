@@ -66,7 +66,7 @@ class App extends Component {
           <Route path="/assets" render={({match})=><AssetList/>} />
           <Route path="/nep5assets" render={({match})=><NEP5AssetList/>} />
           <Route path="/asset/:id" render={({match})=><AssetList/>} />
-          <Route path="/nep5assets/:id" render={({match})=><NEP5AssetList/>} />
+          <Route path="/nep5asset/:id" render={({match})=><NEP5AssetList/>} />
           <Route exact path="/:id(\d+)" render={({match})=><NetworkStatistics/>} />
           <Route exact path="/" render={({match})=><Validators/>} />
           <Route path="/address/:id" render={({match})=><AddressTxs addr={match.params.id}/>} />

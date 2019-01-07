@@ -42,7 +42,7 @@ class AssetInfo extends Component {
                     }} />
 
                     <div className="infoblock">
-                        <h4>{data.amount}</h4>
+                        <h4>{data.available}</h4>
                         <h5>Amount</h5>
                     </div>
                     <div className="infoblock">
