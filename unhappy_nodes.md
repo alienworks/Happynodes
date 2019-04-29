@@ -43,6 +43,153 @@ Suggestion: Do not use
 </pre>
 
 <pre>
+List of Nodes with Corrupted Blocks Based on Bad Blocks found in http://108.252.121.18:10332
+Owner(s): Known and Unknown
+Version: All are using NEO-PYTHON
+Reported by: @jseagrave21
+Issue Link (if appicable): N/A
+Type: Python
+Issue: Some nodes have corrupted blocks
+Details: The corrupted blocks are shown below their parent nodes.
+Bad blocks were queried based on bad blocks found in http://108.252.121.18:10332
+Test: Based on a test conducted on 30 Aug 2018
+{
+    "http://node2.nyc3.bridgeprotocol.io:10332": [
+        2631533,
+        2631520,
+        2628876,
+        2628874,
+        2603556
+    ],
+    "http://node2.sgp1.bridgeprotocol.io:10332": [
+        2647581,
+        2631533,
+        2631520,
+        2628876,
+        2628874,
+        2603556
+    ],
+    "https://pyrpc1.redpulse.com:10331": [
+        2673477,
+        2673353,
+        2669088,
+        2669006,
+        2668576,
+        2654445,
+        2649000,
+        2648846,
+        2647581,
+        2642303,
+        2642297,
+        2639344,
+        2639318,
+        2636778,
+        2636746,
+        2631533,
+        2631520,
+        2628876,
+        2628874,
+        2603556
+    ],
+    "https://pyrpc2.redpulse.com:10331": [
+        2673477,
+        2673353,
+        2669088,
+        2669006,
+        2668576,
+        2654445,
+        2649000,
+        2648846,
+        2647581,
+        2642303,
+        2642297,
+        2639344,
+        2639318,
+        2636778,
+        2636746,
+        2631533,
+        2631520,
+        2628876,
+        2628874,
+        2603556
+    ],
+    "http://pyrpc1.redpulse.com:10332": [
+        2673477,
+        2673353,
+        2669088,
+        2669006,
+        2668576,
+        2654445,
+        2649000,
+        2648846,
+        2647581,
+        2642303,
+        2642297,
+        2639344,
+        2639318,
+        2636778,
+        2636746,
+        2631533,
+        2631520,
+        2628876,
+        2628874,
+        2603556
+    ],
+    "http://pyrpc2.redpulse.com:10332": [
+        2673477,
+        2673353,
+        2669088,
+        2669006,
+        2668576,
+        2654445,
+        2649000,
+        2648846,
+        2647581,
+        2642303,
+        2642297,
+        2639344,
+        2639318,
+        2636778,
+        2636746,
+        2631533,
+        2631520,
+        2628876,
+        2628874,
+        2603556
+    ],
+    "https://pyrpc1.narrative.org:443": [],
+    "https://pyrpc2.narrative.org:443": [],
+    "https://pyrpc3.narrative.org:443": [],
+    "https://pyrpc4.narrative.org:443": [],
+    "http://108.252.121.18:10332": [
+        2673477,
+        2673353,
+        2669088,
+        2669006,
+        2668576,
+        2654445,
+        2649000,
+        2648846,
+        2647581,
+        2642303,
+        2642297,
+        2639344,
+        2639318,
+        2636778,
+        2636746,
+        2631533,
+        2631520,
+        2628876,
+        2628874,
+        2603556
+    ],
+    "http://101.100.174.24:10332": [],
+    "http://52.204.61.212:10332": []
+}
+Suggestion: Do not use nodes with bad blocks
+</pre>
+
+<pre>
 Node: https://seed1.spotcoin.com:10332
 Owner: Spotcoin Team
 Version: NEO:2.7.6
